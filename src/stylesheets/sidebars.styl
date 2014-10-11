@@ -1,0 +1,30 @@
+header-control-color = #E0C59E
+header-control-hover = #F4F0EC
+
+.sidebar
+  .sidebar-header
+    width 100%
+    display flex
+    justify-content center
+    box-sizing border-box
+    padding 0 22px
+    color #644b2b
+
+  .sidebar-header-control
+    font-family 'Ubuntu', Verdana
+    font-size 22px
+    flex-grow 1
+    text-align center
+    color header-control-color
+    text-shadow 2px 2px 2px #644b2b
+    padding 6px
+    cursor: pointer
+
+    :hover
+      color header-control-hover
+
+  .sidebar-header-control:first-child
+    text-align left
+
+  .sidebar-header-control:last-child
+    text-align right

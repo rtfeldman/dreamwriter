@@ -1,0 +1,28 @@
+.backdrop-quadrant
+  position absolute
+  background url("images/quarter-backdrop.jpg")
+  background-size 100% 100%
+  background-repeat no-repeat
+  height 50%
+  width 50%
+  z-index -1
+  box-sizing border-box
+
+.backdrop-left
+  left 0
+  width 51%
+
+.backdrop-top
+  top 0
+  height 51%
+
+.backdrop-right
+  right 0
+  transform scaleX(-1)
+
+.backdrop-bottom
+  bottom 0
+  transform scaleY(-1)
+
+.backdrop-bottom.backdrop-right
+  transform scale(-1)

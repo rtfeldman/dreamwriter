@@ -1,0 +1,30 @@
+@require "mixins/page-text"
+
+#right-sidebar-container
+  position relative
+  flex-grow 1
+
+  width 100%
+  overflow auto
+  box-sizing border-box
+
+  color #644b2b
+  opacity 0.8
+
+  &:hover, &:focus
+    background-color #e0c59e
+    color #644b2b
+    opacity 1
+
+  #notes
+    padding 20px
+    margin-left 10px
+    box-sizing border-box
+
+    page-text()
+
+    font-size 16px
+    line-height 1.62em
+
+    p
+      text-indent 0

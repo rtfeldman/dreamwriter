@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Dreamwriter</title>
+    <script type="text/javascript" src="http://elm-lang.org/elm-runtime.js"></script>
+    <script type="text/javascript" src="App.js"></script>
+    <link rel="stylesheet" type="text/css" href="dreamwriter.css"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="Description" content="Dreamwriter backs up your words as you type, and makes organizing your masterpiece easy. It's completely free and open source!">
+    <link rel="icon" type="image/png" href="images/favicon.ico">
+  </head>
+
+  <body>
+  </body>
+
+  <script type="text/javascript">
+    var ports = {
+      // headers: []
+    }
+
+    var app = Elm.fullscreen(Elm.App, ports);
+
+    // Mutation observer does this - send over a list of chapter headings.
+    // app.ports.headers.send(["foo"]);
+
+    // switch iframeDocument.readyState
+    //   // "complete" in Chrome/Safari, "uninitialized" in Firefox
+    //   when "complete", "uninitialized"
+    //     try
+    //       iframeDocument.open()
+    //       iframeDocument.write html
+    //       iframeDocument.close()
+
+    //       onSuccess()
+    //     catch error
+    //       onError error
+    //   else
+    //     setTimeout (-> writeToIframeDocument iframeDocument, html, onSuccess, onError), 0
+  </script>
+
+</html>

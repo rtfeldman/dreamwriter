@@ -1,0 +1,100 @@
+@require "mixins/page-text"
+
+editor-width = 800px
+editor-header-width = editor-width - 40
+
+#editor-container
+  position relative
+  display flex
+  width editor-width px
+  min-width editor-width px
+  background #fff
+  box-shadow 0.4em 0.4em 0.4em #644b2b
+  border 1px solid #aaa
+
+  #editor-frame
+    display block
+    overflow auto
+    border none
+    width editor-width px
+    box-sizing border-box
+
+  #editor-header, #editor-footer
+    position absolute
+    display flex
+    flex-direction row
+    justify-content center
+    align-items stretch
+
+    left 20px
+    z-index 1
+    height 40px
+    text-align center
+    padding 6px
+    background-color white
+    width editor-header-width
+    line-height 28px
+
+    font-size 18px
+    font-family Ubuntu, Verdana
+    color #777
+
+  .toolbar-button
+    text-shadow 2px 2px 1px #EEE
+
+  #editor-header
+    top 0
+
+  #editor-footer
+    bottom 0
+
+  .toolbar-section
+    flex 1
+    text-align center
+
+  .toolbar-section:first-child
+    text-align left
+
+  .toolbar-section:last-child
+    text-align right
+
+  .font-control
+    font-family Serif
+    width 2.5em
+    height 100%
+    padding 0
+    margin-left 0.5em
+    margin-right 0.5em
+    box-sizing border-box
+
+  .toolbar-font-button
+    position relative
+    top 0
+    line-height 1.1em
+    text-shadow 1px 1px 1px #fff
+    color #252525
+    margin 0
+    margin-right 0.5em
+    padding-left 1em
+    padding-right 1em
+    color inherit
+    min-width 44px
+
+  #toggle-bold
+    font-weight bold
+
+  #toggle-italics
+    font-style italic
+
+  #toggle-strikethrough
+    text-decoration line-through
+
+  #loaded-document
+    background #fff
+
+    width 600px
+    padding 6em 1.5em 6em 1.5em
+    margin 0 auto
+    box-sizing border-box
+
+    page-text()
