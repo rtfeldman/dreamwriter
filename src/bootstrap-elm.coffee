@@ -1,8 +1,7 @@
-ports = {
-  # headers: []
+app = Elm.fullscreen Elm.App, {
+  chapterHeadings: []
+  docTitle:        ""
 }
-
-app = Elm.fullscreen Elm.App, ports
 
 # Writes the given html to the given iframe document, and fires a callback once the write is complete.
 writeToIframeDocument = (iframeDocument, html, onSuccess = (->), onError = (->)) ->
@@ -25,11 +24,13 @@ setUpIframe = (iframe) ->
   contentDocument.designMode = "on"
 
   changeObserver = new MutationObserver (mutations) ->
-    # TODO format the document structure into a list of headings, then
-    # send those over to the headings signal.
+    title = contentDocument.querySelector("h1")?.textContent ? ""
+    app.ports.docTitle.send title
 
-    # TODO format the document title into a title string, then send that
-    # over to the title signal.
+    chapterHeadings = for heading in contentDocument.querySelectorAll("h2")
+      heading.textContent
+
+    app.ports.chapterHeadings.send chapterHeadings
 
   writeToIframeDocument contentDocument, wrapInDocumentMarkup defaultDocStr
 
