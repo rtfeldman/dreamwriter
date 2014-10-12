@@ -26,8 +26,7 @@ key = attr "key"
 data Action
   = NoOp
   | OpenDoc Doc
-  | ChangeTitle String
-  | ChangeChapterHeadings [String]
+  | ChangeEditorContent EditorContent
 
 step : Action -> AppState -> AppState
 step action state =
@@ -37,18 +36,12 @@ step action state =
     OpenDoc doc ->
       state -- TODO actually do the open doc stuff
 
-    ChangeChapterHeadings headings ->
+    ChangeEditorContent content ->
       Debug.log "state"
 
       {state |
-        currentDoc <- Maybe.map (\doc -> updateDoc doc.title headings doc) state.currentDoc
+        currentDoc <- Maybe.map (\doc -> content.doc) state.currentDoc
       }
-
-    ChangeTitle title ->
-      state
-      --{state |
-      --  currentDoc <- Maybe.map (\doc -> updateDoc title doc.headings doc) state.currentDoc
-      --}
 
 main : Signal Element
 main = lift2 scene state Window.dimensions
@@ -60,8 +53,7 @@ actions = Input.input NoOp
 userInput : Signal Action
 userInput =
   merges
-  [ lift ChangeChapterHeadings chapterHeadings
-  , lift ChangeTitle docTitle
+  [ lift ChangeEditorContent editorContent
   , actions.signal
   ]
 
@@ -73,8 +65,13 @@ scene state (w, h) =
 state : Signal AppState
 state = foldp step emptyState userInput
 
-port chapterHeadings : Signal [String]
-port docTitle        : Signal String
+
+type EditorContent =
+  { html : String
+  , doc  : Doc
+  }
+
+port editorContent : Signal EditorContent
 
 port writeCurrentDocTitle : Signal String
 port writeCurrentDocTitle =

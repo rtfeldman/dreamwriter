@@ -1,48 +1,21 @@
+StructuredEditor = require "./StructuredEditor.coffee"
+
 app = Elm.fullscreen Elm.App, {
-  chapterHeadings: []
-  docTitle:        ""
+  editorContent: {
+    html: ""
+    doc: {title: "", chapters: []}
+  }
 }
 
 app.ports.writeCurrentDocTitle.subscribe (title) ->
   console.log "current doc title:", title
 
 # Writes the given html to the given iframe document, and fires a callback once the write is complete.
-writeToIframeDocument = (iframeDocument, html, onSuccess = (->), onError = (->)) ->
-  switch iframeDocument.readyState
-    # "complete" in Chrome/Safari, "uninitialized" in Firefox
-    when "complete", "uninitialized"
-      try
-        iframeDocument.open()
-        iframeDocument.write html
-        iframeDocument.close()
-
-        onSuccess()
-      catch error
-        onError error
-    else
-      setTimeout (-> writeToIframeDocument iframeDocument, html, onSuccess, onError), 0
 
 setUpIframe = (iframe) ->
-  contentDocument = iframe.contentDocument ? iframe.contentWindow.document
-  contentDocument.designMode = "on"
+  editor = new StructuredEditor iframe, (data) -> app.ports.editorContent.send data
 
-  changeObserver = new MutationObserver (mutations) ->
-    title = contentDocument.querySelector("h1")?.textContent ? ""
-    app.ports.docTitle.send title
-
-    chapterHeadings = for heading in contentDocument.querySelectorAll("h2")
-      heading.textContent
-
-    app.ports.chapterHeadings.send chapterHeadings
-
-  writeToIframeDocument contentDocument, wrapInDocumentMarkup defaultDocStr
-
-  changeObserver.observe contentDocument, {
-    childList: true
-    attributes: true
-    characterData: true
-    subtree: true
-  }
+  editor.write wrapInDocumentMarkup(defaultDocStr)
 
 ##### iframe appearance hack #####
 
@@ -64,24 +37,6 @@ setUpIframe = (iframe) ->
 )(document, setUpIframe)
 
 ##################################
-
-# Mutation observer does this - send over a list of chapter headings.
-# app.ports.headers.send(["foo"]);
-
-# switch iframeDocument.readyState
-#   // "complete" in Chrome/Safari, "uninitialized" in Firefox
-#   when "complete", "uninitialized"
-#     try
-#       iframeDocument.open()
-#       iframeDocument.write html
-#       iframeDocument.close()
-
-#       onSuccess()
-#     catch error
-#       onError error
-#   else
-#     setTimeout (-> writeToIframeDocument iframeDocument, html, onSuccess, onError), 0
-
 
 defaultDocStr = """
 
