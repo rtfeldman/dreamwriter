@@ -13,7 +13,6 @@
   "license": "MIT",
   "devDependencies": {
     "coffeeify": "0.6.0",
-    "event-emitter": "0.3.1",
     "grunt": "0.4.5",
     "grunt-appcache": "0.1.8",
     "grunt-autoprefixer": "0.8.2",
@@ -24,8 +23,6 @@
     "grunt-contrib-stylus": "0.18.0",
     "grunt-contrib-watch": "0.6.1",
     "grunt-elm": "^0.2.0",
-    "lodash": "2.4.1",
-    "react": "0.11.1",
     "sha1": "1.1.0"
   },
   "readmeFilename": "README.md"
