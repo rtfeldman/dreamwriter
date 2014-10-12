@@ -1,9 +1,12 @@
 StructuredEditor = require "./DocEditor.coffee"
+sha1             = require "sha1"
 
 app = Elm.fullscreen Elm.App, {
   editDoc: null
   loadDoc: ["", null]
 }
+
+getRandomSha = -> sha1 "#{Math.random()}"[0..16]
 
 # This will be initialized once the iframe is added to the DOM.
 editor = null
@@ -23,7 +26,7 @@ withEditor = (callback) ->
 ########################
 
 setUpEditor = (iframe) ->
-  app.ports.loadDoc.send ["foo-id", null]
+  app.ports.loadDoc.send [getRandomSha(), null]
 
   editor = new StructuredEditor iframe, (updatedDoc) ->
     app.ports.editDoc.send updatedDoc
