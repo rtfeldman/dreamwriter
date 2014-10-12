@@ -2,7 +2,9 @@ module App where
 
 import Debug
 
+import Dreamwriter (Identifier, newId)
 import Dreamwriter.Doc (..)
+import Dreamwriter.DocImport as DocImport
 import Dreamwriter.Model (..)
 import Dreamwriter.View.App (view)
 
@@ -25,6 +27,8 @@ key = attr "key"
 
 data Action
   = NoOp
+  | NewDoc Identifier
+  | NewIntroDoc Identifier
   | OpenDoc Doc
   | ChangeEditorContent (Maybe Doc)
 
@@ -33,8 +37,14 @@ step action state =
   case action of
     NoOp -> state
 
+    NewDoc id ->
+      step (OpenDoc <| DocImport.newBlankDoc id) state
+
+    NewIntroDoc id ->
+      step (OpenDoc <| DocImport.newIntroDoc id) state
+
     OpenDoc doc ->
-      state -- TODO actually do the open doc stuff
+      {state | currentDoc <- Just doc}
 
     ChangeEditorContent maybeDoc ->
       {state | currentDoc <- maybeDoc}

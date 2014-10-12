@@ -1,5 +1,5 @@
-module Dreamwriter (Identifier, newIdentifier) where
+module Dreamwriter (Identifier, newId) where
 
 type Identifier = String
 
-newIdentifier = "foo" -- FIXME: should be sha1
+newId = "foo" -- FIXME: should be sha1

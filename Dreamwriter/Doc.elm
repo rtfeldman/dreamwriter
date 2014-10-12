@@ -1,6 +1,6 @@
 module Dreamwriter.Doc (Doc, Chapter, newDoc, newChapter) where
 
-import Dreamwriter (Identifier, newIdentifier)
+import Dreamwriter (Identifier)
 import Maybe
 import String
 
