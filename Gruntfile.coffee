@@ -23,10 +23,6 @@ module.exports = (grunt) ->
         files: ["src/fonts/*.*"]
         tasks: ["copy:fonts"]
 
-      coffee:
-        files: ["src/**/*.coffee"]
-        tasks: ["coffee"]
-
       dist:
         files: ["dist/**/*", "!dist/dreamwriter.appcache", "!dist/cache/**/*"]
         tasks: ["copy:cache", "appcache"]
@@ -89,11 +85,21 @@ module.exports = (grunt) ->
         files:
           "dist": "**/*.elm"
 
-    coffee:
-      bootstrap:
-        options: sourceMap: true
-        files:
-          "dist/bootstrap-elm.js": "src/bootstrap-elm.coffee"
+    browserify:
+      options:
+        watch: true
+        extensions: ['.js', '.coffee']
+        transform: ['coffeeify']
+        browserifyOptions:
+          debug: true
+
+      dreamwriter:
+        src:  "./src/**/*.coffee"
+        dest: "dist/bootstrap-elm.js"
+
+      vendor:
+        src:  "./vendor/**/*.js"
+        dest: "dist/vendor.js"
 
     appcache:
       options:
@@ -120,11 +126,11 @@ module.exports = (grunt) ->
           '/images/quarter-backdrop.jpg    /cache/images/quarter-backdrop.jpg'
         ]
 
-  ["grunt-contrib-watch", "grunt-contrib-clean", "grunt-elm", "grunt-contrib-coffee", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach (plugin) -> grunt.loadNpmTasks plugin
+  ["grunt-contrib-watch", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach (plugin) -> grunt.loadNpmTasks plugin
 
   grunt.registerTask "build", [
     "stylesheets"
-    "coffee"
+    "browserify"
     "elm"
     "copy"
     "appcache"
