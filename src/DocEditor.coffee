@@ -1,28 +1,52 @@
-## StructuredEditor
+## DocEditor
 #
 # Wraps an iframe and does the following:
 #
 # 1. Enables designMode on the iframe
 # 2. Whenever the iframe's contents change, computes the structure of the
 #    new document (title, chapters, etc.) and passes them to a callback.
-# 3. Exposes a method to write new content to the iframe.
-module.exports = class StructuredEditor
+# 3. Writes to the iframe whenever a new doc is received.
+module.exports = class DocEditor
+  doc: null
+
   constructor: (iframe, onChange) ->
     contentDocument = iframe.contentDocument ? iframe.contentWindow.document
     contentDocument.designMode = "on"
 
-    mutationHandler = getMutationHandler contentDocument, onChange
-    changeObserver  = new MutationObserver mutationHandler
+    changeObserver = new MutationObserver (mutations) =>
+      if @doc == null
+        onChange null
+      else
+        doc = docFromContentDocument contentDocument
+        doc.id = @doc.id
+
+        onChange doc
+
     changeObserver.observe contentDocument, mutationObserverOptions
 
     @contentDocument = contentDocument
     @changeObserver  = changeObserver
 
-  write: (html, onSuccess, onError) ->
-    writeToIframeDocument @contentDocument, html, onSuccess, onError
+  setDoc: (doc) ->
+    docChanged =
+      (doc == null && @doc != null) ||
+      (doc != null && @doc == null) ||
+      (doc.id != @doc.id)
+
+    if docChanged
+      html = if doc == null then "" else doc.html
+
+      writeToIframeDocument @contentDocument, html, onWriteSuccess, onWriteError
+
+    @doc = doc
 
   dispose: ->
     @changeObserver.disconnect()
+
+onWriteSuccess = (->)
+onWriteError   = (err) ->
+    console.error "Error while trying to write to editor", err
+    throw new Error err
 
 # The options used to configure the mutation observer that watches the iframe.
 mutationObserverOptions = {
@@ -32,16 +56,13 @@ mutationObserverOptions = {
   characterData: true
 }
 
-# Returns a handler that will get called whenever the iframe document mutates.
-getMutationHandler = (contentDocument, callback) ->
-  (mutations) ->
-    html     = contentDocument.firstChild.innerHTML
-    title    = contentDocument.querySelector("h1")?.textContent ? ""
-    chapters = for heading in contentDocument.querySelectorAll("h2")
-      {heading: heading.textContent}
-    doc      = {title, chapters}
+docFromContentDocument = (contentDocument) ->
+  html     = contentDocument.firstChild.innerHTML
+  title    = contentDocument.querySelector("h1")?.textContent ? ""
+  chapters = for heading in contentDocument.querySelectorAll("h2")
+    {heading: heading.textContent}
 
-    callback {doc, html}
+  {html, title, chapters}
 
 # Writes the given html to the given iframe document,
 # and fires a callback once the write is complete.

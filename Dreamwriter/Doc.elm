@@ -1,28 +1,34 @@
-module Dreamwriter.Doc (Doc, Chapter, newDoc, newChapter, updateDoc) where
+module Dreamwriter.Doc (Doc, Chapter, newDoc, newChapter) where
 
 import Dreamwriter (Identifier, newIdentifier)
 import Maybe
 import String
 
 type Doc =
-  { title       : String
+  { id          : Identifier
+  , title       : String
   , chapters    : [Chapter]
+  , html        : String
   }
 
 type Chapter =
   { heading     : String
   }
 
-newDoc : String -> [Chapter] -> Doc
-newDoc title chapters =
-  { title    = title
+newDoc : Identifier -> String -> [Chapter] -> String -> Doc
+newDoc id title chapters html =
+  { id       = id
+  , title    = title
   , chapters = chapters
+  , html     = html
   }
 
 newChapter : String -> Chapter
 newChapter heading =
   { heading = heading
   }
+
+{-| Need to get all this working later
 
 updateHeading : String -> Chapter -> Chapter
 updateHeading heading chapter = {chapter | heading <- heading}
@@ -33,7 +39,6 @@ updateDoc title chapterHeadings doc =
    chapters <- zipWith updateHeading chapterHeadings doc.chapters
   }
 
-{-| Need to get all this working later
 -- Ports --
 
 --fromFile : String -> Date -> String -> Doc

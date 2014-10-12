@@ -1,47 +1,29 @@
-StructuredEditor = require "./StructuredEditor.coffee"
+StructuredEditor = require "./DocEditor.coffee"
 
 app = Elm.fullscreen Elm.App, {
-  editorContent: {
-    html: ""
-    doc: {title: "", chapters: []}
-  }
+  getCurrentDoc: null
 }
 
 # This will be initialized once the iframe is added to the DOM.
 editor = null
 
-# TODO remove this; was just for proof-of-concept.
-app.ports.writeCurrentDocTitle.subscribe (title) ->
-  console.log "current doc title:", title
+##### update editor #####
 
-##### write to editor #####
+app.ports.setCurrentDoc.subscribe (currentDoc) ->
+  withEditor (editor) -> editor.setDoc currentDoc
 
-onWriteSuccess = (->)
-onWriteError   = (err) ->
-    console.error "Error while trying to write to editor", err
-    throw new Error err
-
-# TODO set up a port, then uncomment this.
-# app.ports.writeToEditor.subscribe (html) ->
-#   writeToEditor html, onWriteSuccess, onWriteError
-
-writeToEditor = (html, onSuccess, onError) ->
+withEditor = (callback) ->
   if editor?
-    editor.write html, onSuccess, onError
+    callback editor
   else
     # If the editor isn't initialized yet, yield and try again until it's ready.
-    setTimeout (->
-      writeToEditor html, onSuccess, onError
-    ), 0
+    setTimeout (-> withEditor callback), 0
 
-###########################
+########################
 
 setUpEditor = (iframe) ->
-  editor = new StructuredEditor iframe, (newEditorContent) ->
-    app.ports.editorContent.send newEditorContent
-
-  # TODO move this to Elm
-  editor.write wrapInDocumentMarkup(defaultDocStr), onWriteSuccess, onWriteError
+  editor = new StructuredEditor iframe, (updatedDoc) ->
+    app.ports.getCurrentDoc.send updatedDoc
 
 ##### iframe appearance hack #####
 

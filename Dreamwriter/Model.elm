@@ -1,23 +1,19 @@
 module Dreamwriter.Model where
 
 import Dreamwriter.Doc (..)
+import Dreamwriter (Identifier)
 
 type AppState =
-  { docs            : [Doc]
-  , openMenuVisible : Bool
-  , currentDoc      : Maybe Doc
+  { showOpenMenu : Bool
+  , currentDoc   : Maybe Doc
   }
 
 type Settings =
-  { currentDoc : Doc
+  { currentDocId : Identifier
   }
-
-hackDoc = newDoc "Dreamwriter in Elm!" [newChapter "Foreword", newChapter "Chapter One", newChapter "Chapter Two", newChapter "Epilogue"]
 
 emptyState : AppState
 emptyState =
-  { docs            = []
-  , openMenuVisible = False
-  , currentDoc      = Just hackDoc 
-  --, currentDoc      = Nothing
+  { showOpenMenu    = False
+  , currentDoc      = Nothing
   }
