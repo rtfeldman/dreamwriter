@@ -1,5 +1,3 @@
-extraRequires = ["react", "lodash"]
-
 module.exports = (grunt) ->
   grunt.initConfig
     clean: ["dist"]
