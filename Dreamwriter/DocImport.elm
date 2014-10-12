@@ -1,15 +1,9 @@
-module Dreamwriter.DocImport (newBlankDoc, newIntroDoc, wrapInDocMarkup) where
+module Dreamwriter.DocImport (blankDocHtml, newIntroDoc, wrapInDocMarkup) where
 
 import Dreamwriter (Identifier)
 import Dreamwriter.Doc (..)
 
-newBlankDoc : Identifier -> Doc
-newBlankDoc id = 
-  { id       = id
-  , title    = "Untitled Masterpiece"
-  , chapters = []
-  , html     = wrapInDocMarkup blankDocBody
-  }
+blankDocHtml = wrapInDocMarkup blankDocBody
 
 newIntroDoc : Identifier -> Doc
 newIntroDoc id = 

@@ -25,9 +25,9 @@ key = attr "key"
 
 data Action
   = NoOp
-  | NewDoc Identifier
+  | NewDoc
   | LoadDoc (Identifier, (Maybe Doc))
-  | OpenDoc Doc
+  | OpenDoc Identifier
   | ChangeEditorContent (Maybe Doc)
 
 step : Action -> AppState -> AppState
@@ -35,17 +35,17 @@ step action state =
   case action of
     NoOp -> state
 
-    NewDoc id ->
-      step (OpenDoc <| DocImport.newBlankDoc id) state
+    NewDoc ->
+      {state | pendingLoad <- (Nothing, Just DocImport.blankDocHtml)}
+
+    OpenDoc id ->
+      {state | pendingLoad <- (Just id, Nothing)}
 
     LoadDoc (id, maybeDoc) ->
       let doc = case maybeDoc of
         Nothing  -> DocImport.newIntroDoc id
         Just doc -> doc
-      in step (OpenDoc doc) state
-
-    OpenDoc doc ->
-      {state | currentDoc <- Just doc}
+      in {state | currentDoc <- Just doc, pendingLoad <- (Nothing, Nothing)}
 
     ChangeEditorContent maybeDoc ->
       {state | currentDoc <- maybeDoc}
@@ -81,3 +81,6 @@ port loadDoc : Signal (Identifier, (Maybe Doc))
 
 port setCurrentDoc : Signal (Maybe Doc)
 port setCurrentDoc = lift .currentDoc state
+
+port setPendingLoad : Signal (Maybe Identifier, Maybe String)
+port setPendingLoad = lift .pendingLoad state

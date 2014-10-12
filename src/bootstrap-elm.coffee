@@ -16,6 +16,23 @@ editor = null
 app.ports.setCurrentDoc.subscribe (currentDoc) ->
   withEditor (editor) -> editor.setDoc currentDoc
 
+app.ports.setPendingLoad.subscribe ([id, html]) ->
+  console.debug "received pending load:", id, html
+
+  receivedId   = id?
+  receivedHtml = html?
+
+  if receivedId && receivedHtml
+    console.warn "Received a pending load with both id and html; not sure what to do with that..."
+  else if receivedHtml
+    doc = {} # TODO have the editor infer this from the given html
+    # withEditor (editor) -> editor.setDoc currentDoc
+
+    app.ports.loadDoc.send [getRandomSha(), doc]
+  else if receivedId
+    doc = {} # TODO load this doc from the database using the given id
+    app.ports.loadDoc.send [id, doc]
+
 withEditor = (callback) ->
   if editor?
     callback editor
