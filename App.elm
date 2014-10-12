@@ -1,8 +1,6 @@
 module App where
 
-import Debug
-
-import Dreamwriter (Identifier, newId)
+import Dreamwriter (Identifier)
 import Dreamwriter.Doc (..)
 import Dreamwriter.DocImport as DocImport
 import Dreamwriter.Model (..)
@@ -28,7 +26,7 @@ key = attr "key"
 data Action
   = NoOp
   | NewDoc Identifier
-  | NewIntroDoc Identifier
+  | LoadDoc (Identifier, (Maybe Doc))
   | OpenDoc Doc
   | ChangeEditorContent (Maybe Doc)
 
@@ -40,8 +38,11 @@ step action state =
     NewDoc id ->
       step (OpenDoc <| DocImport.newBlankDoc id) state
 
-    NewIntroDoc id ->
-      step (OpenDoc <| DocImport.newIntroDoc id) state
+    LoadDoc (id, maybeDoc) ->
+      let doc = case maybeDoc of
+        Nothing  -> DocImport.newIntroDoc id
+        Just doc -> doc
+      in step (OpenDoc doc) state
 
     OpenDoc doc ->
       {state | currentDoc <- Just doc}
@@ -59,7 +60,8 @@ actions = Input.input NoOp
 userInput : Signal Action
 userInput =
   merges
-  [ lift ChangeEditorContent getCurrentDoc
+  [ lift ChangeEditorContent editDoc
+  , lift LoadDoc loadDoc
   , actions.signal
   ]
 
@@ -71,7 +73,11 @@ scene state (w, h) =
 state : Signal AppState
 state = foldp step emptyState userInput
 
-port getCurrentDoc : Signal (Maybe Doc)
+port editDoc : Signal (Maybe Doc)
+
+-- The database sends a signal that either there's a new doc to be loaded,
+-- or that there are no docs to load (indicating the intro doc should be used).
+port loadDoc : Signal (Identifier, (Maybe Doc))
 
 port setCurrentDoc : Signal (Maybe Doc)
 port setCurrentDoc = lift .currentDoc state

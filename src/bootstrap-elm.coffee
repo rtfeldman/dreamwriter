@@ -1,7 +1,8 @@
 StructuredEditor = require "./DocEditor.coffee"
 
 app = Elm.fullscreen Elm.App, {
-  getCurrentDoc: null
+  editDoc: null
+  loadDoc: ["", null]
 }
 
 # This will be initialized once the iframe is added to the DOM.
@@ -22,8 +23,10 @@ withEditor = (callback) ->
 ########################
 
 setUpEditor = (iframe) ->
+  app.ports.loadDoc.send ["foo-id", null]
+
   editor = new StructuredEditor iframe, (updatedDoc) ->
-    app.ports.getCurrentDoc.send updatedDoc
+    app.ports.editDoc.send updatedDoc
 
 ##### iframe appearance hack #####
 
