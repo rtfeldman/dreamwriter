@@ -3,6 +3,9 @@ app = Elm.fullscreen Elm.App, {
   docTitle:        ""
 }
 
+app.ports.writeCurrentDocTitle.subscribe (title) ->
+  console.log "current doc title:", title
+
 # Writes the given html to the given iframe document, and fires a callback once the write is complete.
 writeToIframeDocument = (iframeDocument, html, onSuccess = (->), onError = (->)) ->
   switch iframeDocument.readyState

@@ -75,3 +75,8 @@ state = foldp step emptyState userInput
 
 port chapterHeadings : Signal [String]
 port docTitle        : Signal String
+
+port writeCurrentDocTitle : Signal String
+port writeCurrentDocTitle =
+  --dropRepeats <|
+  lift (Maybe.maybe "" .title << .currentDoc) state
