@@ -25,6 +25,10 @@ module.exports = (grunt) ->
         files: ["src/fonts/*.*"]
         tasks: ["copy:fonts"]
 
+      coffee:
+        files: ["src/**/*.coffee"]
+        tasks: ["coffee"]
+
       dist:
         files: ["dist/**/*", "!dist/dreamwriter.appcache", "!dist/cache/**/*"]
         tasks: ["copy:cache", "appcache"]
@@ -87,6 +91,12 @@ module.exports = (grunt) ->
         files:
           "dist": "**/*.elm"
 
+    coffee:
+      bootstrap:
+        options: sourceMap: true
+        files:
+          "dist/bootstrap-elm.js": "src/bootstrap-elm.coffee"
+
     appcache:
       options:
         basePath: 'dist'
@@ -112,11 +122,11 @@ module.exports = (grunt) ->
           '/images/quarter-backdrop.jpg    /cache/images/quarter-backdrop.jpg'
         ]
 
-
-  ["grunt-contrib-watch", "grunt-contrib-clean", "grunt-elm", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach (plugin) -> grunt.loadNpmTasks plugin
+  ["grunt-contrib-watch", "grunt-contrib-clean", "grunt-elm", "grunt-contrib-coffee", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach (plugin) -> grunt.loadNpmTasks plugin
 
   grunt.registerTask "build", [
     "stylesheets"
+    "coffee"
     "elm"
     "copy"
     "appcache"
