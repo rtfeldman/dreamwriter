@@ -7,15 +7,41 @@ app = Elm.fullscreen Elm.App, {
   }
 }
 
+# This will be initialized once the iframe is added to the DOM.
+editor = null
+
+# TODO remove this; was just for proof-of-concept.
 app.ports.writeCurrentDocTitle.subscribe (title) ->
   console.log "current doc title:", title
 
-# Writes the given html to the given iframe document, and fires a callback once the write is complete.
+##### write to editor #####
 
-setUpIframe = (iframe) ->
-  editor = new StructuredEditor iframe, (data) -> app.ports.editorContent.send data
+onWriteSuccess = (->)
+onWriteError   = (err) ->
+    console.error "Error while trying to write to editor", err
+    throw new Error err
 
-  editor.write wrapInDocumentMarkup(defaultDocStr)
+# TODO set up a port, then uncomment this.
+# app.ports.writeToEditor.subscribe (html) ->
+#   writeToEditor html, onWriteSuccess, onWriteError
+
+writeToEditor = (html, onSuccess, onError) ->
+  if editor?
+    editor.write html, onSuccess, onError
+  else
+    # If the editor isn't initialized yet, yield and try again until it's ready.
+    setTimeout (->
+      writeToEditor html, onSuccess, onError
+    ), 0
+
+###########################
+
+setUpEditor = (iframe) ->
+  editor = new StructuredEditor iframe, (newEditorContent) ->
+    app.ports.editorContent.send newEditorContent
+
+  # TODO move this to Elm
+  editor.write wrapInDocumentMarkup(defaultDocStr), onWriteSuccess, onWriteError
 
 ##### iframe appearance hack #####
 
@@ -23,18 +49,18 @@ setUpIframe = (iframe) ->
 # to detect when that will happen, so we use a mutation observer to watch
 # for it and set it up as soon as it appears.
 
-((document, setUpIframe) ->
+((document, setUpEditor) ->
   iframeAppearanceObserver = new MutationObserver (mutations) ->
     iframe = document.getElementById "editor-frame"
 
     if iframe
-      setUpIframe iframe
+      setUpEditor iframe
 
       # We've done what we set out to do, so we can safely disconncet now.
       iframeAppearanceObserver.disconnect()
 
   iframeAppearanceObserver.observe document.body, {attributes: true, childList: true}
-)(document, setUpIframe)
+)(document, setUpEditor)
 
 ##################################
 
