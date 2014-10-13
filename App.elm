@@ -1,6 +1,7 @@
 module App where
 
 import Dreamwriter (Identifier)
+import Dreamwriter.Action (..)
 import Dreamwriter.Doc (..)
 import Dreamwriter.DocImport as DocImport
 import Dreamwriter.Model (..)
@@ -15,20 +16,10 @@ import Html.Optimize.RefEq as Ref
 import Maybe
 import Window
 
-import Graphics.Input
-import Graphics.Input as Input
-
 -- TODO remove this once it's in elm-html
 key = attr "key"
 
 -- ACTIONS --
-
-data Action
-  = NoOp
-  | NewDoc
-  | LoadDoc (Identifier, (Maybe Doc))
-  | OpenDoc Identifier
-  | ChangeEditorContent (Maybe Doc)
 
 step : Action -> AppState -> AppState
 step action state =
@@ -52,10 +43,6 @@ step action state =
 
 main : Signal Element
 main = lift2 scene state Window.dimensions
-
--- actions from user input
-actions : Input.Input Action
-actions = Input.input NoOp
 
 userInput : Signal Action
 userInput =

@@ -17,8 +17,8 @@ module.exports = class DocEditor
       if @doc == null
         onChange null
       else
-        doc = docFromContentDocument contentDocument
-        doc.id = @doc.id
+        doc = DocEditor.docFromNode contentDocument.firstChild
+        doc.id = @doc.id # TODO decouple id from doc
 
         onChange doc
 
@@ -40,6 +40,14 @@ module.exports = class DocEditor
 
     @doc = doc
 
+  @docFromNode = (node) ->
+    html     = node.innerHTML
+    title    = node.ownerDocument.querySelector("h1")?.textContent ? ""
+    chapters = for heading in node.ownerDocument.querySelectorAll("h2")
+      {heading: heading.textContent}
+
+    {html, title, chapters}
+
   dispose: ->
     @changeObserver.disconnect()
 
@@ -55,14 +63,6 @@ mutationObserverOptions = {
   attributes:    true
   characterData: true
 }
-
-docFromContentDocument = (contentDocument) ->
-  html     = contentDocument.firstChild.innerHTML
-  title    = contentDocument.querySelector("h1")?.textContent ? ""
-  chapters = for heading in contentDocument.querySelectorAll("h2")
-    {heading: heading.textContent}
-
-  {html, title, chapters}
 
 # Writes the given html to the given iframe document,
 # and fires a callback once the write is complete.

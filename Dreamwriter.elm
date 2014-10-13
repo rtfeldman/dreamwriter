@@ -1,3 +1,3 @@
-module Dreamwriter (Identifier) where
+module Dreamwriter where
 
 type Identifier = String

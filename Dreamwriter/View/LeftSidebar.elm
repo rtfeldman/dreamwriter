@@ -1,10 +1,12 @@
 module Dreamwriter.View.LeftSidebar where
 
+import Dreamwriter.Action (..)
 import Dreamwriter.Model (..)
 import Dreamwriter.View.Outline as Outline
 
 import Html (..)
 import Html.Attributes (..)
+import Html.Events (..)
 import Html.Tags (..)
 import Maybe
 
@@ -19,10 +21,9 @@ view state =
     Just currentDoc ->
       div [id "left-sidebar-container", class "sidebar", key "left-sidebar-container"] [
         div [key "left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
-          span [class "sidebar-header-control", key "new"] [text "new"],
+          span [class "sidebar-header-control", key "new", onclick actions.handle (always NewDoc)] [text "new"],
           span [class "sidebar-header-control", key "open"] [text "open"]
-          --span [class "sidebar-header-control", key "new",  onClick handleNewDoc] ["new"],
-          --span [class "sidebar-header-control", key "open", onClick (getOpenMenuClickHandler true)] ["open"]
+          --span [class "sidebar-header-control", key "open", onClick (getOpenMenuClickHandler true)] [text "open"]
         ],
 
         div [id "title", key "title"] [text currentDoc.title],

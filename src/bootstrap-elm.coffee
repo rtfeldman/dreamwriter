@@ -1,5 +1,5 @@
-StructuredEditor = require "./DocEditor.coffee"
-sha1             = require "sha1"
+DocEditor = require "./DocEditor.coffee"
+sha1      = require "sha1"
 
 app = Elm.fullscreen Elm.App, {
   editDoc: null
@@ -25,10 +25,17 @@ app.ports.setPendingLoad.subscribe ([id, html]) ->
   if receivedId && receivedHtml
     console.warn "Received a pending load with both id and html; not sure what to do with that..."
   else if receivedHtml
-    doc = {} # TODO have the editor infer this from the given html
-    # withEditor (editor) -> editor.setDoc currentDoc
+    wrapperNode = document.createElement "div"
+    wrapperNode.innerHTML = receivedHtml
 
-    app.ports.loadDoc.send [getRandomSha(), doc]
+    doc = DocEditor.docFromNode wrapperNode.firstChild
+    id  = getRandomSha()
+
+    doc.id = id # TODO shouldn't need to do this
+
+    withEditor (editor) ->
+      editor.setDoc doc
+      app.ports.loadDoc.send [id, doc]
   else if receivedId
     doc = {} # TODO load this doc from the database using the given id
     app.ports.loadDoc.send [id, doc]
@@ -45,7 +52,7 @@ withEditor = (callback) ->
 setUpEditor = (iframe) ->
   app.ports.loadDoc.send [getRandomSha(), null]
 
-  editor = new StructuredEditor iframe, (updatedDoc) ->
+  editor = new DocEditor iframe, (updatedDoc) ->
     app.ports.editDoc.send updatedDoc
 
 ##### iframe appearance hack #####
