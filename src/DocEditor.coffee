@@ -28,10 +28,8 @@ module.exports = class DocEditor
     @changeObserver  = changeObserver
 
   setDoc: (doc) ->
-    docChanged =
-      (doc == null && @doc != null) ||
-      (doc != null && @doc == null) ||
-      (doc.id != @doc.id)
+    docChanged = (doc != @doc) &&
+      (doc == null || @doc == null || doc.id != @doc.id)
 
     if docChanged
       html = if doc == null then "" else doc.html

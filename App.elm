@@ -33,10 +33,11 @@ step action state =
       {state | pendingLoad <- (Just id, Nothing)}
 
     LoadDoc (id, maybeDoc) ->
-      let doc = case maybeDoc of
-        Nothing  -> DocImport.newIntroDoc id
-        Just doc -> doc
-      in {state | currentDoc <- Just doc, pendingLoad <- (Nothing, Nothing)}
+      case maybeDoc of
+        Nothing  ->
+          {state | pendingLoad <- (Nothing, Just DocImport.introDocHtml)}
+        Just doc ->
+          {state | currentDoc <- Just doc, pendingLoad <- (Nothing, Nothing)}
 
     ChangeEditorContent maybeDoc ->
       {state | currentDoc <- maybeDoc}

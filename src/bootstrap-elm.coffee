@@ -1,12 +1,10 @@
 DocEditor = require "./DocEditor.coffee"
-sha1      = require "sha1"
+DreamSync = require "./DreamSync.coffee"
 
 app = Elm.fullscreen Elm.App, {
   editDoc: null
   loadDoc: ["", null]
 }
-
-getRandomSha = -> sha1 "#{Math.random()}"[0..16]
 
 # This will be initialized once the iframe is added to the DOM.
 editor = null
@@ -14,11 +12,16 @@ editor = null
 ##### update editor #####
 
 app.ports.setCurrentDoc.subscribe (currentDoc) ->
-  withEditor (editor) -> editor.setDoc currentDoc
+  withEditor (editor) ->
+    editor.setDoc currentDoc
 
 app.ports.setPendingLoad.subscribe ([id, html]) ->
   receivedId   = id?
   receivedHtml = html?
+
+  updateCurrentDoc = (doc) ->
+    sync.putSetting "currentDocId", doc.id, ->
+      app.ports.loadDoc.send [doc.id, doc]
 
   if receivedId && receivedHtml
     console.warn "Received a pending load with both id and html; not sure what to do with that..."
@@ -27,15 +30,11 @@ app.ports.setPendingLoad.subscribe ([id, html]) ->
     wrapperNode.innerHTML = html
 
     doc = DocEditor.docFromNode wrapperNode
-    id  = getRandomSha()
 
-    doc.id = id # TODO shouldn't need to do this
-
-    app.ports.loadDoc.send [id, doc]
-
+    sync.saveDocWithSnapshot doc, {html}, (doc, snapshot) ->
+      updateCurrentDoc doc
   else if receivedId
-    doc = {} # TODO load this doc from the database using the given id
-    app.ports.loadDoc.send [id, doc]
+    sync.getDoc id, updateCurrentDoc
 
 withEditor = (callback) ->
   if editor?
@@ -46,9 +45,17 @@ withEditor = (callback) ->
 
 ########################
 
-setUpEditor = (iframe) ->
-  app.ports.loadDoc.send [getRandomSha(), null]
+sync = new DreamSync()
 
+sync.getCurrentDocId (id) ->
+  if id?
+    sync.getDoc id, (doc) ->
+      app.ports.loadDoc.send [id, doc]
+  else
+    # Passing an id with a null doc triggers loading the intro doc.
+    app.ports.loadDoc.send [DreamSync.getRandomSha(), null]
+
+setUpEditor = (iframe) ->
   editor = new DocEditor iframe, (updatedDoc) ->
     app.ports.editDoc.send updatedDoc
 
