@@ -7,7 +7,6 @@ type AppState =
   { showOpenMenu : Bool
   , currentDoc   : Maybe Doc
   , currentDocId : Maybe Identifier
-  , pendingHtml  : Maybe String
   }
 
 emptyState : AppState
@@ -15,5 +14,4 @@ emptyState =
   { showOpenMenu = False
   , currentDoc   = Nothing
   , currentDocId = Nothing
-  , pendingHtml  = Nothing
   }

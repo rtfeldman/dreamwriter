@@ -8,11 +8,13 @@ import Graphics.Input as Input
 
 data Action
   = NoOp
-  | NewDoc
-  | LoadDoc (Identifier, Maybe Doc)
+  | LoadDoc (Identifier, Doc)
   | OpenDocId Identifier
   | ChangeEditorContent (Maybe Doc)
 
 -- actions from user input
 actions : Input.Input Action
 actions = Input.input NoOp
+
+newDocInput : Input.Input ()
+newDocInput = Input.input ()

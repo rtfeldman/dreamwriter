@@ -1,9 +1,3 @@
-module Dreamwriter.DocImport (blankDocHtml, introDocHtml) where
-
-blankDocHtml = wrapInDocMarkup blankDocBody
-
-introDocHtml = wrapInDocMarkup introDocBody
-
 blankDocBody = """
   <h1>Untitled Masterpiece</h1>
   <h3>Brilliant Author</h3>
@@ -55,7 +49,7 @@ introDocBody = """
       <b><a href="https://twitter.com/rtfeldman">@rtfeldman</a></b> on Twitter
   </div>"""
 
-wrapInDocMarkup html = """
+wrapInDocMarkup = (html) -> """
   <html>
     <head>
       <meta charset="utf-8"/>
@@ -146,6 +140,30 @@ wrapInDocMarkup html = """
           }
       </style>
     </head>
-    <body>""" ++ html ++ """</body>
+    <body>#{html}</body>
   </html>
 """
+
+inferTitleFrom = (node) ->
+  node.querySelector("h1")?.textContent
+
+inferChaptersFrom = (node) ->
+  for heading in node.querySelectorAll("h2")
+    {heading: heading.textContent}
+
+docFromHtml = (html) ->
+  wrapperNode = document.createElement "div"
+  wrapperNode.innerHTML = html
+
+  {
+    title:    inferTitleFrom(wrapperNode) ? ""
+    chapters: inferChaptersFrom(wrapperNode)
+  }
+
+module.exports = {
+  blankDocHtml: wrapInDocMarkup(blankDocBody)
+  introDocHtml: wrapInDocMarkup(introDocBody)
+  inferTitleFrom
+  inferChaptersFrom
+  docFromHtml
+}

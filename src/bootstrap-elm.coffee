@@ -1,9 +1,9 @@
 Editor = require "./Editor.coffee"
 DreamSync = require "./DreamSync.coffee"
+DocImport = require "./DocImport.coffee"
 
 app = Elm.fullscreen Elm.App, {
-  editDoc: null
-  loadDoc: ["", null]
+  loadDoc: ["", {title: "", chapters: []}]
 }
 
 sync = new DreamSync()
@@ -25,14 +25,15 @@ loadDocId = (docId) ->
     sync.getSnapshot doc.snapshotId, (snapshot) ->
       withEditor (editor) ->
         editor.writeHtml snapshot.html, true
-        app.ports.loadDoc.send [docId, doc]
+        loadDoc doc.id, doc
 
-inferTitleFrom = (node) ->
-  node.querySelector("h1")?.textContent
+loadDoc = (docId, doc) -> app.ports.loadDoc.send [docId, doc]
 
-inferChaptersFrom = (node) ->
-  for heading in node.querySelectorAll("h2")
-    {heading: heading.textContent}
+saveHtmlAndLoadDoc = (html) ->
+  inferredDoc = DocImport.docFromHtml html
+
+  sync.saveDocWithSnapshot inferredDoc, {html}, (doc, snapshot) ->
+    loadDoc doc.id, doc
 
 # The options used to configure the mutation observer that watches the iframe.
 mutationObserverOptions = {
@@ -46,12 +47,12 @@ setUpEditor = (iframe) ->
   maybeEditor = new Editor iframe, mutationObserverOptions, (mutations, node) ->
     sync.getCurrentDocId (currentDocId) ->
       sync.getDoc currentDocId, (doc) ->
-        doc.title    = inferTitleFrom(node) ? doc.title ? ""
-        doc.chapters = inferChaptersFrom(node)
+        doc.title    = DocImport.inferTitleFrom(node) ? doc.title ? ""
+        doc.chapters = DocImport.inferChaptersFrom(node)
 
         # Persist the update
         sync.saveDocWithSnapshot doc, {html: node.innerHTML}, (updatedDoc) ->
-          app.ports.editDoc.send updatedDoc
+          loadDoc updatedDoc.id, updatedDoc
 
 ##### iframe appearance hack #####
 
@@ -82,23 +83,12 @@ app.ports.setCurrentDocId.subscribe (newDocId) ->
         sync.saveCurrentDocId newDocId, ->
           loadDocId newDocId
 
-app.ports.setPendingHtml.subscribe (html) ->
-  if html?
-    wrapperNode = document.createElement "div"
-    wrapperNode.innerHTML = html
-
-    doc = {
-      title:    inferTitleFrom(wrapperNode) ? ""
-      chapters: inferChaptersFrom(node)
-    }
-
-    sync.saveDocWithSnapshot doc, {html}, (doc, snapshot) ->
-      app.ports.loadDoc.send [doc.id, doc]
+app.ports.newDoc.subscribe ->
+  saveHtmlAndLoadDoc DocImport.blankDocHtml
 
 # Initialize the app based on the stored currentDocId
 sync.getCurrentDocId (id) ->
   if id?
     loadDocId id
   else
-    # Passing an id with a null doc triggers loading the intro doc.
-    app.ports.loadDoc.send [DreamSync.getRandomSha(), null]
+    saveHtmlAndLoadDoc DocImport.introDocHtml

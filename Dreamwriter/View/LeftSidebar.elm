@@ -21,7 +21,7 @@ view state =
     Just currentDoc ->
       div [id "left-sidebar-container", class "sidebar", key "left-sidebar-container"] [
         div [key "left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
-          span [class "sidebar-header-control", key "new", onclick actions.handle (always NewDoc)] [text "new"],
+          span [class "sidebar-header-control", key "new", onclick newDocInput.handle (always ())] [text "new"],
           span [class "sidebar-header-control", key "open"] [text "open"]
           --span [class "sidebar-header-control", key "open", onClick (getOpenMenuClickHandler true)] [text "open"]
         ],
