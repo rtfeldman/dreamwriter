@@ -54,8 +54,14 @@ sync.getCurrentDocId (id) ->
     app.ports.loadDoc.send [DreamSync.getRandomSha(), null]
 
 setUpEditor = (iframe) ->
-  editor = new DocEditor iframe, (updatedDoc) ->
+  editor = new DocEditor iframe, (html, updatedDoc) ->
+    # Tell the app about the update
     app.ports.editDoc.send updatedDoc
+
+    # Persist the update
+    sync.getCurrentDocId (currentDocId) ->
+      sync.getDoc currentDocId, (doc) ->
+        sync.saveDocWithSnapshot doc, {html}, (->)
 
 ##### iframe appearance hack #####
 

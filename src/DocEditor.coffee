@@ -5,7 +5,7 @@
 # 1. Enables designMode on the iframe
 # 2. Whenever the iframe's contents change, computes the structure of the
 #    new document (title, chapters, etc.) and passes them to a callback.
-# 3. Writes to the iframe whenever a new doc is received.
+# 3. Writes to the iframe when requested
 module.exports = class DocEditor
   constructor: (iframe, onChange) ->
     contentDocument = iframe.contentDocument ? iframe.contentWindow.document
@@ -13,7 +13,8 @@ module.exports = class DocEditor
 
     @contentDocument  = contentDocument
     @mutationObserver = new MutationObserver (mutations) =>
-      onChange DocEditor.docFromNode contentDocument.firstChild
+      onChange contentDocument.firstChild.innerHTML,
+        DocEditor.docFromNode contentDocument.firstChild
 
     @enableMutationObserver()
 
