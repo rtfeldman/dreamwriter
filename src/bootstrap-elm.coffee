@@ -15,26 +15,17 @@ app.ports.setCurrentDoc.subscribe (currentDoc) ->
   withEditor (editor) ->
     editor.setDoc currentDoc
 
-app.ports.setPendingLoad.subscribe ([id, html]) ->
-  receivedId   = id?
-  receivedHtml = html?
+app.ports.setPendingHtml.subscribe (html) ->
 
-  updateCurrentDoc = (doc) ->
-    sync.putSetting "currentDocId", doc.id, ->
-      app.ports.loadDoc.send [doc.id, doc]
-
-  if receivedId && receivedHtml
-    console.warn "Received a pending load with both id and html; not sure what to do with that..."
-  else if receivedHtml
+  if html?
     wrapperNode = document.createElement "div"
     wrapperNode.innerHTML = html
 
     doc = DocEditor.docFromNode wrapperNode
 
     sync.saveDocWithSnapshot doc, {html}, (doc, snapshot) ->
-      updateCurrentDoc doc
-  else if receivedId
-    sync.getDoc id, updateCurrentDoc
+      sync.putSetting "currentDocId", doc.id, ->
+        app.ports.loadDoc.send [doc.id, doc]
 
 withEditor = (callback) ->
   if editor?

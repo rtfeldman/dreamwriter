@@ -9,7 +9,7 @@ import Graphics.Input as Input
 data Action
   = NoOp
   | NewDoc
-  | LoadDoc (Identifier, (Maybe Doc))
+  | LoadDoc (Identifier, Maybe Doc)
   | OpenDoc Identifier
   | ChangeEditorContent (Maybe Doc)
 

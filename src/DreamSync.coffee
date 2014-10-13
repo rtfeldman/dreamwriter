@@ -24,7 +24,7 @@ module.exports = class DreamSync
     @stores.settings.put {id, value}, onSuccess, onError
 
   getSetting: (id, onSuccess, onError) ->
-    @stores.settings.get id, (({value}) -> onSuccess value), onError
+    @stores.settings.get id, ((result) -> onSuccess result?.value), onError
 
   getCurrentDocId: (onSuccess, onError) ->
     @getSetting "currentDocId", onSuccess, onError

@@ -27,17 +27,23 @@ step action state =
     NoOp -> state
 
     NewDoc ->
-      {state | pendingLoad <- (Nothing, Just DocImport.blankDocHtml)}
+      {state | pendingHtml <- Just DocImport.blankDocHtml}
 
     OpenDoc id ->
-      {state | pendingLoad <- (Just id, Nothing)}
+      {state | currentDocId <- Just id}
 
     LoadDoc (id, maybeDoc) ->
       case maybeDoc of
-        Nothing  ->
-          {state | pendingLoad <- (Nothing, Just DocImport.introDocHtml)}
+        -- When there is no doc available to load, load the intro doc.
+        Nothing ->
+          {state | pendingHtml <- Just DocImport.introDocHtml}
+
+        -- When a doc is provided, load it and clear out pending.
         Just doc ->
-          {state | currentDoc <- Just doc, pendingLoad <- (Nothing, Nothing)}
+          {state | currentDoc   <- Just doc
+                 , currentDocId <- Just id
+                 , pendingHtml  <- Nothing
+          }
 
     ChangeEditorContent maybeDoc ->
       {state | currentDoc <- maybeDoc}
@@ -70,5 +76,5 @@ port loadDoc : Signal (Identifier, (Maybe Doc))
 port setCurrentDoc : Signal (Maybe Doc)
 port setCurrentDoc = lift .currentDoc state
 
-port setPendingLoad : Signal (Maybe Identifier, Maybe String)
-port setPendingLoad = lift .pendingLoad state
+port setPendingHtml : Signal (Maybe String)
+port setPendingHtml = lift .pendingHtml state

@@ -6,16 +6,14 @@ import Dreamwriter (Identifier)
 type AppState =
   { showOpenMenu : Bool
   , currentDoc   : Maybe Doc
-  , pendingLoad  : (Maybe Identifier, Maybe String)
-  }
-
-type Settings =
-  { currentDocId : Identifier
+  , currentDocId : Maybe Identifier
+  , pendingHtml  : Maybe String
   }
 
 emptyState : AppState
 emptyState =
-  { showOpenMenu    = False
-  , currentDoc      = Nothing
-  , pendingLoad     = (Nothing, Nothing)
+  { showOpenMenu = False
+  , currentDoc   = Nothing
+  , currentDocId = Nothing
+  , pendingHtml  = Nothing
   }
