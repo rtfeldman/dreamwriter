@@ -8,12 +8,12 @@ app = Elm.fullscreen Elm.App, {
 
 sync = new DreamSync()
 
-# This will be initialized once the iframe is added to the DOM.
-editor = null
+# This will be initialized once the iframe has been added to the DOM.
+maybeEditor = null
 
 withEditor = (callback) ->
-  if editor?
-    callback editor
+  if maybeEditor?
+    callback maybeEditor
   else
     # If the editor isn't initialized yet, yield and try again until it's ready.
     setTimeout (-> withEditor callback), 0
@@ -43,7 +43,7 @@ mutationObserverOptions = {
 }
 
 setUpEditor = (iframe) ->
-  editor = new Editor iframe, mutationObserverOptions, (mutations, node) ->
+  maybeEditor = new Editor iframe, mutationObserverOptions, (mutations, node) ->
     sync.getCurrentDocId (currentDocId) ->
       sync.getDoc currentDocId, (doc) ->
         doc.title    = inferTitleFrom(node) ? doc.title ? ""
@@ -89,7 +89,7 @@ app.ports.setPendingHtml.subscribe (html) ->
 
     doc = {
       title:    inferTitleFrom(wrapperNode) ? ""
-      chapters: inferChaptersFrom(wrapperNode)
+      chapters: inferChaptersFrom(node)
     }
 
     sync.saveDocWithSnapshot doc, {html}, (doc, snapshot) ->
