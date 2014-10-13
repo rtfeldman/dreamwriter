@@ -1,4 +1,4 @@
-DocEditor = require "./DocEditor.coffee"
+Editor = require "./Editor.coffee"
 DreamSync = require "./DreamSync.coffee"
 
 app = Elm.fullscreen Elm.App, {
@@ -34,8 +34,16 @@ inferChaptersFromNode = (node) ->
   for heading in node.querySelectorAll("h2")
     {heading: heading.textContent}
 
+# The options used to configure the mutation observer that watches the iframe.
+mutationObserverOptions = {
+  subtree:       true
+  childList:     true
+  attributes:    true
+  characterData: true
+}
+
 setUpEditor = (iframe) ->
-  editor = new DocEditor iframe, (node) ->
+  editor = new Editor iframe, mutationObserverOptions, (mutations, node) ->
     sync.getCurrentDocId (currentDocId) ->
       sync.getDoc currentDocId, (doc) ->
         doc.title    = inferTitleFromNode(node) ? doc.title ? ""
@@ -79,7 +87,7 @@ app.ports.setPendingHtml.subscribe (html) ->
     wrapperNode = document.createElement "div"
     wrapperNode.innerHTML = html
 
-    doc = DocEditor.docFromNode wrapperNode
+    doc = Editor.docFromNode wrapperNode
 
     sync.saveDocWithSnapshot doc, {html}, (doc, snapshot) ->
       app.ports.loadDoc.send [doc.id, doc]

@@ -7,13 +7,13 @@
 #    new document (title, chapters, etc.) and passes them to a callback.
 # 3. Writes to the iframe when requested
 module.exports = class DocEditor
-  constructor: (iframe, onChange) ->
+  constructor: (iframe, @mutationObserverOptions, onChange) ->
     contentDocument = iframe.contentDocument ? iframe.contentWindow.document
     contentDocument.designMode = "on"
 
     @contentDocument  = contentDocument
     @mutationObserver = new MutationObserver (mutations) =>
-      onChange contentDocument.firstChild
+      onChange mutations, contentDocument.firstChild
 
     @enableMutationObserver()
 
@@ -30,7 +30,7 @@ module.exports = class DocEditor
       @enableMutationObserver @contentDocument
 
   enableMutationObserver: =>
-    @mutationObserver.observe @contentDocument, mutationObserverOptions
+    @mutationObserver.observe @contentDocument, @mutationObserverOptions
 
   disableMutationObserver: ->
     @mutationObserver.disconnect()
@@ -39,14 +39,6 @@ onWriteSuccess = (->)
 onWriteError   = (err) ->
     console.error "Error while trying to write to editor", err
     throw new Error err
-
-# The options used to configure the mutation observer that watches the iframe.
-mutationObserverOptions = {
-  subtree:       true
-  childList:     true
-  attributes:    true
-  characterData: true
-}
 
 # Writes the given html to the given iframe document,
 # and fires a callback once the write is complete.
