@@ -42,8 +42,8 @@ module.exports = class DocEditor
 
   @docFromNode = (node) ->
     html     = node.innerHTML
-    title    = node.ownerDocument.querySelector("h1")?.textContent ? ""
-    chapters = for heading in node.ownerDocument.querySelectorAll("h2")
+    title    = node.querySelector("h1")?.textContent ? ""
+    chapters = for heading in node.querySelectorAll("h2")
       {heading: heading.textContent}
 
     {html, title, chapters}

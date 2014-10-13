@@ -17,8 +17,6 @@ app.ports.setCurrentDoc.subscribe (currentDoc) ->
   withEditor (editor) -> editor.setDoc currentDoc
 
 app.ports.setPendingLoad.subscribe ([id, html]) ->
-  console.debug "received pending load:", id, html
-
   receivedId   = id?
   receivedHtml = html?
 
@@ -26,16 +24,15 @@ app.ports.setPendingLoad.subscribe ([id, html]) ->
     console.warn "Received a pending load with both id and html; not sure what to do with that..."
   else if receivedHtml
     wrapperNode = document.createElement "div"
-    wrapperNode.innerHTML = receivedHtml
+    wrapperNode.innerHTML = html
 
-    doc = DocEditor.docFromNode wrapperNode.firstChild
+    doc = DocEditor.docFromNode wrapperNode
     id  = getRandomSha()
 
     doc.id = id # TODO shouldn't need to do this
 
-    withEditor (editor) ->
-      editor.setDoc doc
-      app.ports.loadDoc.send [id, doc]
+    app.ports.loadDoc.send [id, doc]
+
   else if receivedId
     doc = {} # TODO load this doc from the database using the given id
     app.ports.loadDoc.send [id, doc]

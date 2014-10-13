@@ -15,7 +15,7 @@ newIntroDoc id =
 
 blankDocBody = """
   <h1>Untitled Masterpiece</h1>
-  <h2>Brilliant Author</h2>
+  <h3>Brilliant Author</h3>
   <p>&nbsp;</p>
 """
 
