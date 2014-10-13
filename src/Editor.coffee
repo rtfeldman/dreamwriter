@@ -1,4 +1,4 @@
-## DocEditor
+## Editor
 #
 # Wraps an iframe and does the following:
 #
@@ -6,7 +6,7 @@
 # 2. Whenever the iframe's contents change, computes the structure of the
 #    new document (title, chapters, etc.) and passes them to a callback.
 # 3. Writes to the iframe when requested
-module.exports = class DocEditor
+module.exports = class Editor
   constructor: (iframe, @mutationObserverOptions, onChange) ->
     contentDocument = iframe.contentDocument ? iframe.contentWindow.document
     contentDocument.designMode = "on"

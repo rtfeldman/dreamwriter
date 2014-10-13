@@ -27,10 +27,10 @@ loadDocId = (docId) ->
         editor.writeHtml snapshot.html
         app.ports.loadDoc.send [docId, doc]
 
-inferTitleFromNode = (node) ->
+inferTitleFrom = (node) ->
   node.querySelector("h1")?.textContent
 
-inferChaptersFromNode = (node) ->
+inferChaptersFrom = (node) ->
   for heading in node.querySelectorAll("h2")
     {heading: heading.textContent}
 
@@ -46,8 +46,8 @@ setUpEditor = (iframe) ->
   editor = new Editor iframe, mutationObserverOptions, (mutations, node) ->
     sync.getCurrentDocId (currentDocId) ->
       sync.getDoc currentDocId, (doc) ->
-        doc.title    = inferTitleFromNode(node) ? doc.title ? ""
-        doc.chapters = inferChaptersFromNode node
+        doc.title    = inferTitleFrom(node) ? doc.title ? ""
+        doc.chapters = inferChaptersFrom(node)
 
         # Persist the update
         sync.saveDocWithSnapshot doc, {html: node.innerHTML}, (updatedDoc) ->
