@@ -87,7 +87,10 @@ app.ports.setPendingHtml.subscribe (html) ->
     wrapperNode = document.createElement "div"
     wrapperNode.innerHTML = html
 
-    doc = Editor.docFromNode wrapperNode
+    doc = {
+      title:    inferTitleFrom(wrapperNode) ? ""
+      chapters: inferChaptersFrom(wrapperNode)
+    }
 
     sync.saveDocWithSnapshot doc, {html}, (doc, snapshot) ->
       app.ports.loadDoc.send [doc.id, doc]
