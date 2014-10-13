@@ -30,7 +30,8 @@ step action state =
       {state | pendingHtml <- Just DocImport.blankDocHtml}
 
     OpenDoc id ->
-      {state | currentDocId <- Just id}
+      {state | currentDocId <- Just id
+             , showOpenMenu <- False}
 
     LoadDoc (id, maybeDoc) ->
       case maybeDoc of
