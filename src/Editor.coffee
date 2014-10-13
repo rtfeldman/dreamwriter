@@ -17,17 +17,24 @@ module.exports = class Editor
 
     @enableMutationObserver()
 
-  writeHtml: (html) =>
-    @withoutMutationObserver =>
-      writeToIframeDocument @contentDocument, html, onWriteSuccess, onWriteError
+  writeHtml: (html, skipObserver, onSuccess = (->), onError = onWriteError) =>
+    @runWithOptionalObserver skipObserver, =>
+      writeToIframeDocument @contentDocument, html, onSuccess, onError
 
-  withoutMutationObserver: (runLogic) =>
-    @disableMutationObserver()
+  execCommand: (command, skipObserver) =>
+    @runWithOptionalObserver skipObserver, =>
+      @contentDocument.execCommand command
 
-    try
+  runWithOptionalObserver: (skipObserver, runLogic) =>
+    if skipObserver
       runLogic()
-    finally
-      @enableMutationObserver @contentDocument
+    else
+      @disableMutationObserver()
+
+      try
+        runLogic()
+      finally
+        @enableMutationObserver @contentDocument
 
   enableMutationObserver: =>
     @mutationObserver.observe @contentDocument, @mutationObserverOptions
@@ -35,8 +42,7 @@ module.exports = class Editor
   disableMutationObserver: ->
     @mutationObserver.disconnect()
 
-onWriteSuccess = (->)
-onWriteError   = (err) ->
+onWriteError = (err) ->
     console.error "Error while trying to write to editor", err
     throw new Error err
 

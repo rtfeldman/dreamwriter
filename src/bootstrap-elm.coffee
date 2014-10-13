@@ -24,7 +24,7 @@ loadDocId = (docId) ->
   sync.getDoc docId, (doc) ->
     sync.getSnapshot doc.snapshotId, (snapshot) ->
       withEditor (editor) ->
-        editor.writeHtml snapshot.html
+        editor.writeHtml snapshot.html, true
         app.ports.loadDoc.send [docId, doc]
 
 inferTitleFrom = (node) ->
