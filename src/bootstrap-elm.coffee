@@ -27,15 +27,23 @@ loadDocId = (docId) ->
         editor.writeHtml snapshot.html
         app.ports.loadDoc.send [docId, doc]
 
-setUpEditor = (iframe) ->
-  editor = new DocEditor iframe, (html, updatedDoc) ->
-    # Tell the app about the update
-    app.ports.editDoc.send updatedDoc
+inferTitleFromNode = (node) ->
+  node.querySelector("h1")?.textContent
 
-    # Persist the update
+inferChaptersFromNode = (node) ->
+  for heading in node.querySelectorAll("h2")
+    {heading: heading.textContent}
+
+setUpEditor = (iframe) ->
+  editor = new DocEditor iframe, (node) ->
     sync.getCurrentDocId (currentDocId) ->
       sync.getDoc currentDocId, (doc) ->
-        sync.saveDocWithSnapshot doc, {html}, (->)
+        doc.title    = inferTitleFromNode(node) ? doc.title ? ""
+        doc.chapters = inferChaptersFromNode node
+
+        # Persist the update
+        sync.saveDocWithSnapshot doc, {html: node.innerHTML}, (updatedDoc) ->
+          app.ports.editDoc.send updatedDoc
 
 ##### iframe appearance hack #####
 

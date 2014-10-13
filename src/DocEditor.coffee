@@ -13,8 +13,7 @@ module.exports = class DocEditor
 
     @contentDocument  = contentDocument
     @mutationObserver = new MutationObserver (mutations) =>
-      onChange contentDocument.firstChild.innerHTML,
-        DocEditor.docFromNode contentDocument.firstChild
+      onChange contentDocument.firstChild
 
     @enableMutationObserver()
 
@@ -35,13 +34,6 @@ module.exports = class DocEditor
 
   disableMutationObserver: ->
     @mutationObserver.disconnect()
-
-  @docFromNode: (node) ->
-    title    = node.querySelector("h1")?.textContent ? ""
-    chapters = for heading in node.querySelectorAll("h2")
-      {heading: heading.textContent}
-
-    {title, chapters}
 
 onWriteSuccess = (->)
 onWriteError   = (err) ->
