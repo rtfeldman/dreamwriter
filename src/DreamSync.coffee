@@ -29,8 +29,14 @@ module.exports = class DreamSync
   getCurrentDocId: (onSuccess, onError) ->
     @getSetting "currentDocId", onSuccess, onError
 
+  saveCurrentDocId: (id, onSuccess, onError) ->
+    @putSetting "currentDocId", id, onSuccess, onError
+
   getDoc: (id, onSuccess, onError) ->
     @stores.docs.get id, onSuccess, onError
+
+  getSnapshot: (id, onSuccess, onError) ->
+    @stores.snapshots.get id, onSuccess, onError
 
   saveDocWithSnapshot: (doc, snapshot, onSuccess, onError) ->
     persistDocAndSnapshot = =>

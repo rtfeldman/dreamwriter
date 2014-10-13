@@ -73,8 +73,8 @@ port editDoc : Signal (Maybe Doc)
 -- or that there are no docs to load (indicating the intro doc should be used).
 port loadDoc : Signal (Identifier, (Maybe Doc))
 
-port setCurrentDoc : Signal (Maybe Doc)
-port setCurrentDoc = lift .currentDoc state
+port setCurrentDocId : Signal (Maybe Identifier)
+port setCurrentDocId = lift .currentDocId state
 
 port setPendingHtml : Signal (Maybe String)
 port setPendingHtml = lift .pendingHtml state

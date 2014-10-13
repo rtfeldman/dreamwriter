@@ -5,22 +5,18 @@ import Maybe
 import String
 
 type Doc =
-  { id          : Identifier
-  , title       : String
+  { title       : String
   , chapters    : [Chapter]
-  , html        : String
   }
 
 type Chapter =
   { heading     : String
   }
 
-newDoc : Identifier -> String -> [Chapter] -> String -> Doc
-newDoc id title chapters html =
-  { id       = id
-  , title    = title
+newDoc : String -> [Chapter] -> String -> Doc
+newDoc title chapters html =
+  { title    = title
   , chapters = chapters
-  , html     = html
   }
 
 newChapter : String -> Chapter

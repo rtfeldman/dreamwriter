@@ -7,47 +7,40 @@
 #    new document (title, chapters, etc.) and passes them to a callback.
 # 3. Writes to the iframe whenever a new doc is received.
 module.exports = class DocEditor
-  doc: null
-
   constructor: (iframe, onChange) ->
     contentDocument = iframe.contentDocument ? iframe.contentWindow.document
     contentDocument.designMode = "on"
 
-    changeObserver = new MutationObserver (mutations) =>
-      if @doc == null
-        onChange null
-      else
-        doc = DocEditor.docFromNode contentDocument.firstChild
-        doc.id = @doc.id # TODO decouple id from doc
+    @contentDocument  = contentDocument
+    @mutationObserver = new MutationObserver (mutations) =>
+      onChange DocEditor.docFromNode contentDocument.firstChild
 
-        onChange doc
+    @enableMutationObserver()
 
-    changeObserver.observe contentDocument, mutationObserverOptions
-
-    @contentDocument = contentDocument
-    @changeObserver  = changeObserver
-
-  setDoc: (doc) ->
-    docChanged = (doc != @doc) &&
-      (doc == null || @doc == null || doc.id != @doc.id)
-
-    if docChanged
-      html = if doc == null then "" else doc.html
-
+  writeHtml: (html) =>
+    @withoutMutationObserver =>
       writeToIframeDocument @contentDocument, html, onWriteSuccess, onWriteError
 
-    @doc = doc
+  withoutMutationObserver: (runLogic) =>
+    @disableMutationObserver()
 
-  @docFromNode = (node) ->
-    html     = node.innerHTML
+    try
+      runLogic()
+    finally
+      @enableMutationObserver @contentDocument
+
+  enableMutationObserver: =>
+    @mutationObserver.observe @contentDocument, mutationObserverOptions
+
+  disableMutationObserver: ->
+    @mutationObserver.disconnect()
+
+  @docFromNode: (node) ->
     title    = node.querySelector("h1")?.textContent ? ""
     chapters = for heading in node.querySelectorAll("h2")
       {heading: heading.textContent}
 
-    {html, title, chapters}
-
-  dispose: ->
-    @changeObserver.disconnect()
+    {title, chapters}
 
 onWriteSuccess = (->)
 onWriteError   = (err) ->
