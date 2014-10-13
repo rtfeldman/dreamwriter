@@ -6,6 +6,8 @@ app = Elm.fullscreen Elm.App, {
   loadDoc: ["", null]
 }
 
+sync = new DreamSync()
+
 # This will be initialized once the iframe is added to the DOM.
 editor = null
 
@@ -24,34 +26,6 @@ loadDocId = (docId) ->
       withEditor (editor) ->
         editor.writeHtml snapshot.html
         app.ports.loadDoc.send [docId, doc]
-
-app.ports.setCurrentDocId.subscribe (newDocId) ->
-  if newDocId?
-    # TODO Ideally this would not be Race Condition City...
-    sync.getCurrentDocId (currentDocId) ->
-      if currentDocId != newDocId
-        sync.saveCurrentDocId newDocId, ->
-          loadDocId newDocId
-
-app.ports.setPendingHtml.subscribe (html) ->
-  if html?
-    wrapperNode = document.createElement "div"
-    wrapperNode.innerHTML = html
-
-    doc = DocEditor.docFromNode wrapperNode
-
-    sync.saveDocWithSnapshot doc, {html}, (doc, snapshot) ->
-      app.ports.loadDoc.send [doc.id, doc]
-
-sync = new DreamSync()
-
-# Initialize the app based on the stored currentDocId
-sync.getCurrentDocId (id) ->
-  if id?
-    loadDocId id
-  else
-    # Passing an id with a null doc triggers loading the intro doc.
-    app.ports.loadDoc.send [DreamSync.getRandomSha(), null]
 
 setUpEditor = (iframe) ->
   editor = new DocEditor iframe, (html, updatedDoc) ->
@@ -83,3 +57,29 @@ setUpEditor = (iframe) ->
 )(document, setUpEditor)
 
 ##################################
+
+app.ports.setCurrentDocId.subscribe (newDocId) ->
+  if newDocId?
+    # TODO Ideally this would not be Race Condition City...
+    sync.getCurrentDocId (currentDocId) ->
+      if currentDocId != newDocId
+        sync.saveCurrentDocId newDocId, ->
+          loadDocId newDocId
+
+app.ports.setPendingHtml.subscribe (html) ->
+  if html?
+    wrapperNode = document.createElement "div"
+    wrapperNode.innerHTML = html
+
+    doc = DocEditor.docFromNode wrapperNode
+
+    sync.saveDocWithSnapshot doc, {html}, (doc, snapshot) ->
+      app.ports.loadDoc.send [doc.id, doc]
+
+# Initialize the app based on the stored currentDocId
+sync.getCurrentDocId (id) ->
+  if id?
+    loadDocId id
+  else
+    # Passing an id with a null doc triggers loading the intro doc.
+    app.ports.loadDoc.send [DreamSync.getRandomSha(), null]
