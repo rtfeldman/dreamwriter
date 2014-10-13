@@ -29,7 +29,7 @@ step action state =
     NewDoc ->
       {state | pendingHtml <- Just DocImport.blankDocHtml}
 
-    OpenDoc id ->
+    OpenDocId id ->
       {state | currentDocId <- Just id
              , showOpenMenu <- False}
 

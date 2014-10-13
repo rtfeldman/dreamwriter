@@ -10,7 +10,7 @@ data Action
   = NoOp
   | NewDoc
   | LoadDoc (Identifier, Maybe Doc)
-  | OpenDoc Identifier
+  | OpenDocId Identifier
   | ChangeEditorContent (Maybe Doc)
 
 -- actions from user input
