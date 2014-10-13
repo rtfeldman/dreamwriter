@@ -103,7 +103,6 @@
       root.indexedDB = root.indexedDB || root.webkitIndexedDB || root.mozIndexedDB || root.msIndexedDB;
       root.IDBTransaction = (_ref1 = root.IDBTransaction) != null ? _ref1 : root.webkitIDBTransaction;
       root.IDBKeyRange = (_ref2 = root.IDBKeyRange) != null ? _ref2 : root.webkitIDBKeyRange;
-      root.storageInfo = (_ref3 = root.storageInfo) != null ? _ref3 : root.webkitStorageInfo;
       problems = [];
       if (!root.indexedDB) {
         problems.push("Could not initialize IndexedDB - no indexedDB present");
@@ -121,9 +120,9 @@
         }
         return;
       }
-      if ((_ref4 = root.storageInfo) != null) {
-        _ref4.requestQuota((_ref5 = root.storageInfo) != null ? _ref5.TEMPORARY : void 0, options.desiredQuotaBytes);
-      }
+      //if (navigator.webkitTemporaryStorage != null) {
+      //  requestQuota((_ref5 = root.storageInfo) != null ? navigator.webkitTemporaryStorage : void 0, options.desiredQuotaBytes);
+      //}
       upgrade = function(event) {
         var store, storeName, _j, _len1, _ref6, _ref7;
         _this.fireEvent('upgrade');
