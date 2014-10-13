@@ -87,17 +87,18 @@ module.exports = (grunt) ->
 
     browserify:
       options:
+        transform: ['browserify-mustache', 'coffeeify']
         watch: true
-        extensions: ['.js', '.coffee']
-        transform: ['coffeeify']
         browserifyOptions:
           debug: true
 
       dreamwriter:
-        src:  "./src/**/*.coffee"
+        extensions: ['.coffee', '.mustache']
+        src:  ["./src/**/*.coffee", "./src/**/*.mustache"]
         dest: "dist/bootstrap-elm.js"
 
       vendor:
+        extensions: ['.js']
         src:  "./vendor/**/*.js"
         dest: "dist/vendor.js"
 
