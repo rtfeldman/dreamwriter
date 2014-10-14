@@ -16,5 +16,8 @@ data Action
 actions : Input.Input Action
 actions = Input.input NoOp
 
+downloadInput : Input.Input String
+downloadInput = Input.input ""
+
 newDocInput : Input.Input ()
 newDocInput = Input.input ()

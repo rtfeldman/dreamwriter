@@ -21,6 +21,9 @@ module.exports = class Editor
     @runWithOptionalObserver skipObserver, =>
       writeToIframeDocument @contentDocument, html, onSuccess, onError
 
+  getHtml: ->
+    @contentDocument.firstChild.innerHTML
+
   execCommand: (command, skipObserver) =>
     @runWithOptionalObserver skipObserver, =>
       @contentDocument.execCommand command

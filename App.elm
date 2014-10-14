@@ -62,3 +62,6 @@ port setCurrentDocId = lift .currentDocId state
 
 port newDoc : Signal ()
 port newDoc = newDocInput.signal
+
+port downloadDoc : Signal String
+port downloadDoc = downloadInput.signal

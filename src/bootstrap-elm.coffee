@@ -1,6 +1,7 @@
 Editor = require "./Editor.coffee"
 DreamSync = require "./DreamSync.coffee"
 DocImport = require "./DocImport.coffee"
+saveAs    = require "../vendor/FileSaver.js"
 
 app = Elm.fullscreen Elm.App, {
   loadDoc: ["", {title: "", chapters: []}]
@@ -75,6 +76,8 @@ setUpEditor = (iframe) ->
 
 ##################################
 
+downloadFileType = "text/plain;charset=#{document.characterSet}"
+
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
     # TODO Ideally this would not be Race Condition City...
@@ -85,6 +88,10 @@ app.ports.setCurrentDocId.subscribe (newDocId) ->
 
 app.ports.newDoc.subscribe ->
   saveHtmlAndLoadDoc DocImport.blankDocHtml
+
+app.ports.downloadDoc.subscribe (filename) ->
+  withEditor (editor) ->
+    saveAs new Blob([editor.getHtml()], {type: downloadFileType}), filename
 
 # Initialize the app based on the stored currentDocId
 sync.getCurrentDocId (id) ->
