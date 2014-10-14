@@ -1,7 +1,7 @@
 Editor = require "./Editor.coffee"
 DreamSync = require "./DreamSync.coffee"
 DocImport = require "./DocImport.coffee"
-saveAs    = require "../vendor/FileSaver.js"
+saveAs    = require "FileSaver.js"
 
 app = Elm.fullscreen Elm.App, {
   loadDoc: ["", {title: "", chapters: []}]
