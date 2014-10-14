@@ -1,0 +1,26 @@
+{
+  "name": "dreamwriter",
+  "version": "0.0.1",
+  "homepage": "https://github.com/rtfeldman/dreamwriter-elm",
+  "authors": [
+    "Richard Feldman <richard.t.feldman@gmail.com>"
+  ],
+  "description": "Streamlined writing app.",
+  "main": "dist/index.html",
+  "keywords": [
+    "dreamwriter",
+    "elm"
+  ],
+  "license": "Apache2",
+  "private": true,
+  "dependencies": {
+    "FileSaver.js": "git@github.com:eligrey/FileSaver.js.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

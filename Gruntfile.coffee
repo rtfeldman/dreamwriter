@@ -23,6 +23,10 @@ module.exports = (grunt) ->
         files: ["src/fonts/*.*"]
         tasks: ["copy:fonts"]
 
+      bower:
+        files: ["bower.json"]
+        tasks: ["browserifyBower"]
+
       dist:
         files: ["dist/**/*", "!dist/dreamwriter.appcache", "!dist/cache/**/*"]
         tasks: ["copy:cache", "appcache"]
@@ -102,6 +106,14 @@ module.exports = (grunt) ->
         src:  "./vendor/**/*.js"
         dest: "dist/vendor.js"
 
+    browserifyBower:
+      options:
+        file: "dist/vendor-bower.js"
+        forceResolve:
+          "FileSaver.js": "FileSaver.min.js"
+
+      vendor: {}
+
     appcache:
       options:
         basePath: 'dist'
@@ -127,10 +139,11 @@ module.exports = (grunt) ->
           '/images/quarter-backdrop.jpg    /cache/images/quarter-backdrop.jpg'
         ]
 
-  ["grunt-contrib-watch", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach (plugin) -> grunt.loadNpmTasks plugin
+  ["grunt-contrib-watch", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach (plugin) -> grunt.loadNpmTasks plugin
 
   grunt.registerTask "build", [
     "stylesheets"
+    "browserifyBower"
     "browserify"
     "elm"
     "copy"
