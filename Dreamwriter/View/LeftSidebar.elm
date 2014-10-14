@@ -20,13 +20,17 @@ illegalFilenameCharMatcher = regex "[/\\<>?|\":*]"
 legalizeFilename : String -> String
 legalizeFilename = replace All illegalFilenameCharMatcher (\_ -> "_")
 
+downloadContentType = "text/plain;charset=UTF-8"
+
 view : AppState -> Html
 view state =
   case state.currentDoc of
     Nothing ->
       span [] []
     Just currentDoc ->
-      let filenameForDownload = (legalizeFilename currentDoc.title) ++ ".html"
+      let downloadOptions = { filename    = (legalizeFilename currentDoc.title) ++ ".html"
+                            , contentType = downloadContentType
+                            }
       in
         div [id "left-sidebar-container", class "sidebar", key "left-sidebar-container"] [
           div [key "left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
@@ -37,7 +41,7 @@ view state =
 
           div [id "title", key "title"] [text currentDoc.title],
           div [id "file-buttons", key "file-buttons"] [
-            span [class "file-button", key "download", onclick downloadInput.handle (always filenameForDownload)] [text "download"],
+            span [class "file-button", key "download", onclick downloadInput.handle (always downloadOptions)] [text "download"],
             span [class "file-button", key "stats"] [text "stats"]
           ],
 

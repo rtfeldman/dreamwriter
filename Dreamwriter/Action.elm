@@ -16,8 +16,13 @@ data Action
 actions : Input.Input Action
 actions = Input.input NoOp
 
-downloadInput : Input.Input String
-downloadInput = Input.input ""
+type DownloadOptions =
+  { filename    : String
+  , contentType : String
+  }
+
+downloadInput : Input.Input DownloadOptions
+downloadInput = Input.input { filename = "", contentType = "" }
 
 newDocInput : Input.Input ()
 newDocInput = Input.input ()

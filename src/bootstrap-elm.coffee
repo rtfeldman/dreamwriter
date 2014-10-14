@@ -76,8 +76,6 @@ setUpEditor = (iframe) ->
 
 ##################################
 
-downloadFileType = "text/plain;charset=#{document.characterSet}"
-
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
     # TODO Ideally this would not be Race Condition City...
@@ -89,9 +87,9 @@ app.ports.setCurrentDocId.subscribe (newDocId) ->
 app.ports.newDoc.subscribe ->
   saveHtmlAndLoadDoc DocImport.blankDocHtml
 
-app.ports.downloadDoc.subscribe (filename) ->
+app.ports.downloadDoc.subscribe ({filename, contentType}) ->
   withEditor (editor) ->
-    saveAs new Blob([editor.getHtml()], {type: downloadFileType}), filename
+    saveAs new Blob([editor.getHtml()], {type: contentType}), filename
 
 # Initialize the app based on the stored currentDocId
 sync.getCurrentDocId (id) ->
