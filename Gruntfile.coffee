@@ -111,6 +111,7 @@ module.exports = (grunt) ->
         file: "dist/vendor-bower.js"
         forceResolve:
           "FileSaver.js": "FileSaver.min.js"
+          "db.js": "src/db.js"
 
       vendor: {}
 

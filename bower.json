@@ -14,7 +14,8 @@
   "license": "Apache2",
   "private": true,
   "dependencies": {
-    "FileSaver.js": "git@github.com:eligrey/FileSaver.js.git"
+    "FileSaver.js": "git@github.com:eligrey/FileSaver.js.git",
+    "db.js": "~0.9.0"
   },
   "ignore": [
     "**/.*",
