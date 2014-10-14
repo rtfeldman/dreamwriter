@@ -2,89 +2,86 @@
 #
 # Handles synchronizing data to/from IndexedDB, remote, etc.
 
+dbjs = require "db.js"
 sha1 = require "sha1"
 
 databaseVersion = '1' # Must be an ever-increasing integer for Firefox and a string for Chrome.
-desiredStorageQuotaBytes = 1024 * 1024 * 1024 * 1024 # 1TB
+
+defaultKeySettings = {keyPath: "id", autoIncrement: false}
+defaultConnectionOptions =
+  server: "dreamwriter"
+  version: databaseVersion
+  schema:
+    settings:
+      key: defaultKeySettings
+    docs:
+      key: defaultKeySettings
+    snapshots:
+      key: defaultKeySettings
 
 module.exports = class DreamSync
-  constructor: ->
-    storeNames = ['docs', 'snapshots', 'settings']
+  constructor: (connection) ->
+    @db = connection
 
-    vault = new Vault
-      name: "dreamwriter"
-      version: databaseVersion
-      desiredStorageQuotaBytes: desiredStorageQuotaBytes
-      stores: storeNames
-      storeDefaults: { keyName: 'id' }
-
-    @stores = vault.stores
-
-  putSetting: (id, value, onSuccess, onError) =>
-    @stores.settings.put {id, value}, onSuccess, onError
-
-  getSetting: (id, onSuccess, onError) ->
-    @stores.settings.get id, ((result) -> onSuccess result?.value), onError
-
-  getCurrentDocId: (onSuccess, onError) ->
-    @getSetting "currentDocId", onSuccess, onError
-
-  saveCurrentDocId: (id, onSuccess, onError) ->
-    @putSetting "currentDocId", id, onSuccess, onError
-
-  getDoc: (id, onSuccess, onError) ->
-    @stores.docs.get id, onSuccess, onError
-
-  getSnapshot: (id, onSuccess, onError) ->
-    @stores.snapshots.get id, onSuccess, onError
-
-  saveDocWithSnapshot: (doc, snapshot, onSuccess, onError) ->
-    persistDocAndSnapshot = =>
-      succeed = => @listeners.emit DreamStore.CHANGE_EVENT
-      fail    = -> throw new Error "Error saving doc #{doc?.id} and snapshot #{snapshot?.id}"
-
-      doc.snapshotId ?= snapshot.id ? DreamSync.getRandomSha()
-      snapshot.id    ?= doc.snapshotId
-
-      currentDate = new Date()
-
-      doc.creationTimestamp      ||= currentDate
-      snapshot.creationTimestamp ||= currentDate
-      doc.lastModified      = currentDate
-      snapshot.lastModified = currentDate
-
-      onParallelSuccess = -> onSuccess doc, snapshot
-
-      runInParallel [
-        (succeed, fail) => @stores.docs.put      doc,      succeed, fail
-        (succeed, fail) => @stores.snapshots.put snapshot, succeed, fail
-      ], onParallelSuccess, onError
-
-    if doc.id?
-      @getDoc doc.id, (existingDoc) =>
-        if existingDoc.lastModified.getTime() > doc.lastModified.getTime()
-          # TODO handle this by re-rendering etc
-          alert "Your document is out of sync! Please refresh."
-        else
-          persistDocAndSnapshot()
-    else
-      doc.id = DreamSync.getRandomSha()
-      persistDocAndSnapshot()
-
+  @connect: (options = defaultConnectionOptions) ->
+    new Promise (resolve, reject) ->
+      dbjs.open(options).then ((conn) -> resolve new DreamSync conn), reject
 
   @getRandomSha: -> sha1 "#{Math.random()}"[0..16]
 
-runInParallel = (continuations = [], onSuccess = (->), onError = (-> throw new Error "Error executing #{continuations.length} operations in parallel.")) ->
-  remaining = continuations.length
+  getCurrentDocId:       => @getSetting  "currentDocId"
+  saveCurrentDocId: (id) => @saveSetting "currentDocId", id
 
-  completeWithSuccess = ->
-    remaining--
-    if remaining < 1
-      onSuccess()
+  saveSetting: (id, value) => @db.settings.update {id, value}
+  getSetting:  (id) =>
+    new Promise (resolve, reject) =>
+      @db.settings.get(id).then ((result) -> resolve result?.value), reject
 
-  completeWithError = (err) ->
-    completeWithError = completeWithSuccess = (->)
-    onError err
+  getDoc:      (id) => @db.docs.get      id
+  getSnapshot: (id) => @db.snapshots.get id
 
-  continuations.forEach (continuation) ->
-    continuation completeWithSuccess, completeWithError
+  saveDocWithSnapshot: (doc, snapshot) ->
+    if doc.id?
+      new Promise (resolve, reject) =>
+        @getDoc(doc.id).then (existingDoc) =>
+          if existingDoc.lastModified.getTime() > doc.lastModified.getTime()
+            # TODO handle this by re-rendering etc
+            alert "Your document is out of sync! Please refresh."
+          else
+            persistDocAndSnapshot(@db, doc, snapshot).then resolve, reject
+    else
+      doc.id = DreamSync.getRandomSha()
+      persistDocAndSnapshot @db, doc, snapshot
+
+persistDocAndSnapshot = (db, doc, snapshot) ->
+  new Promise (resolve, reject) ->
+    doc.snapshotId ?= snapshot.id ? DreamSync.getRandomSha()
+    snapshot.id    ?= doc.snapshotId
+
+    currentDate = new Date()
+
+    doc.creationTimestamp      ||= currentDate
+    snapshot.creationTimestamp ||= currentDate
+    doc.lastModified      = currentDate
+    snapshot.lastModified = currentDate
+
+    runInParallel([
+      db.docs.update(doc)
+      db.snapshots.update(snapshot)
+    ]).then (-> resolve {doc, snapshot}), reject
+
+runInParallel = (promises) ->
+  new Promise (resolve, reject) ->
+    remaining = promises.length
+
+    completeWithSuccess = ->
+      remaining--
+      if remaining < 1
+        resolve()
+
+    completeWithError = (err) ->
+      completeWithError = completeWithSuccess = (->)
+      reject err
+
+    promises.forEach (promise) ->
+      promise.then completeWithSuccess, completeWithError

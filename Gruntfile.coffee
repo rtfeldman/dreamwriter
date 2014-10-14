@@ -64,10 +64,6 @@ module.exports = (grunt) ->
         ]
         dest: "dist/cache/"
 
-      vendor:
-        src:  "vendor/**/*.js"
-        dest: "dist/vendor.js"
-
     stylus:
       compile:
         options:
@@ -101,14 +97,9 @@ module.exports = (grunt) ->
         src:  ["./src/**/*.coffee", "./src/**/*.mustache"]
         dest: "dist/bootstrap-elm.js"
 
-      vendor:
-        extensions: ['.js']
-        src:  "./vendor/**/*.js"
-        dest: "dist/vendor.js"
-
     browserifyBower:
       options:
-        file: "dist/vendor-bower.js"
+        file: "dist/vendor.js"
         forceResolve:
           "FileSaver.js": "FileSaver.min.js"
           "db.js": "src/db.js"

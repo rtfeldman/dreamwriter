@@ -7,10 +7,11 @@ app = Elm.fullscreen Elm.App, {
   loadDoc: ["", {title: "", chapters: []}]
 }
 
-sync = new DreamSync()
-
 # This will be initialized once the iframe has been added to the DOM.
 maybeEditor = null
+
+# This will be initialized once a connection to the db has been established.
+sync = null
 
 withEditor = (callback) ->
   if maybeEditor?
@@ -22,8 +23,8 @@ withEditor = (callback) ->
 # Looks up the doc and snapshot associated with the given docId,
 # writes the snapshot to the editor, and tells Elm about the new currentDocId
 loadDocId = (docId) ->
-  sync.getDoc docId, (doc) ->
-    sync.getSnapshot doc.snapshotId, (snapshot) ->
+  sync.getDoc(docId).then (doc) ->
+    sync.getSnapshot(doc.snapshotId).then (snapshot) ->
       withEditor (editor) ->
         editor.writeHtml snapshot.html, true
         loadDoc doc.id, doc
@@ -33,7 +34,7 @@ loadDoc = (docId, doc) -> app.ports.loadDoc.send [docId, doc]
 saveHtmlAndLoadDoc = (html) ->
   inferredDoc = DocImport.docFromHtml html
 
-  sync.saveDocWithSnapshot inferredDoc, {html}, (doc, snapshot) ->
+  sync.saveDocWithSnapshot(inferredDoc, {html}).then ({doc}) ->
     loadDoc doc.id, doc
 
 # The options used to configure the mutation observer that watches the iframe.
@@ -46,14 +47,13 @@ mutationObserverOptions = {
 
 setUpEditor = (iframe) ->
   maybeEditor = new Editor iframe, mutationObserverOptions, (mutations, node) ->
-    sync.getCurrentDocId (currentDocId) ->
-      sync.getDoc currentDocId, (doc) ->
+    sync.getCurrentDocId().then (currentDocId) ->
+      sync.getDoc(currentDocId).then (doc) ->
         doc.title    = DocImport.inferTitleFrom(node) ? doc.title ? ""
         doc.chapters = DocImport.inferChaptersFrom(node)
 
-        # Persist the update
-        sync.saveDocWithSnapshot doc, {html: node.innerHTML}, (updatedDoc) ->
-          loadDoc updatedDoc.id, updatedDoc
+        sync.saveDocWithSnapshot(doc, {html: node.innerHTML}).then (result) ->
+          loadDoc result.doc.id, result.doc
 
 ##### iframe appearance hack #####
 
@@ -79,9 +79,9 @@ setUpEditor = (iframe) ->
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
     # TODO Ideally this would not be Race Condition City...
-    sync.getCurrentDocId (currentDocId) ->
+    sync.getCurrentDocId().then (currentDocId) ->
       if currentDocId != newDocId
-        sync.saveCurrentDocId newDocId, ->
+        sync.saveCurrentDocId(newDocId).then ->
           loadDocId newDocId
 
 app.ports.newDoc.subscribe ->
@@ -91,9 +91,12 @@ app.ports.downloadDoc.subscribe ({filename, contentType}) ->
   withEditor (editor) ->
     saveAs new Blob([editor.getHtml()], {type: contentType}), filename
 
-# Initialize the app based on the stored currentDocId
-sync.getCurrentDocId (id) ->
-  if id?
-    loadDocId id
-  else
-    saveHtmlAndLoadDoc DocImport.introDocHtml
+DreamSync.connect().then (instance) ->
+  sync = instance
+
+  # Initialize the app based on the stored currentDocId
+  sync.getCurrentDocId().then (id) ->
+    if id?
+      loadDocId id
+    else
+      saveHtmlAndLoadDoc DocImport.introDocHtml
