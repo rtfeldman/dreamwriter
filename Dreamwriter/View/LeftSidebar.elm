@@ -28,7 +28,7 @@ view state =
                 onclick actions.handle (\_ -> ToggleOpenMenu False)] [text "cancel"]
             ]
 
-          , bodyNodes = OpenMenu.view state.docs currentDoc
+          , bodyNodes = [OpenMenu.view state.docs currentDoc]
           }
         False ->
           { headerNodes = [
@@ -43,5 +43,5 @@ view state =
       in
         div [key "#left-sidebar-container", id "left-sidebar-container", class "sidebar"] [
           div [key "#left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] headerNodes,
-          div [key "#left-sidebar-body", id "left-sidebar-body"] [bodyNodes]
+          div [key "#left-sidebar-body", id "left-sidebar-body"] bodyNodes
         ]
