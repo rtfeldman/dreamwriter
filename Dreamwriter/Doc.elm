@@ -4,10 +4,14 @@ import Dreamwriter (Identifier)
 import Maybe
 import String
 
+type MsSinceEpoch = Int
+
 type Doc =
-  { id          : Identifier
-  , title       : String
-  , chapters    : [Chapter]
+  { id               : Identifier
+  , title            : String
+  , chapters         : [Chapter]
+  , creationTime     : MsSinceEpoch
+  , lastModifiedTime : MsSinceEpoch
   }
 
 type Chapter =

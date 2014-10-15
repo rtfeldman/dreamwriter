@@ -32,7 +32,7 @@ module.exports = class DreamSync
     if doc.id?
       new Promise (resolve, reject) =>
         @getDoc(doc.id).then (existingDoc) =>
-          if existingDoc.lastModified.getTime() > doc.lastModified.getTime()
+          if existingDoc.lastModifiedTime > doc.lastModifiedTime
             # TODO handle this by re-rendering etc
             alert "Your document is out of sync! Please refresh."
           else
@@ -46,12 +46,12 @@ persistDocAndSnapshot = (db, doc, snapshot) ->
     doc.snapshotId ?= snapshot.id ? DreamSync.getRandomSha()
     snapshot.id    ?= doc.snapshotId
 
-    currentDate = new Date()
+    currentTime = new Date().getTime()
 
-    doc.creationTimestamp      ||= currentDate
-    snapshot.creationTimestamp ||= currentDate
-    doc.lastModified      = currentDate
-    snapshot.lastModified = currentDate
+    doc.creationTime           ||= currentTime
+    snapshot.creationTime      ||= currentTime
+    doc.lastModifiedTime         = currentTime
+    snapshot.lastModifiedTime    = currentTime
 
     Promise.all([
       db.docs.update(doc)

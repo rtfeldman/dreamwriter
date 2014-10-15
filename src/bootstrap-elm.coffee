@@ -3,8 +3,10 @@ DreamSync = require "./DreamSync.coffee"
 DocImport = require "./DocImport.coffee"
 saveAs    = require "FileSaver.js"
 
+blankDoc = {id: "", title: "", chapters: [], creationTime: 0, lastModifiedTime: 0}
+
 app = Elm.fullscreen Elm.App, {
-  loadAsCurrentDoc: {id: "", title: "", chapters: []}
+  loadAsCurrentDoc: blankDoc
   listDocs: []
 }
 
