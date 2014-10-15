@@ -38,6 +38,9 @@ step action state =
     ListDocs docs ->
       {state | docs <- docs}
 
+    ToggleOpenMenu show ->
+      {state | showOpenMenu <- show}
+
 main : Signal Element
 main = lift2 scene state Window.dimensions
 

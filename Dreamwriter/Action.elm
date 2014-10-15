@@ -11,6 +11,7 @@ data Action
   | LoadAsCurrentDoc Doc
   | OpenDocId Identifier
   | ListDocs [Doc]
+  | ToggleOpenMenu Bool
 
 -- actions from user input
 actions : Input.Input Action
