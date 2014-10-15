@@ -30,8 +30,8 @@ step action state =
              , showOpenMenu <- False
       }
 
-    LoadAsCurrentDoc (id, doc) ->
-      {state | currentDocId <- Just id
+    LoadAsCurrentDoc doc ->
+      {state | currentDocId <- Just doc.id
              , currentDoc   <- Just doc
       }
 
@@ -57,7 +57,7 @@ scene state (w, h) =
 state : Signal AppState
 state = foldp step emptyState userInput
 
-port loadAsCurrentDoc : Signal (Identifier, Doc)
+port loadAsCurrentDoc : Signal Doc
 port listDocs : Signal [Doc]
 
 port setCurrentDocId : Signal (Maybe Identifier)

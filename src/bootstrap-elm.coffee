@@ -4,7 +4,7 @@ DocImport = require "./DocImport.coffee"
 saveAs    = require "FileSaver.js"
 
 app = Elm.fullscreen Elm.App, {
-  loadAsCurrentDoc: ["", {title: "", chapters: []}]
+  loadAsCurrentDoc: {id: "", title: "", chapters: []}
   listDocs: []
 }
 
@@ -28,9 +28,7 @@ loadDocId = (docId) ->
     sync.getSnapshot(doc.snapshotId).then (snapshot) ->
       withEditor (editor) ->
         editor.writeHtml snapshot.html, true
-        loadDoc doc.id, doc
-
-loadDoc = (docId, doc) -> app.ports.loadAsCurrentDoc.send [docId, doc]
+        app.ports.loadAsCurrentDoc.send doc
 
 saveHtmlAndLoadDoc = (html) ->
   inferredDoc = DocImport.docFromHtml html

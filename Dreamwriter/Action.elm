@@ -8,7 +8,7 @@ import Graphics.Input as Input
 
 data Action
   = NoOp
-  | LoadAsCurrentDoc (Identifier, Doc)
+  | LoadAsCurrentDoc Doc
   | OpenDocId Identifier
   | ListDocs [Doc]
 
