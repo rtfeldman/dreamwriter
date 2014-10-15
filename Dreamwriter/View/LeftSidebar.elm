@@ -30,32 +30,38 @@ view state =
     Nothing ->
       span [] []
     Just currentDoc ->
-      case state.showOpenMenu of
+      let {headerNodes, bodyNodes} = case state.showOpenMenu of
         True  ->
-          div [key "#left-sidebar-container", id "left-sidebar-container", class "sidebar"] [
-            div [key "#left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
+          { headerNodes = [
               span [key "#cancel-open", class "sidebar-header-control",
                 onclick actions.handle (\_ -> ToggleOpenMenu False)] [text "cancel"]
-            ],
+            ]
 
-            OpenMenu.view state.docs currentDoc
-          ]
-        False -> viewCurrentDoc currentDoc
+          , bodyNodes = [OpenMenu.view state.docs currentDoc]
+          }
+        False ->
+          { headerNodes = [
+              span [key "#new-doc-button", class "sidebar-header-control",
+                onclick newDocInput.handle (always ())] [text "new"],
+              span [key "#open-doc-button", class "sidebar-header-control",
+                onclick actions.handle (\_ -> ToggleOpenMenu True)] [text "open"]
+            ]
 
-viewCurrentDoc : Doc -> Html
+          , bodyNodes = viewCurrentDoc currentDoc
+          }
+      in
+        div [key "#left-sidebar-container", id "left-sidebar-container", class "sidebar"] [
+          div [key "#left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] headerNodes,
+          div [key "#left-sidebar-body", id "left-sidebar-body"] bodyNodes
+        ]
+
+viewCurrentDoc : Doc -> [Html]
 viewCurrentDoc currentDoc =
   let downloadOptions = { filename    = (legalizeFilename currentDoc.title) ++ ".html"
                         , contentType = downloadContentType
                         }
   in
-    div [key "#left-sidebar-container", id "left-sidebar-container", class "sidebar"] [
-      div [key "#left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
-        span [key "#new-doc-button", class "sidebar-header-control",
-          onclick newDocInput.handle (always ())] [text "new"],
-        span [key "#open-doc-button", class "sidebar-header-control",
-          onclick actions.handle (\_ -> ToggleOpenMenu True)] [text "open"]
-      ],
-
+    [
       div [key "#title", id "title"] [text currentDoc.title],
       div [key "#file-buttons", id "file-buttons"] [
         span [key "#download-button", class "file-button",
