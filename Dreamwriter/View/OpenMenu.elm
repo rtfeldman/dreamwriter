@@ -26,20 +26,26 @@ view docs currentDoc =
 
       openFileNodes : [Html]
       openFileNodes = [
-        input [id "openFileChooser", key "openFileChooser", value "",
+        input [id "openFileChooser", value "",
           --onchange handleFileChooserChange, 
           (attr "type" "file"), multiple True, accept "text/html"] [],
 
-        div [class "open-entry", key "open-local-file"
+        div [class "open-entry"
             --, onclick handleShowOpenFile
           ] [
-            span [key "open-local-file-1"] [text "A "],
-            b    [key "open-local-file-2"] [text ".html"],
-            span [key "open-local-file-3"] [text " file from your computer..."]
+            span [] [text "A "],
+            b    [] [text ".html"],
+            span [] [text " file from your computer..."]
           ]
       ]
   in
-    div [id "open", key "open"] (openFileNodes ++ docNodes)
+    div [id "left-sidebar-container", class "sidebar", key "left-sidebar-container"] [
+      div [key "left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
+        span [class "sidebar-header-control", key "cancel",
+          onclick actions.handle (\_ -> ToggleOpenMenu False)] [text "cancel"]
+      ],
+      div [id "open"] (openFileNodes ++ docNodes)
+    ]
 
 viewOpenDocEntryFor : Doc -> Doc -> Html
 viewOpenDocEntryFor currentDoc doc =
@@ -47,7 +53,7 @@ viewOpenDocEntryFor currentDoc doc =
     then "open-entry current"
     else "open-entry"
   in
-    div [class className, key ("open-doc-" ++ doc.id),
+    div [class className,
       onclick actions.handle (\_ -> OpenDocId doc.id)] [text doc.title]
 
 preferDoc : Doc -> Doc -> Doc
