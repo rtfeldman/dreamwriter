@@ -38,15 +38,10 @@ saveHtmlAndLoadDoc = (html) ->
   sync.saveDocWithSnapshot(inferredDoc, {html}).then ({doc}) ->
     loadAsCurrentDoc doc.id, doc
 
-# The options used to configure the mutation observer that watches the iframe.
-mutationObserverOptions = {
-  subtree:       true
-  childList:     true
-  attributes:    true
-  characterData: true
-}
-
 setUpEditor = (iframe) ->
+  mutationObserverOptions =
+    { subtree: true, childList: true, attributes: true, characterData: true }
+
   maybeEditor = new Editor iframe, mutationObserverOptions, (mutations, node) ->
     sync.getCurrentDocId().then (currentDocId) ->
       sync.getDoc(currentDocId).then (doc) ->
