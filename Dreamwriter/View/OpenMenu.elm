@@ -39,13 +39,7 @@ view docs currentDoc =
           ]
       ]
   in
-    div [key "#left-sidebar-container", id "left-sidebar-container", class "sidebar"] [
-      div [key "#left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
-        span [key "#cancel-open", class "sidebar-header-control",
-          onclick actions.handle (\_ -> ToggleOpenMenu False)] [text "cancel"]
-      ],
-      div [key "#open-files", id "open"] (openFileNodes ++ docNodes)
-    ]
+    div [key "#open-files", id "open"] (openFileNodes ++ docNodes)
 
 viewOpenDocEntryFor : Doc -> Doc -> Html
 viewOpenDocEntryFor currentDoc doc =

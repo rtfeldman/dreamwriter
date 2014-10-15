@@ -31,7 +31,15 @@ view state =
       span [] []
     Just currentDoc ->
       case state.showOpenMenu of
-        True  -> OpenMenu.view state.docs currentDoc
+        True  ->
+          div [key "#left-sidebar-container", id "left-sidebar-container", class "sidebar"] [
+            div [key "#left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
+              span [key "#cancel-open", class "sidebar-header-control",
+                onclick actions.handle (\_ -> ToggleOpenMenu False)] [text "cancel"]
+            ],
+
+            OpenMenu.view state.docs currentDoc
+          ]
         False -> viewCurrentDoc currentDoc
 
 viewCurrentDoc : Doc -> Html
