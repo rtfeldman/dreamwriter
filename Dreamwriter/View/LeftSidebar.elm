@@ -37,7 +37,7 @@ view state =
                 onclick actions.handle (\_ -> ToggleOpenMenu False)] [text "cancel"]
             ]
 
-          , bodyNodes = OpenMenu.view state.docs currentDoc
+          , bodyNodes = [OpenMenu.view state.docs currentDoc]
           }
         False ->
           { headerNodes = [
@@ -52,16 +52,16 @@ view state =
       in
         div [key "#left-sidebar-container", id "left-sidebar-container", class "sidebar"] [
           div [key "#left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] headerNodes,
-          div [key "#left-sidebar-body", id "left-sidebar-body"] [bodyNodes]
+          div [key "#left-sidebar-body", id "left-sidebar-body"] bodyNodes
         ]
 
-viewCurrentDoc : Doc -> Html
+viewCurrentDoc : Doc -> [Html]
 viewCurrentDoc currentDoc =
   let downloadOptions = { filename    = (legalizeFilename currentDoc.title) ++ ".html"
                         , contentType = downloadContentType
                         }
   in
-    div [key "#open-files", id "open"] [
+    [
       div [key "#title", id "title"] [text currentDoc.title],
       div [key "#file-buttons", id "file-buttons"] [
         span [key "#download-button", class "file-button",
