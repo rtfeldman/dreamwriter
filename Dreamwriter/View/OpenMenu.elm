@@ -21,11 +21,11 @@ view docs currentDoc =
       sortedDocs : [Doc]
       sortedDocs = sortBy (negate << .lastModifiedTime) docsPreferringCurrent
 
-      docEntries : [Html]
-      docEntries = map (viewOpenDocEntryFor currentDoc) sortedDocs
+      docNodes : [Html]
+      docNodes = map (viewOpenDocEntryFor currentDoc) sortedDocs
 
-      openFileEntry : [Html]
-      openFileEntry = [
+      openFileNodes : [Html]
+      openFileNodes = [
         input [id "openFileChooser", value "",
           --onchange handleFileChooserChange, 
           (attr "type" "file"), multiple True, accept "text/html"] [],
@@ -44,7 +44,7 @@ view docs currentDoc =
         span [class "sidebar-header-control", key "cancel",
           onclick actions.handle (\_ -> ToggleOpenMenu False)] [text "cancel"]
       ],
-      div [id "open"] (openFileEntry ++ docEntries)
+      div [id "open"] (openFileNodes ++ docNodes)
     ]
 
 viewOpenDocEntryFor : Doc -> Doc -> Html
