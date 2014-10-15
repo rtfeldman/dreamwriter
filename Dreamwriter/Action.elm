@@ -10,7 +10,7 @@ data Action
   = NoOp
   | LoadAsCurrentDoc (Identifier, Doc)
   | OpenDocId Identifier
-  | ChangeEditorContent (Maybe Doc)
+  | ListDocs [Doc]
 
 -- actions from user input
 actions : Input.Input Action

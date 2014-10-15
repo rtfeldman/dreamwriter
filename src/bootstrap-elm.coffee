@@ -5,6 +5,7 @@ saveAs    = require "FileSaver.js"
 
 app = Elm.fullscreen Elm.App, {
   loadAsCurrentDoc: ["", {title: "", chapters: []}]
+  listDocs: []
 }
 
 # This will be initialized once a connection to the db has been established.
@@ -76,6 +77,8 @@ setUpEditor = (iframe) ->
 
 ##################################
 
+refreshDocList = -> sync.listDocs().then app.ports.listDocs.send
+
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
     # TODO Ideally this would not be Race Condition City...
@@ -86,6 +89,7 @@ app.ports.setCurrentDocId.subscribe (newDocId) ->
 
 app.ports.newDoc.subscribe ->
   saveHtmlAndLoadDoc DocImport.blankDocHtml
+  refreshDocList()
 
 app.ports.downloadDoc.subscribe ({filename, contentType}) ->
   withEditor (editor) ->
@@ -100,3 +104,5 @@ DreamSync.connect().then (instance) ->
       loadDocId id
     else
       saveHtmlAndLoadDoc DocImport.introDocHtml
+
+  refreshDocList()

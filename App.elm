@@ -35,6 +35,9 @@ step action state =
              , currentDoc   <- Just doc
       }
 
+    ListDocs docs ->
+      {state | docs <- docs}
+
 main : Signal Element
 main = lift2 scene state Window.dimensions
 
@@ -42,6 +45,7 @@ userInput : Signal Action
 userInput =
   merges
   [ lift LoadAsCurrentDoc loadAsCurrentDoc
+  , lift ListDocs         listDocs
   , actions.signal
   ]
 
@@ -54,6 +58,7 @@ state : Signal AppState
 state = foldp step emptyState userInput
 
 port loadAsCurrentDoc : Signal (Identifier, Doc)
+port listDocs : Signal [Doc]
 
 port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = lift .currentDocId state

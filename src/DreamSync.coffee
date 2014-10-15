@@ -23,6 +23,8 @@ module.exports = class DreamSync
     new Promise (resolve, reject) =>
       @db.settings.get(id).then ((result) -> resolve result?.value), reject
 
+  listDocs: => @db.docs.query().all().execute()
+
   getDoc:      (id) => @db.docs.get      id
   getSnapshot: (id) => @db.snapshots.get id
 
