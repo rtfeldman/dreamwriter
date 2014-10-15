@@ -40,19 +40,20 @@ viewCurrentDoc currentDoc =
                         , contentType = downloadContentType
                         }
   in
-    div [id "left-sidebar-container", class "sidebar", key "left-sidebar-container"] [
-      div [key "left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
-        span [class "sidebar-header-control", key "new",
+    div [key "#left-sidebar-container", id "left-sidebar-container", class "sidebar"] [
+      div [key "#left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] [
+        span [key "#new-doc-button", class "sidebar-header-control",
           onclick newDocInput.handle (always ())] [text "new"],
-        span [class "sidebar-header-control", key "open",
+        span [key "#open-doc-button", class "sidebar-header-control",
           onclick actions.handle (\_ -> ToggleOpenMenu True)] [text "open"]
       ],
 
-      div [id "title", key "title"] [text currentDoc.title],
-      div [id "file-buttons", key "file-buttons"] [
-        span [class "file-button", key "download", onclick downloadInput.handle (always downloadOptions)] [text "download"],
-        span [class "file-button", key "stats"] [text "stats"]
+      div [key "#title", id "title"] [text currentDoc.title],
+      div [key "#file-buttons", id "file-buttons"] [
+        span [key "#download-button", class "file-button",
+          onclick downloadInput.handle (always downloadOptions)] [text "download"],
+        span [key "#stats-button", class "file-button"] [text "stats"]
       ],
 
       Outline.view currentDoc.chapters
-      ]
+    ]

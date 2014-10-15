@@ -17,12 +17,12 @@ key = attr "key"
 
 view : AppState -> Html
 view state =
-  div [id "page"] [
-    div [class "backdrop", key "backdrop"] [
-      div [key "backdrop-tl", class "backdrop-quadrant backdrop-top backdrop-left"] [],
-      div [key "backdrop-bl", class "backdrop-quadrant backdrop-bottom backdrop-left"] [],
-      div [key "backdrop-tr", class "backdrop-quadrant backdrop-top backdrop-right"] [],
-      div [key "backdrop-br", class "backdrop-quadrant backdrop-bottom backdrop-right"] []
+  div [key "#page", id "page"] [
+    div [key "#backdrop", class "backdrop"] [
+      div [key "#backdrop-tl", class "backdrop-quadrant backdrop-top backdrop-left"] [],
+      div [key "#backdrop-bl", class "backdrop-quadrant backdrop-bottom backdrop-left"] [],
+      div [key "#backdrop-tr", class "backdrop-quadrant backdrop-top backdrop-right"] [],
+      div [key "#backdrop-br", class "backdrop-quadrant backdrop-bottom backdrop-right"] []
     ],
 
     LeftSidebar.view state,
