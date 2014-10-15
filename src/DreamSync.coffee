@@ -7,8 +7,7 @@ sha1      = require "sha1"
 dbOptions = require "./idb-options.json"
 
 module.exports = class DreamSync
-  constructor: (connection) ->
-    @db = connection
+  constructor: (@db) ->
 
   @connect: ->
     new Promise (resolve, reject) ->
