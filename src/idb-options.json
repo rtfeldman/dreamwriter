@@ -1,0 +1,15 @@
+{
+  "server": "dreamwriter",
+  "version": "1",
+  "schema": {
+    "settings": {
+      "key": {"keyPath": "id", "autoIncrement": false}
+    },
+    "docs": {
+      "key": {"keyPath": "id", "autoIncrement": false}
+    },
+    "snapshots": {
+      "key": {"keyPath": "id", "autoIncrement": false}
+    }
+  }
+}

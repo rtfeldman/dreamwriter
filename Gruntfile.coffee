@@ -93,8 +93,8 @@ module.exports = (grunt) ->
           debug: true
 
       dreamwriter:
-        extensions: ['.coffee', '.mustache']
-        src:  ["./src/**/*.coffee", "./src/**/*.mustache"]
+        extensions: ['.coffee', '.mustache', '.json']
+        src:  ["./src/**/*.coffee", "./src/**/*.mustache", "./src/**/*.json"]
         dest: "dist/bootstrap-elm.js"
 
     browserifyBower:

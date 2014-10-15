@@ -2,30 +2,17 @@
 #
 # Handles synchronizing data to/from IndexedDB, remote, etc.
 
-dbjs = require "db.js"
-sha1 = require "sha1"
-
-databaseVersion = '1' # Must be an ever-increasing integer for Firefox and a string for Chrome.
-
-defaultKeySettings = {keyPath: "id", autoIncrement: false}
-defaultConnectionOptions =
-  server: "dreamwriter"
-  version: databaseVersion
-  schema:
-    settings:
-      key: defaultKeySettings
-    docs:
-      key: defaultKeySettings
-    snapshots:
-      key: defaultKeySettings
+dbjs      = require "db.js"
+sha1      = require "sha1"
+dbOptions = require "./idb-options.json"
 
 module.exports = class DreamSync
   constructor: (connection) ->
     @db = connection
 
-  @connect: (options = defaultConnectionOptions) ->
+  @connect: ->
     new Promise (resolve, reject) ->
-      dbjs.open(options).then ((conn) -> resolve new DreamSync conn), reject
+      dbjs.open(dbOptions).then ((conn) -> resolve new DreamSync conn), reject
 
   @getRandomSha: -> sha1 "#{Math.random()}"[0..16]
 
