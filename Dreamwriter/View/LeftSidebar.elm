@@ -56,7 +56,6 @@ viewCurrentDoc currentDoc =
           onclick actions.handle (\_ -> ToggleOpenMenu True)] [text "open"]
       ],
 
-      div [key "#current-doc-view"] [
       div [key "#title", id "title"] [text currentDoc.title],
       div [key "#file-buttons", id "file-buttons"] [
         span [key "#download-button", class "file-button",
@@ -65,5 +64,4 @@ viewCurrentDoc currentDoc =
       ],
 
       Outline.view currentDoc.chapters
-      ]
     ]
