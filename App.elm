@@ -30,7 +30,7 @@ step action state =
              , showOpenMenu <- False
       }
 
-    LoadDoc (id, doc) ->
+    LoadAsCurrentDoc (id, doc) ->
       {state | currentDocId <- Just id
              , currentDoc   <- Just doc
       }
@@ -41,7 +41,7 @@ main = lift2 scene state Window.dimensions
 userInput : Signal Action
 userInput =
   merges
-  [ lift LoadDoc loadDoc
+  [ lift LoadAsCurrentDoc loadAsCurrentDoc
   , actions.signal
   ]
 
@@ -53,9 +53,7 @@ scene state (w, h) =
 state : Signal AppState
 state = foldp step emptyState userInput
 
--- The database sends a signal that either there's a new doc to be loaded,
--- or that there are no docs to load (indicating the intro doc should be used).
-port loadDoc : Signal (Identifier, Doc)
+port loadAsCurrentDoc : Signal (Identifier, Doc)
 
 port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = lift .currentDocId state

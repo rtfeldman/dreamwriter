@@ -4,7 +4,7 @@ DocImport = require "./DocImport.coffee"
 saveAs    = require "FileSaver.js"
 
 app = Elm.fullscreen Elm.App, {
-  loadDoc: ["", {title: "", chapters: []}]
+  loadAsCurrentDoc: ["", {title: "", chapters: []}]
 }
 
 # This will be initialized once a connection to the db has been established.
@@ -29,13 +29,13 @@ loadDocId = (docId) ->
         editor.writeHtml snapshot.html, true
         loadDoc doc.id, doc
 
-loadDoc = (docId, doc) -> app.ports.loadDoc.send [docId, doc]
+loadDoc = (docId, doc) -> app.ports.loadAsCurrentDoc.send [docId, doc]
 
 saveHtmlAndLoadDoc = (html) ->
   inferredDoc = DocImport.docFromHtml html
 
   sync.saveDocWithSnapshot(inferredDoc, {html}).then ({doc}) ->
-    loadDoc doc.id, doc
+    loadAsCurrentDoc doc.id, doc
 
 # The options used to configure the mutation observer that watches the iframe.
 mutationObserverOptions = {
@@ -53,7 +53,7 @@ setUpEditor = (iframe) ->
         doc.chapters = DocImport.inferChaptersFrom(node)
 
         sync.saveDocWithSnapshot(doc, {html: node.innerHTML}).then (result) ->
-          loadDoc result.doc.id, result.doc
+          loadAsCurrentDoc result.doc.id, result.doc
 
 ##### iframe appearance hack #####
 
