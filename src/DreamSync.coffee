@@ -56,4 +56,4 @@ persistDocAndSnapshot = (db, doc, snapshot) ->
     Promise.all([
       db.docs.update(doc)
       db.snapshots.update(snapshot)
-    ]).then (-> resolve {doc, snapshot}), reject
+    ]).then (-> resolve doc), reject

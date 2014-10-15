@@ -33,8 +33,8 @@ loadDocId = (docId) ->
 saveHtmlAndLoadDoc = (html) ->
   inferredDoc = DocImport.docFromHtml html
 
-  sync.saveDocWithSnapshot(inferredDoc, {html}).then ({doc}) ->
-    loadAsCurrentDoc doc.id, doc
+  sync.saveDocWithSnapshot(inferredDoc, {html})
+    .then app.ports.loadAsCurrentDoc.send
 
 setUpEditor = (iframe) ->
   mutationObserverOptions =
@@ -46,8 +46,8 @@ setUpEditor = (iframe) ->
         doc.title    = DocImport.inferTitleFrom(node) ? doc.title ? ""
         doc.chapters = DocImport.inferChaptersFrom(node)
 
-        sync.saveDocWithSnapshot(doc, {html: node.innerHTML}).then (result) ->
-          loadAsCurrentDoc result.doc.id, result.doc
+        sync.saveDocWithSnapshot(doc, {html: node.innerHTML})
+          .then app.ports.loadAsCurrentDoc.send
 
 ##### iframe appearance hack #####
 
