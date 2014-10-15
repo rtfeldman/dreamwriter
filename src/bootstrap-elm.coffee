@@ -1,4 +1,4 @@
-Editor = require "./Editor.coffee"
+Editor    = require "./Editor.coffee"
 DreamSync = require "./DreamSync.coffee"
 DocImport = require "./DocImport.coffee"
 saveAs    = require "FileSaver.js"
@@ -7,11 +7,11 @@ app = Elm.fullscreen Elm.App, {
   loadDoc: ["", {title: "", chapters: []}]
 }
 
-# This will be initialized once the iframe has been added to the DOM.
-maybeEditor = null
-
 # This will be initialized once a connection to the db has been established.
 sync = null
+
+# This will be initialized once the iframe has been added to the DOM.
+maybeEditor = null
 
 withEditor = (callback) ->
   if maybeEditor?
