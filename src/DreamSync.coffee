@@ -51,23 +51,7 @@ persistDocAndSnapshot = (db, doc, snapshot) ->
     doc.lastModified      = currentDate
     snapshot.lastModified = currentDate
 
-    runInParallel([
+    Promise.all([
       db.docs.update(doc)
       db.snapshots.update(snapshot)
     ]).then (-> resolve {doc, snapshot}), reject
-
-runInParallel = (promises) ->
-  new Promise (resolve, reject) ->
-    remaining = promises.length
-
-    completeWithSuccess = ->
-      remaining--
-      if remaining < 1
-        resolve()
-
-    completeWithError = (err) ->
-      completeWithError = completeWithSuccess = (->)
-      reject err
-
-    promises.forEach (promise) ->
-      promise.then completeWithSuccess, completeWithError
