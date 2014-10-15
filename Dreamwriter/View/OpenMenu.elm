@@ -30,7 +30,7 @@ view docs currentDoc =
           --onchange handleFileChooserChange, 
           (attr "type" "file"), multiple True, accept "text/html"] [],
 
-        div [key "#open-file-from-computer", class "open-entry"
+        div [key "#open-file-from-device", class "open-entry from-device"
             --, onclick handleShowOpenFile
           ] [
             span [key "#open-file-text-1"] [text "A "],
