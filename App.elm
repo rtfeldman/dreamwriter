@@ -26,8 +26,8 @@ step action state =
     NoOp -> state
 
     OpenDocId id ->
-      {state | currentDocId <- Just id
-             , showOpenMenu <- False
+      {state | currentDocId    <- Just id
+             , leftSidebarView <- CurrentDocView
       }
 
     LoadAsCurrentDoc doc ->
@@ -38,8 +38,8 @@ step action state =
     ListDocs docs ->
       {state | docs <- docs}
 
-    ToggleOpenMenu show ->
-      {state | showOpenMenu <- show}
+    SetLeftSidebarView mode ->
+      {state | leftSidebarView <- mode}
 
 main : Signal Element
 main = lift2 scene state Window.dimensions

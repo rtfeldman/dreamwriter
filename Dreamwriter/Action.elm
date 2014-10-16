@@ -2,6 +2,7 @@ module Dreamwriter.Action where
 
 import Dreamwriter (..)
 import Dreamwriter.Doc (..)
+import Dreamwriter.Model (..)
 
 import Graphics.Input
 import Graphics.Input as Input
@@ -11,7 +12,7 @@ data Action
   | LoadAsCurrentDoc Doc
   | OpenDocId Identifier
   | ListDocs [Doc]
-  | ToggleOpenMenu Bool
+  | SetLeftSidebarView LeftSidebarView
 
 -- actions from user input
 actions : Input.Input Action

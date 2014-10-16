@@ -21,21 +21,21 @@ view state =
     Nothing ->
       span [] []
     Just currentDoc ->
-      let {headerNodes, bodyNodes} = case state.showOpenMenu of
-        True  ->
+      let {headerNodes, bodyNodes} = case state.leftSidebarView of
+        OpenMenuView  ->
           { headerNodes = [
               span [key "#cancel-open", class "sidebar-header-control",
-                onclick actions.handle (\_ -> ToggleOpenMenu False)] [text "cancel"]
+                onclick actions.handle (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
             ]
 
           , bodyNodes = [OpenMenu.view state.docs currentDoc]
           }
-        False ->
+        CurrentDocView ->
           { headerNodes = [
               span [key "#new-doc-button", class "sidebar-header-control",
                 onclick newDocInput.handle (always ())] [text "new"],
               span [key "#open-doc-button", class "sidebar-header-control",
-                onclick actions.handle (\_ -> ToggleOpenMenu True)] [text "open"]
+                onclick actions.handle (\_ -> SetLeftSidebarView OpenMenuView)] [text "open"]
             ]
 
           , bodyNodes = CurrentDoc.view currentDoc

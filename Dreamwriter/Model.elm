@@ -3,8 +3,10 @@ module Dreamwriter.Model where
 import Dreamwriter.Doc (..)
 import Dreamwriter (Identifier)
 
+data LeftSidebarView = CurrentDocView | OpenMenuView
+
 type AppState =
-  { showOpenMenu : Bool
+  { leftSidebarView : LeftSidebarView
   , docs         : [Doc]
   , currentDoc   : Maybe Doc
   , currentDocId : Maybe Identifier
@@ -12,7 +14,7 @@ type AppState =
 
 emptyState : AppState
 emptyState =
-  { showOpenMenu = False
+  { leftSidebarView = CurrentDocView
   , docs         = []
   , currentDoc   = Nothing
   , currentDocId = Nothing
