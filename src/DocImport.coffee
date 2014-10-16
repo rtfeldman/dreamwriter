@@ -18,10 +18,20 @@ docFromHtml = (html) ->
     chapters: inferChaptersFrom(wrapperNode)
   }
 
+docFromFile = (filename, lastModifiedTime, html) ->
+  doc = docFromHtml html
+
+  doc.title = filename
+  doc.lastModifiedTime = lastModifiedTime
+
+  doc
+
 module.exports = {
   blankDocHtml
   introDocHtml
   inferTitleFrom
   inferChaptersFrom
   docFromHtml
+  docFromFile
+  wrapInDoc
 }

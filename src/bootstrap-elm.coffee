@@ -51,6 +51,44 @@ setUpEditor = (iframe) ->
         sync.saveDocWithSnapshot(doc, {html: node.innerHTML})
           .then app.ports.loadAsCurrentDoc.send
 
+showFileChooser = ->
+  new Promise (resolve, reject) ->
+    fileChooser = document.createElement "input"
+    clickEvent  = document.createEvent "MouseEvents"
+
+    for name, value of {type: "file", accept: "text/html", multiple: "true"}
+      fileChooser.setAttribute name, value
+
+    fileChooser.addEventListener "change", (event) ->
+      files = fileChooser.files
+
+      # Self-destruct now that we're no longer needed.
+      document.body.removeChild fileChooser
+
+      resolve files
+
+    document.body.appendChild fileChooser
+
+    clickEvent.initMouseEvent "click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null
+
+    fileChooser.dispatchEvent clickEvent
+
+readDocFromFile = (file, onSuccess, onError) ->
+  new Promise (resolve, reject) ->
+    reader = new FileReader
+
+    reader.onerror = reject
+    reader.onabort = reject
+    reader.onload = (response) ->
+      filename         = file.name ? file.fileName
+      lastModifiedTime = if file.lastModifiedDate? then (new Date file.lastModifiedDate).getTime() else undefined
+      html             = DocImport.wrapInDoc body: response.target.result
+      doc              = DocImport.docFromFile filename, lastModifiedTime, html
+
+      resolve {doc, html}
+
+    reader.readAsText file
+
 ##### iframe appearance hack #####
 
 # We need to set up the iframe as soon as it appears, but we don't have a way
@@ -89,6 +127,19 @@ app.ports.newDoc.subscribe ->
 app.ports.downloadDoc.subscribe ({filename, contentType}) ->
   withEditor (editor) ->
     saveAs new Blob([editor.getHtml()], {type: contentType}), filename
+
+app.ports.openFromFile.subscribe ->
+  showFileChooser().then (files) ->
+    saveAndLoadFromFile = (file) ->
+      new Promise (resolve, reject) ->
+        saveAndResolve = ({doc, html}) ->
+          sync.saveDocWithSnapshot(doc, {html}).then (newCurrentDoc) ->
+            app.ports.loadAsCurrentDoc.send newCurrentDoc
+            resolve()
+
+        readDocFromFile(file).then saveAndResolve, reject
+
+    Promise.all(saveAndLoadFromFile file for file in files).then refreshDocList
 
 DreamSync.connect().then (instance) ->
   sync = instance

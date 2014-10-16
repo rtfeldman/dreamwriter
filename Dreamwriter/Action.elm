@@ -27,3 +27,6 @@ downloadInput = Input.input { filename = "", contentType = "" }
 
 newDocInput : Input.Input ()
 newDocInput = Input.input ()
+
+openFromFileInput : Input.Input ()
+openFromFileInput = Input.input ()

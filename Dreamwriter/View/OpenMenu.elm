@@ -26,12 +26,8 @@ view docs currentDoc =
 
       openFileNodes : [Html]
       openFileNodes = [
-        input [key "#openFileChooser", id "openFileChooser", value "",
-          --onchange handleFileChooserChange, 
-          (attr "type" "file"), multiple True, accept "text/html"] [],
-
-        div [key "#open-file-from-device", class "open-entry from-device"
-            --, onclick handleShowOpenFile
+        div [key "#open-from-file", class "open-entry from-file",
+            onclick openFromFileInput.handle (always ())
           ] [
             span [key "#open-file-text-1"] [text "A "],
             b    [key "#open-file-text-2"] [text ".html"],
