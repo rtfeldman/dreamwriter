@@ -31,9 +31,9 @@ step action state =
       }
 
     LoadAsCurrentDoc doc ->
-      {state | currentDocId <- Just doc.id
-             , currentDoc   <- Just doc
-      }
+      let stateAfterOpenDocId = step (OpenDocId doc.id) state
+      in
+        {stateAfterOpenDocId | currentDoc <- Just doc}
 
     ListDocs docs ->
       {state | docs <- docs}
