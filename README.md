@@ -29,3 +29,16 @@ It can only run in modern browsers, as it uses the following browser features:
 You can compare the two code bases back when they were at feature parity: [dreamwriter-coffee](https://github.com/rtfeldman/dreamwriter-coffee/tree/strangeloop) and [dreamwriter](https://github.com/rtfeldman/dreamwriter/tree/strangeloop). Naturally, development on the CoffeeScript version has ceased in favor of the more featureful Elm version.
 
 The Strange Loop 2014 talk [Web Apps without Web Servers](http://www.youtube.com/watch?v=WqV5kqaFRDU) incorporated Dreamwriter as a case study.
+
+## Building
+
+1. Install [Elm](http://elm-lang.org)
+2. Install [node.js](http://nodejs.org)
+3. `git clone git@github.com:rtfeldman/dreamwriter.git`
+4. `cd dreamwriter`
+5. `npm install`
+6. `npm install -g grunt-cli bower`
+7. `bower install`
+8. `elm-get install`
+9. `grunt`
+10. Visit [localhost:8000](http://localhost:8000) in your browser!
