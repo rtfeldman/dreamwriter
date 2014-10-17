@@ -92,7 +92,7 @@ module.exports = function(grunt) {
       dreamwriter: {
         srcDir: "Dreamwriter",
         files: {
-          "dist": "**/*.elm"
+          "dist": "App.elm"
         }
       }
     },
