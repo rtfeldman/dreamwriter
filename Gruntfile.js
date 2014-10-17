@@ -138,7 +138,7 @@ module.exports = function(grunt) {
           '/index.html                     /cache/index.html',
           '/dreamwriter.css                /cache/dreamwriter.css',
           '/dreamwriter.css.map            /cache/dreamwriter.css.map',
-          '/dreamwriter.js                 /cache/dreamwriter.js',
+          '/App.js                         /cache/App.js',
           '/vendor.js                      /cache/vendor.js',
           '/fonts/robot-slab-bold.woff     /cache/fonts/roboto-slab-bold.woff',
           '/fonts/roboto-slab-regular.woff /cache/fonts/roboto-slab-regular.woff',
