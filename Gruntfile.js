@@ -140,6 +140,7 @@ module.exports = function(grunt) {
           '/dreamwriter.css.map            /cache/dreamwriter.css.map',
           '/App.js                         /cache/App.js',
           '/vendor.js                      /cache/vendor.js',
+          '/bootstrap-elm.js               /cache/bootstrap-elm.js',
           '/fonts/robot-slab-bold.woff     /cache/fonts/roboto-slab-bold.woff',
           '/fonts/roboto-slab-regular.woff /cache/fonts/roboto-slab-regular.woff',
           '/fonts/ubuntu.woff              /cache/fonts/ubuntu.woff',
