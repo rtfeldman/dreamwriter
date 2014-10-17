@@ -24,7 +24,7 @@
     "grunt-contrib-copy": "0.5.0",
     "grunt-contrib-stylus": "0.18.0",
     "grunt-contrib-watch": "0.6.1",
-    "grunt-elm": "^0.2.0",
+    "grunt-elm": "^0.3.0",
     "hogan.js": "^3.0.2",
     "sha1": "1.1.0"
   },
