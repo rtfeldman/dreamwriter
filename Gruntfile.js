@@ -7,8 +7,6 @@ module.exports = function(grunt) {
   htmlminFiles = {"dist/index.html": "src/index.html"}
 
   grunt.initConfig({
-    aws: awsCredentials,
-
     clean: ["dist"],
 
     watch: {
@@ -227,12 +225,7 @@ module.exports = function(grunt) {
     },
 
     s3: {
-      options: {
-        accessKeyId:     "<%= aws.accessKeyId %>",
-        secretAccessKey: "<%= aws.secretAccessKey %>",
-        region:          "<%= aws.region %>",
-        bucket:          "<%= aws.bucket %>"
-      },
+      options: awsCredentials,
 
       deploy: {
         cwd: "dist/",
