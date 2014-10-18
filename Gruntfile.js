@@ -9,7 +9,7 @@ module.exports = function(grunt) {
       },
       stylus: {
         files: ["src/stylesheets/**/*.styl"],
-        tasks: ["stylesheets"]
+        tasks: ["stylus:dev", "autoprefixer:dev"]
       },
       html: {
         files: ["src/index.html"],
@@ -34,10 +34,17 @@ module.exports = function(grunt) {
     },
 
     connect: {
-      "static": {
+      dev: {
         options: {
           port: 8000,
           base: 'dist'
+        }
+      },
+      prod: {
+        options: {
+          port: "<%= connect.dev.options.port %>",
+          base: '<%= connect.dev.options.base %>',
+          keepalive: true
         }
       }
     },
@@ -68,23 +75,36 @@ module.exports = function(grunt) {
     },
 
     stylus: {
-      compile: {
-        options: {
-          paths: ["src/stylesheets/*.styl"]
-        },
+      dev: {
+        linenos: true,
+        compress: false,
+        paths: ["src/stylesheets/*.styl"],
         files: {
           "dist/dreamwriter.css": ["src/stylesheets/*.styl"]
         }
+      },
+      prod: {
+        linenos: false,
+        compress: true,
+        paths: "<%= stylus.dev.paths %>",
+        files: "<%= stylus.dev.files %>"
       }
     },
 
     autoprefixer: {
-      dreamwriter: {
+      dev: {
         options: {
-          map: true
+          map: true,
+          src: "dist/dreamwriter.css",
+          dest: "dist/dreamwriter.css"
         },
-        src: "dist/dreamwriter.css",
-        dest: "dist/dreamwriter.css"
+      },
+      prod: {
+        options: {
+          map: false,
+          src: "<%= autoprefixer.dev.src %>",
+          dest: "<%= autoprefixer.dev.dest %>"
+        }
       }
     },
 
@@ -99,16 +119,24 @@ module.exports = function(grunt) {
 
     browserify: {
       options: {
-        transform: ['browserify-mustache', 'coffeeify'],
-        watch: true,
-        browserifyOptions: {
-          debug: true
-        }
+        transform: ['browserify-mustache', 'coffeeify']
       },
-      dreamwriter: {
+      dev: {
         extensions: ['.coffee', '.mustache', '.json'],
         src: ["./src/**/*.coffee", "./src/**/*.mustache", "./src/**/*.json"],
-        dest: "dist/bootstrap-elm.js"
+        dest: "dist/bootstrap-elm.js",
+        browserifyOptions: {
+          debug: true
+        },
+        watch: true
+      },
+      prod: {
+        extensions: "<%= browserify.dev.extensions %>",
+        src: "<%= browserify.dev.src %>",
+        dest: "<%= browserify.dev.dest %>",
+        browserifyOptions: {
+          debug: false
+        }
       }
     },
 
@@ -127,7 +155,11 @@ module.exports = function(grunt) {
       options: {
         basePath: 'dist'
       },
-      all: {
+      dev: {
+        dest: 'dist/dreamwriter.appcache',
+        network: '*'
+      },
+      prod: {
         dest: 'dist/dreamwriter.appcache',
         cache: {
           patterns: ['dist/cache/**/*']
@@ -137,7 +169,6 @@ module.exports = function(grunt) {
           '/                               /cache/index.html',
           '/index.html                     /cache/index.html',
           '/dreamwriter.css                /cache/dreamwriter.css',
-          '/dreamwriter.css.map            /cache/dreamwriter.css.map',
           '/App.js                         /cache/App.js',
           '/vendor.js                      /cache/vendor.js',
           '/bootstrap-elm.js               /cache/bootstrap-elm.js',
@@ -156,8 +187,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks(plugin);
   });
 
-  grunt.registerTask("build", ["stylesheets", "browserifyBower", "browserify", "elm", "copy", "appcache"]);
-  grunt.registerTask("stylesheets", ["stylus", "autoprefixer"]);
+  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "browserifyBower", "browserify:prod", "elm", "copy", "appcache:prod"]);
+  grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "browserifyBower", "browserify:dev",  "elm", "copy", "appcache:dev"]);
 
-  grunt.registerTask("default", ["clean", "build", "connect", "watch"]);
+  grunt.registerTask("build", ["build:dev"]);
+  grunt.registerTask("prod",  ["build:prod", "connect:prod"]);
+
+  grunt.registerTask("default", ["clean", "build", "connect:dev", "watch"]);
 };
