@@ -3,6 +3,17 @@ var fs = require("fs"),
     awsCredentials = fs.existsSync(awsCredentialsFilename) ?
       JSON.parse(fs.readFileSync(awsCredentialsFilename))  : {};
 
+/*
+  aws-credentials.json should look like this:
+
+  {
+    "accessKeyId":     "[access key ID goes here]",
+    "secretAccessKey": "[secret access key goes here]",
+    "region":          "us-west-2",
+    "bucket":          "dreamwriter.io"
+  }
+*/
+
 module.exports = function(grunt) {
   htmlminFiles = {"dist/index.html": "src/index.html"}
 
