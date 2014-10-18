@@ -1,4 +1,6 @@
 module.exports = function(grunt) {
+  htmlminFiles = {"dist/index.html": "src/index.html"}
+
   grunt.initConfig({
     clean: ["dist"],
 
@@ -90,7 +92,6 @@ module.exports = function(grunt) {
     stylus: {
       dev: {
         linenos: true,
-        compress: false,
         paths: ["src/stylesheets/*.styl"],
         files: {
           "dist/dreamwriter.css": ["src/stylesheets/*.styl"]
@@ -98,7 +99,6 @@ module.exports = function(grunt) {
       },
       prod: {
         linenos: false,
-        compress: true,
         paths: "<%= stylus.dev.paths %>",
         files: "<%= stylus.dev.files %>"
       }
@@ -169,10 +169,22 @@ module.exports = function(grunt) {
         removeComments: true,
         collapseWhitespace: true
       },
+      dev: {
+        files: htmlminFiles
+      },
       prod: {
+        files: htmlminFiles
+      }
+    },
+
+    cssmin: {
+      dev: {
         files: {
-          "dist/index.html": "src/index.html"
+          'dist/dreamwriter.css': 'dist/dreamwriter.css'
         }
+      },
+      prod: {
+        files: "<%= cssmin.dev.files %>"
       }
     },
 
@@ -208,12 +220,12 @@ module.exports = function(grunt) {
     }
   });
 
-  ["grunt-contrib-watch", "grunt-contrib-htmlmin", "grunt-contrib-uglify", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach(function(plugin) {
+  ["grunt-contrib-watch", "grunt-contrib-htmlmin", "grunt-contrib-cssmin", "grunt-contrib-htmlmin", "grunt-contrib-uglify", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach(function(plugin) {
     grunt.loadNpmTasks(plugin);
   });
 
-  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "browserifyBower", "browserify:prod", "elm", "htmlmin:prod", "copy", "uglify:prod", "appcache:prod"]);
-  grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "browserifyBower", "browserify:dev",  "elm", "htmlmin:dev",  "copy",                "appcache:dev"]);
+  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "browserifyBower", "browserify:prod", "elm", "htmlmin:prod", "copy", "uglify:prod", "cssmin:prod", "appcache:prod"]);
+  grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "browserifyBower", "browserify:dev",  "elm", "htmlmin:dev",  "copy",                               "appcache:dev"]);
 
   grunt.registerTask("build", ["build:dev"]);
   grunt.registerTask("prod",  ["build:prod", "connect:prod"]);
