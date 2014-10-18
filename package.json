@@ -23,6 +23,7 @@
     "grunt-contrib-connect": "0.8.0",
     "grunt-contrib-copy": "0.5.0",
     "grunt-contrib-stylus": "0.18.0",
+    "grunt-contrib-uglify": "0.6.0",
     "grunt-contrib-watch": "0.6.1",
     "grunt-elm": "^0.3.0",
     "hogan.js": "^3.0.2",

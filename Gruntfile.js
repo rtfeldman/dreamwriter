@@ -30,6 +30,10 @@ module.exports = function(grunt) {
       dist: {
         files: ["dist/**/*", "!dist/dreamwriter.appcache", "!dist/cache/**/*"],
         tasks: ["copy:cache", "appcache"]
+      },
+      distJS: {
+        files: ["dist/**/*.js"],
+        tasks: ["uglify:dev"]
       }
     },
 
@@ -46,6 +50,19 @@ module.exports = function(grunt) {
           base: '<%= connect.dev.options.base %>',
           keepalive: true
         }
+      }
+    },
+
+    uglify: {
+      prod: {
+        options: {
+          sourceMap: false
+        },
+        files: {
+          "dist/App.js": "dist/App.js",
+          "dist/vendor.js": "dist/vendor.js",
+          "dist/bootstrap-elm.js": "dist/bootstrap-elm.js"
+        },
       }
     },
 
@@ -183,12 +200,12 @@ module.exports = function(grunt) {
     }
   });
 
-  ["grunt-contrib-watch", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach(function(plugin) {
+  ["grunt-contrib-watch", "grunt-contrib-uglify", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach(function(plugin) {
     grunt.loadNpmTasks(plugin);
   });
 
-  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "browserifyBower", "browserify:prod", "elm", "copy", "appcache:prod"]);
-  grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "browserifyBower", "browserify:dev",  "elm", "copy", "appcache:dev"]);
+  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "browserifyBower", "browserify:prod", "elm", "copy", "uglify:prod", "appcache:prod"]);
+  grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "browserifyBower", "browserify:dev",  "elm", "copy",                "appcache:dev"]);
 
   grunt.registerTask("build", ["build:dev"]);
   grunt.registerTask("prod",  ["build:prod", "connect:prod"]);
