@@ -2,6 +2,8 @@ module.exports = function(grunt) {
   htmlminFiles = {"dist/index.html": "src/index.html"}
 
   grunt.initConfig({
+    aws: grunt.file.readJSON("aws-credentials.json"),
+
     clean: ["dist"],
 
     watch: {
@@ -217,18 +219,33 @@ module.exports = function(grunt) {
           '/images/favicon.ico             /cache/images/favicon.ico',
           '/images/quarter-backdrop.jpg    /cache/images/quarter-backdrop.jpg']
       }
+    },
+
+    s3: {
+      options: {
+        accessKeyId:     "<%= aws.accessKeyId %>",
+        secretAccessKey: "<%= aws.secretAccessKey %>",
+        region:          "<%= aws.region %>",
+        bucket:          "<%= aws.bucket %>"
+      },
+
+      deploy: {
+        cwd: "dist/",
+        src: "**"
+      }
     }
   });
 
-  ["grunt-contrib-watch", "grunt-contrib-htmlmin", "grunt-contrib-cssmin", "grunt-contrib-htmlmin", "grunt-contrib-uglify", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache"].forEach(function(plugin) {
+  ["grunt-contrib-watch", "grunt-contrib-htmlmin", "grunt-contrib-cssmin", "grunt-contrib-htmlmin", "grunt-contrib-uglify", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache", "grunt-aws"].forEach(function(plugin) {
     grunt.loadNpmTasks(plugin);
   });
 
   grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "browserifyBower", "browserify:prod", "elm", "htmlmin:prod", "copy", "uglify:prod", "cssmin:prod", "appcache:prod"]);
   grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "browserifyBower", "browserify:dev",  "elm", "htmlmin:dev",  "copy",                               "appcache:dev"]);
 
-  grunt.registerTask("build", ["build:dev"]);
-  grunt.registerTask("prod",  ["build:prod", "connect:prod"]);
+  grunt.registerTask("build",  ["build:dev"]);
+  grunt.registerTask("prod",   ["build:prod", "connect:prod"]);
+  grunt.registerTask("deploy", ["clean", "build:prod", "s3"]);
 
   grunt.registerTask("default", ["clean", "build", "connect:dev", "watch"]);
 };
