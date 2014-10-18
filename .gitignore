@@ -33,3 +33,5 @@ elm_dependencies
 bower_components
 build
 .DS_Store
+
+aws-credentials.json
