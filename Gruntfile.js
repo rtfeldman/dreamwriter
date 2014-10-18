@@ -1,8 +1,13 @@
+var fs = require("fs"),
+    awsCredentialsFilename = "aws-credentials.json",
+    awsCredentials = fs.existsSync(awsCredentialsFilename) ?
+      JSON.parse(fs.readFileSync(awsCredentialsFilename))  : {};
+
 module.exports = function(grunt) {
   htmlminFiles = {"dist/index.html": "src/index.html"}
 
   grunt.initConfig({
-    aws: grunt.file.readJSON("aws-credentials.json"),
+    aws: awsCredentials,
 
     clean: ["dist"],
 
