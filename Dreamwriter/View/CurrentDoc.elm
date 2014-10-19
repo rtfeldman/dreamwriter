@@ -27,11 +27,11 @@ view currentDoc =
   }
   in
     [
-      div [key "#title", id "title"] [text currentDoc.title],
-      div [key "#file-buttons", id "file-buttons"] [
-        span [key "#download-button", class "file-button",
+      div [id "title"] [text currentDoc.title],
+      div [id "file-buttons"] [
+        span [class "file-button",
           onclick downloadInput.handle (always downloadOptions)] [text "download"],
-        span [key "#stats-button", class "file-button"] [text "stats"]
+        span [class "file-button"] [text "stats"]
       ],
 
       viewOutline currentDoc.chapters
@@ -39,7 +39,7 @@ view currentDoc =
 
 viewOutline : [Chapter] -> Html
 viewOutline chapters =
-  ul [id "outline", key "outline"] <| indexedMap viewChapter chapters
+  ul [id "outline"] <| indexedMap viewChapter chapters
 
 viewChapter : Int -> Chapter -> Html
 viewChapter index chapter = li [key ("chapter" ++ (show index))] [text chapter.heading]

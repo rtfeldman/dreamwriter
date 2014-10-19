@@ -13,4 +13,4 @@ view state =
     Nothing ->
       span [] []
     Just currentDoc ->
-      div [key "#right-sidebar-container", id "right-sidebar-container", class "sidebar"] []
+      div [id "right-sidebar-container", class "sidebar"] []

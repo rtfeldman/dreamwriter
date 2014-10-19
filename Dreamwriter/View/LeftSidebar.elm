@@ -21,7 +21,7 @@ view state =
       let {headerNodes, bodyNodes} = case state.leftSidebarView of
         OpenMenuView  ->
           { headerNodes = [
-              span [key "#cancel-open", class "sidebar-header-control",
+              span [class "sidebar-header-control",
                 onclick actions.handle (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
             ]
 
@@ -29,16 +29,16 @@ view state =
           }
         CurrentDocView ->
           { headerNodes = [
-              span [key "#new-doc-button", class "sidebar-header-control",
+              span [class "sidebar-header-control",
                 onclick newDocInput.handle (always ())] [text "new"],
-              span [key "#open-doc-button", class "sidebar-header-control",
+              span [class "sidebar-header-control",
                 onclick actions.handle (\_ -> SetLeftSidebarView OpenMenuView)] [text "open"]
             ]
 
           , bodyNodes = CurrentDoc.view currentDoc
           }
       in
-        div [key "#left-sidebar-container", id "left-sidebar-container", class "sidebar"] [
-          div [key "#left-sidebar-header", id "left-sidebar-header", class "sidebar-header"] headerNodes,
-          div [key "#left-sidebar-body", id "left-sidebar-body"] bodyNodes
+        div [id "left-sidebar-container", class "sidebar"] [
+          div [id "left-sidebar-header", class "sidebar-header"] headerNodes,
+          div [id "left-sidebar-body"] bodyNodes
         ]

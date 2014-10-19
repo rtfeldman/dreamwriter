@@ -17,6 +17,6 @@ view state =
     Nothing         -> "hidden"
     Just currentDoc -> ""
   in
-    div [key "#editor-container", id "editor-container", class containerClass] [
-      iframe [key "#editor-frame", id "editor-frame", spellcheck True] []
+    div [id "editor-container", class containerClass] [
+      iframe [id "editor-frame", spellcheck True] []
     ]

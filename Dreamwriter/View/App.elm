@@ -14,12 +14,12 @@ import Html.Tags (..)
 
 view : AppState -> Html
 view state =
-  div [key "#page", id "page"] [
-    div [key "#backdrop", class "backdrop"] [
-      div [key "#backdrop-tl", class "backdrop-quadrant backdrop-top backdrop-left"] [],
-      div [key "#backdrop-bl", class "backdrop-quadrant backdrop-bottom backdrop-left"] [],
-      div [key "#backdrop-tr", class "backdrop-quadrant backdrop-top backdrop-right"] [],
-      div [key "#backdrop-br", class "backdrop-quadrant backdrop-bottom backdrop-right"] []
+  div [id "page"] [
+    div [class "backdrop"] [
+      div [class "backdrop-quadrant backdrop-top backdrop-left"] [],
+      div [class "backdrop-quadrant backdrop-bottom backdrop-left"] [],
+      div [class "backdrop-quadrant backdrop-top backdrop-right"] [],
+      div [class "backdrop-quadrant backdrop-bottom backdrop-right"] []
     ],
 
     LeftSidebar.view state,

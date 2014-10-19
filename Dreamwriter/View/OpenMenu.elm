@@ -23,16 +23,16 @@ view docs currentDoc =
 
       openFileNodes : [Html]
       openFileNodes = [
-        div [key "#open-from-file", class "open-entry from-file",
+        div [class "open-entry from-file",
             onclick openFromFileInput.handle (always ())
           ] [
-            span [key "#open-file-text-1"] [text "A "],
-            b    [key "#open-file-text-2"] [text ".html"],
-            span [key "#open-file-text-3"] [text " file from your computer..."]
+            span [] [text "A "],
+            b    [] [text ".html"],
+            span [] [text " file from your computer..."]
           ]
       ]
   in
-    div [key "#open-files", id "open"] (openFileNodes ++ docNodes)
+    div [id "open"] (openFileNodes ++ docNodes)
 
 viewOpenDocEntryFor : Doc -> Doc -> Html
 viewOpenDocEntryFor currentDoc doc =
