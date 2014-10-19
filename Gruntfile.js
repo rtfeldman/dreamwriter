@@ -148,7 +148,8 @@ module.exports = function(grunt) {
 
     browserify: {
       options: {
-        transform: ['browserify-mustache', 'coffeeify']
+        transform: ['browserify-mustache', 'coffeeify'],
+        watch: true
       },
       dev: {
         extensions: ['.coffee', '.mustache', '.json'],
@@ -156,8 +157,7 @@ module.exports = function(grunt) {
         dest: "dist/bootstrap-elm.js",
         browserifyOptions: {
           debug: true
-        },
-        watch: true
+        }
       },
       prod: {
         extensions: "<%= browserify.dev.extensions %>",
