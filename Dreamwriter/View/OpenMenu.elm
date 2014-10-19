@@ -8,9 +8,6 @@ import Html.Attributes (..)
 import Html.Events (..)
 import Html.Tags (..)
 
--- TODO remove this once it's in elm-html
-key = attr "key"
-
 view : [Doc] -> Doc -> Html
 view docs currentDoc =
   -- Prefer the current doc over the docs in the list, since it is refreshed

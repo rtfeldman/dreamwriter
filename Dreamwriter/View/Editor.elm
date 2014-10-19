@@ -9,9 +9,6 @@ import Html.Events (..)
 import Html.Tags (..)
 import Maybe
 
--- TODO remove this once it's in elm-html
-key = attr "key"
-
 view : AppState -> Html
 view state =
   -- Even if we have nothing to show, we need to render the iframe so we

@@ -10,9 +10,6 @@ import Html.Tags (..)
 
 import Regex (..)
 
--- TODO remove this once it's in elm-html
-key = attr "key"
-
 -- Replace illegal filename characters with underscores
 illegalFilenameCharMatcher = regex "[/\\<>?|\":*]"
 

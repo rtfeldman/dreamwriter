@@ -15,9 +15,6 @@ import Html.Optimize.RefEq as Ref
 import Maybe
 import Window
 
--- TODO remove this once it's in elm-html
-key = attr "key"
-
 -- ACTIONS --
 
 step : Action -> AppState -> AppState

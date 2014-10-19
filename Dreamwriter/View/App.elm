@@ -12,9 +12,6 @@ import Html.Attributes (..)
 import Html.Events (..)
 import Html.Tags (..)
 
--- TODO remove this once it's in elm-html
-key = attr "key"
-
 view : AppState -> Html
 view state =
   div [key "#page", id "page"] [

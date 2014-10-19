@@ -12,9 +12,6 @@ import Html.Events (..)
 import Html.Tags (..)
 import Maybe
 
--- TODO remove this once it's in elm-html
-key = attr "key"
-
 view : AppState -> Html
 view state =
   case state.currentDoc of
