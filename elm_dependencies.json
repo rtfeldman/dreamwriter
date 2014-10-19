@@ -1,12 +1,12 @@
 {
-    "version": "0.1",
-    "summary": "TodoMVC created with Elm and elm-html",
-    "description": "Use elm-html so that we can reuse the typical TodoMVC CSS and structure.",
-    "license": "BSD3",
-    "exposed-modules": [],
-    "elm-version": "0.13",
-    "dependencies": {
-        "evancz/elm-html": "0.2"
-    },
-    "repository": "https://github.com/evancz/elm-todomvc.git"
+  "version": "0.0.1",
+  "summary": "Streamlined writing app created with Elm and elm-html",
+  "description": "Completely functional offline!",
+  "license": "Apache2",
+  "exposed-modules": [],
+  "elm-version": "0.13",
+  "dependencies": {
+    "evancz/elm-html": "0.3"
+  },
+  "repository": "https://github.com/rtfeldman/dreamwriter.git"
 }
