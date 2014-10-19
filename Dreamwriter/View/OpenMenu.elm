@@ -32,7 +32,7 @@ view docs currentDoc =
           ]
       ]
   in
-    div [id "open"] (openFileNodes ++ docNodes)
+    div [key "open-menu-view", id "open"] (openFileNodes ++ docNodes)
 
 viewOpenDocEntryFor : Doc -> Doc -> Html
 viewOpenDocEntryFor currentDoc doc =

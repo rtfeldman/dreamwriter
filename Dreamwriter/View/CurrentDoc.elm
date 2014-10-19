@@ -18,15 +18,14 @@ legalizeFilename = replace All illegalFilenameCharMatcher (\_ -> "_")
 
 downloadContentType = "text/plain;charset=UTF-8"
 
--- TODO refactor this to return Html instead of [Html] once vdom bug is fixed...
-view : Doc -> [Html]
+view : Doc -> Html
 view currentDoc =
   let downloadOptions = {
     filename    = (legalizeFilename currentDoc.title) ++ ".html",
     contentType = downloadContentType
   }
   in
-    [
+    div [key "current-doc-view", id "current-doc-view"] [
       div [id "title"] [text currentDoc.title],
       div [id "file-buttons"] [
         span [class "file-button",
