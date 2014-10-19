@@ -44,14 +44,6 @@ module.exports = function(grunt) {
       bower: {
         files: ["bower.json"],
         tasks: ["browserifyBower"]
-      },
-      dist: {
-        files: ["dist/**/*", "!dist/dreamwriter.appcache", "!dist/cache/**/*"],
-        tasks: ["copy:cache", "appcache"]
-      },
-      distJS: {
-        files: ["dist/**/*.js"],
-        tasks: ["uglify:dev"]
       }
     },
 
