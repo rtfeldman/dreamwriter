@@ -29,6 +29,10 @@ view currentDoc state =
 viewChapter : Chapter -> Html
 viewChapter chapter =
   div [key ("chapter " ++ chapter.id)] [
-    h2  [id ("edit-chapter-heading-" ++ chapter.id), class "chapter-heading", contenteditable True, spellcheck True] [text chapter.heading],
-    div [id ("edit-chapter-body-" ++ chapter.id),    class "chapter-body",    contenteditable True, spellcheck True] []
+    h2  [contenteditable True, spellcheck True,
+      id ("edit-chapter-heading-" ++ chapter.id),
+      class "editable chapter-heading"] [text chapter.heading],
+    div [contenteditable True, spellcheck True,
+      id ("edit-chapter-body-" ++ chapter.id),    
+      class "editable chapter-body"] []
   ]
