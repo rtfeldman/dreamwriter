@@ -71,3 +71,6 @@ port openFromFile = openFromFileInput.signal
 
 port downloadDoc : Signal DownloadOptions
 port downloadDoc = downloadInput.signal
+
+port navigateToChapterId : Signal Identifier
+port navigateToChapterId = navigateToChapterIdInput.signal

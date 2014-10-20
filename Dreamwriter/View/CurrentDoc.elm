@@ -41,4 +41,7 @@ viewOutline chapters =
   ul [id "outline"] <| indexedMap viewChapter chapters
 
 viewChapter : Int -> Chapter -> Html
-viewChapter index chapter = li [key ("chapter" ++ (show index))] [text chapter.heading]
+viewChapter index chapter = li [
+    key ("chapter" ++ (show index)),
+    onclick navigateToChapterIdInput.handle (always chapter.id)
+  ] [text chapter.heading]

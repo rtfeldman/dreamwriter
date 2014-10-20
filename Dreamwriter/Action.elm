@@ -31,3 +31,6 @@ newDocInput = Input.input ()
 
 openFromFileInput : Input.Input ()
 openFromFileInput = Input.input ()
+
+navigateToChapterIdInput : Input.Input Identifier
+navigateToChapterIdInput = Input.input ""
