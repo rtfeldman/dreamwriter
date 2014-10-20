@@ -83,9 +83,8 @@ readDocFromFile = (file, onSuccess, onError) ->
       filename         = file.name ? file.fileName
       lastModifiedTime = if file.lastModifiedDate? then (new Date file.lastModifiedDate).getTime() else undefined
       html             = response.target.result
-      doc              = DocImport.docFromFile filename, lastModifiedTime, html
 
-      resolve {doc, html}
+      resolve DocImport.docFromFile filename, lastModifiedTime, html
 
     reader.readAsText file
 
@@ -96,7 +95,6 @@ write = (id, html) ->
     elem = document.getElementById id
 
     if elem
-      console.log "wrote after", attempts, "attempts"
       elem.innerHTML = html
     else
       attempts++
@@ -131,8 +129,8 @@ app.ports.openFromFile.subscribe ->
   showFileChooser().then (files) ->
     saveAndLoadFromFile = (file) ->
       new Promise (resolve, reject) ->
-        saveAndResolve = ({doc, html}) ->
-          sync.saveDocWithSnapshot(doc, {html}).then (newCurrentDoc) ->
+        saveAndResolve = (doc) ->
+          sync.saveFreshDoc(doc).then (newCurrentDoc) ->
             app.ports.loadAsCurrentDoc.send newCurrentDoc
             resolve()
 

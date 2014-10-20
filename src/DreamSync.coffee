@@ -28,21 +28,38 @@ module.exports = class DreamSync
   getDoc:      (id) => @db.docs.get      id
   getSnapshot: (id) => @db.snapshots.get id
 
+  saveDoc:      (doc)      => @db.docs.update      doc
+  saveSnapshot: (snapshot) => @db.snapshots.update snapshot
 
-  saveSnapshot: (doc, snapshot) ->
-    if doc.id?
-      new Promise (resolve, reject) =>
-        @getDoc(doc.id).then (existingDoc) =>
-          if existingDoc.lastModifiedTime > doc.lastModifiedTime
-            # TODO handle this by re-rendering etc
-            alert "Your document is out of sync! Please refresh."
-          else
-            persistDocAndSnapshot(@db, doc, snapshot).then resolve, reject
-    else
-      doc.id = DreamSync.getRandomSha()
 
-      persistDocAndSnapshot @db, doc, snapshot
+  # Mutates the LIVING HELL out of the doc you give it, so watch out!
+  # Assumes the chapters on the doc you give it will have an "html" field,
+  # which this deletes before persisting those fields as snapshots.
+  # This may not be pretty, but it sure is fast!
+  saveFreshDoc: (doc) =>
+    doc.lastModifiedTime   = new Date().getTime()
+    doc.creationTime     ||= doc.lastModifiedTime
+    doc.id               ||= DreamSync.getRandomSha()
 
+    allPromises = doc.chapters.reduce ((promises, chapter) =>
+      snapshot = {id: DreamSync.getRandomSha(), html: chapter.html}
+      delete chapter.html
+
+      chapter.lastModifiedTime    = doc.lastModifiedTime
+      chapter.creationTime      ||= doc.creationTime
+      chapter.id                ||= DreamSync.getRandomSha()
+      chapter.snapshotId          = snapshot.id
+
+      promises.concat [@saveSnapshot snapshot]
+    ), [@saveDoc doc]
+
+    new Promise (resolve, reject) ->
+      onSuccess = -> resolve doc
+      onError   = ->
+        console.error "doc that could not be saved:", doc
+        throw new Error "Unable to save doc #{JSON.stringify doc}"
+
+      Promise.all(allPromises).then onSuccess, onError
 
   saveDocWithSnapshot: (doc, snapshot) ->
     if doc.id?

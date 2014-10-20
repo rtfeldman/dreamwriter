@@ -22,7 +22,7 @@ inferChaptersFrom = (node) ->
 
     {
       heading:          heading.textContent
-      words:            0
+      words:            0 # TODO infer from html
       creationTime:     now
       lastModifiedTime: now
       html:             html
@@ -36,7 +36,7 @@ docFromHtml = (html) ->
     title:       inferTitleFrom(wrapperNode) ? ""
     description: inferDescriptionFrom(wrapperNode) ? ""
     chapters:    inferChaptersFrom(wrapperNode)
-    words:       0
+    words:       0 # TODO infer from summed chapters, title, and description
   }
 
 docFromFile = (filename, lastModifiedTime, html) ->
