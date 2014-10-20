@@ -42,7 +42,7 @@ docFromHtml = (html) ->
 docFromFile = (filename, lastModifiedTime, html) ->
   doc = docFromHtml html
 
-  doc.title = filename
+  doc.title ||= filename.replace(/\.[^\.]+$/, "") # Strip off file extension
   doc.lastModifiedTime = doc.creationTime = lastModifiedTime
 
   for chapter in doc.chapters
