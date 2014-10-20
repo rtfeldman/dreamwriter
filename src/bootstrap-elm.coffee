@@ -27,15 +27,16 @@ withEditor = (callback) ->
 # writes the snapshot to the editor, and tells Elm about the new currentDocId
 loadDocId = (docId) ->
   sync.getDoc(docId).then (doc) ->
-    sync.getSnapshot(doc.snapshotId).then (snapshot) ->
-      app.ports.loadAsCurrentDoc.send doc
+    app.ports.loadAsCurrentDoc.send doc
 
-      write "edit-description", snapshot.html
+    doc.chapters.forEach (chapter) ->
+      write "edit-chapter-heading-#{chapter.id}", chapter.heading
+
+      sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
+        write "edit-chapter-body-#{chapter.id}", snapshot.html
 
 saveHtmlAndLoadDoc = (html) ->
-  inferredDoc = DocImport.docFromHtml html
-
-  sync.saveDocWithSnapshot(inferredDoc, {html})
+  sync.saveFreshDoc(DocImport.docFromHtml html)
     .then app.ports.loadAsCurrentDoc.send
 
 setUpEditor = (iframe) ->

@@ -41,7 +41,7 @@ module.exports = class DreamSync
     doc.creationTime     ||= doc.lastModifiedTime
     doc.id               ||= DreamSync.getRandomSha()
 
-    allPromises = doc.chapters.reduce ((promises, chapter) =>
+    snapshotPromises = for chapter in doc.chapters
       snapshot = {id: DreamSync.getRandomSha(), html: chapter.html}
       delete chapter.html
 
@@ -50,8 +50,9 @@ module.exports = class DreamSync
       chapter.id                ||= DreamSync.getRandomSha()
       chapter.snapshotId          = snapshot.id
 
-      promises.concat [@saveSnapshot snapshot]
-    ), [@saveDoc doc]
+      @saveSnapshot snapshot
+
+    allPromises = snapshotPromises.concat [@saveDoc doc]
 
     new Promise (resolve, reject) ->
       onSuccess = -> resolve doc

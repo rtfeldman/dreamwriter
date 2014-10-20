@@ -3,7 +3,7 @@ introDocHtml = require("./templates/IntroDocBody.mustache")()
 
 htmlUntil = (node, predicate) ->
   if predicate node
-    (node?.innerHTML ? "") + (htmlUntil node.nextSibling, predicate)
+    (node?.outerHTML ? "") + (htmlUntil node.nextSibling, predicate)
   else
     ""
 
