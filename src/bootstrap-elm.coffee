@@ -3,7 +3,7 @@ DreamSync = require "./DreamSync.coffee"
 DocImport = require "./DocImport.coffee"
 saveAs    = require "FileSaver.js"
 
-blankDoc = {id: "", title: "", chapters: [], creationTime: 0, lastModifiedTime: 0}
+blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, lastModifiedTime: 0, words: 0}
 
 app = Elm.fullscreen Elm.App, {
   loadAsCurrentDoc: blankDoc
@@ -29,8 +29,8 @@ loadDocId = (docId) ->
   sync.getDoc(docId).then (doc) ->
     sync.getSnapshot(doc.snapshotId).then (snapshot) ->
       app.ports.loadAsCurrentDoc.send doc
-      withEditor (editor) ->
-        editor.writeHtml snapshot.html, true
+
+      write "edit-description", snapshot.html
 
 saveHtmlAndLoadDoc = (html) ->
   inferredDoc = DocImport.docFromHtml html
@@ -89,41 +89,27 @@ readDocFromFile = (file, onSuccess, onError) ->
 
     reader.readAsText file
 
-##### iframe appearance hack #####
+write = (id, html) ->
+  attempts = 1
 
-# We need to set up the iframe as soon as it appears, but we don't have a way
-# to detect when that will happen, so we use a mutation observer to watch
-# for it and set it up as soon as it appears.
+  writeWhenReady = ->
+    elem = document.getElementById id
 
-((document, setUpEditor) ->
-  iframeAppearanceObserver = new MutationObserver (mutations) ->
-    setTimeout (->
-      requestAnimationFrame ->
-        console.log document.getElementById("edit-preface")
-    ), 0
+    if elem
+      console.log "wrote after", attempts, "attempts"
+      elem.innerHTML = html
+    else
+      attempts++
 
-    isEditor = (node) -> node.nodeType != 3 && node.getAttribute("contentEditable")
-    setUpEditors = (nodes) ->
-      for node in nodes
-        if isEditor node
-          setUpEditor node
-        else
-          setUpEditors node.children
+      if attempts > 10000
+        console.error "Aborting write after 10,000 attempts:", id, html
+      else
+        requestAnimationFrame writeWhenReady
 
-    for mutation in mutations
-      setUpEditors mutation.addedNodes
+  writeWhenReady()
 
-    # TODO it's a problem that this never disconnects...will register all sorts of
-    # duplicate events during editing :(
-    # maybe we just want to do this for the first editor? And then do the others
-    # differently? Erg...
-
-  iframeAppearanceObserver.observe document.body, {attributes: true, childList: true}
-)(document, setUpEditor)
-
-##################################
-
-refreshDocList = -> sync.listDocs().then app.ports.listDocs.send
+refreshDocList = -> sync.listDocs().then (docs) ->
+  app.ports.listDocs.send docs
 
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
