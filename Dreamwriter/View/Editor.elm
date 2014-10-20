@@ -9,14 +9,21 @@ import Html.Events (..)
 import Html.Tags (..)
 import Maybe
 
+-- TODO remove this once it's fixed in elm-html
+contenteditable = toggle "contentEditable" 
+
 view : AppState -> Html
 view state =
-  -- Even if we have nothing to show, we need to render the iframe so we
-  -- can set it up on our first mount. Render it with display:none if need be.
-  let containerClass = case state.currentDoc of
-    Nothing         -> "hidden"
-    Just currentDoc -> ""
-  in
-    div [id "editor-container", class containerClass] [
-      iframe [id "editor-frame", spellcheck True] []
-    ]
+  case state.currentDoc of
+    Nothing -> span [] []
+    Just currentDoc -> 
+      div [id "editor-container"] [
+        div [id "editor-frame"] [
+          div [class "document-page"] [
+            section [id "preface"] [
+              header [id "edit-preface-header", contenteditable True, spellcheck True] [text currentDoc.title],
+              section [id "edit-preface", contenteditable True, spellcheck True] []
+            ]
+          ]
+        ]
+      ]

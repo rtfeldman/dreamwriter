@@ -1,32 +1,29 @@
 ## Editor
 #
-# Wraps an iframe and does the following:
+# Wraps a contentEditable element and does the following:
 #
-# 1. Enables designMode on the iframe
-# 2. Whenever the iframe's contents change, computes the structure of the
+# 1. Whenever the element's contents change, computes the structure of the
 #    new document (title, chapters, etc.) and passes them to a callback.
-# 3. Writes to the iframe when requested
+# 2. Writes to the element when requested, optionally while disabling the 
+#    mutation observer to avoid spurious updates.
 module.exports = class Editor
-  constructor: (iframe, @mutationObserverOptions, onChange) ->
-    contentDocument = iframe.contentDocument ? iframe.contentWindow.document
-    contentDocument.designMode = "on"
-
-    @contentDocument  = contentDocument
+  constructor: (@elem, @mutationObserverOptions, onChange) ->
     @mutationObserver = new MutationObserver (mutations) =>
-      onChange mutations, contentDocument.firstChild
+      onChange mutations, @elem
 
     @enableMutationObserver()
 
   writeHtml: (html, skipObserver, onSuccess = (->), onError = onWriteError) =>
     @runWithOptionalObserver skipObserver, =>
-      writeToIframeDocument @contentDocument, html, onSuccess, onError
+      @elem.innerHTML = html
+      onSuccess()
 
   getHtml: ->
-    @contentDocument.firstChild.innerHTML
+    @elem.innerHTML
 
   execCommand: (command, skipObserver) =>
     @runWithOptionalObserver skipObserver, =>
-      @contentDocument.execCommand command
+      @elem.execCommand command
 
   runWithOptionalObserver: (skipObserver, runLogic) =>
     if skipObserver
@@ -37,10 +34,10 @@ module.exports = class Editor
       try
         runLogic()
       finally
-        @enableMutationObserver @contentDocument
+        @enableMutationObserver @elem
 
   enableMutationObserver: =>
-    @mutationObserver.observe @contentDocument, @mutationObserverOptions
+    @mutationObserver.observe @elem, @mutationObserverOptions
 
   disableMutationObserver: ->
     @mutationObserver.disconnect()
@@ -48,23 +45,3 @@ module.exports = class Editor
 onWriteError = (err) ->
     console.error "Error while trying to write to editor", err
     throw new Error err
-
-# Writes the given html to the given iframe document,
-# and fires a callback once the write is complete.
-writeToIframeDocument = (iframeDocument, html, onSuccess, onError) ->
-  switch iframeDocument.readyState
-    # "complete" in Chrome/Safari, "uninitialized" in Firefox
-    when "complete", "uninitialized"
-      try
-        iframeDocument.open()
-        iframeDocument.write html
-        iframeDocument.close()
-
-        onSuccess()
-      catch error
-        onError error
-    else
-      # If the iframe isn't ready yet, yield and try again until it is ready.
-      setTimeout (->
-        writeToIframeDocument iframeDocument, html, onSuccess, onError
-      ), 0

@@ -28,9 +28,9 @@ withEditor = (callback) ->
 loadDocId = (docId) ->
   sync.getDoc(docId).then (doc) ->
     sync.getSnapshot(doc.snapshotId).then (snapshot) ->
+      app.ports.loadAsCurrentDoc.send doc
       withEditor (editor) ->
         editor.writeHtml snapshot.html, true
-        app.ports.loadAsCurrentDoc.send doc
 
 saveHtmlAndLoadDoc = (html) ->
   inferredDoc = DocImport.docFromHtml html
@@ -82,7 +82,7 @@ readDocFromFile = (file, onSuccess, onError) ->
     reader.onload = (response) ->
       filename         = file.name ? file.fileName
       lastModifiedTime = if file.lastModifiedDate? then (new Date file.lastModifiedDate).getTime() else undefined
-      html             = DocImport.wrapInDoc body: response.target.result
+      html             = response.target.result
       doc              = DocImport.docFromFile filename, lastModifiedTime, html
 
       resolve {doc, html}
@@ -97,13 +97,26 @@ readDocFromFile = (file, onSuccess, onError) ->
 
 ((document, setUpEditor) ->
   iframeAppearanceObserver = new MutationObserver (mutations) ->
-    iframe = document.getElementById "editor-frame"
+    setTimeout (->
+      requestAnimationFrame ->
+        console.log document.getElementById("edit-preface")
+    ), 0
 
-    if iframe
-      setUpEditor iframe
+    isEditor = (node) -> node.nodeType != 3 && node.getAttribute("contentEditable")
+    setUpEditors = (nodes) ->
+      for node in nodes
+        if isEditor node
+          setUpEditor node
+        else
+          setUpEditors node.children
 
-      # We've done what we set out to do, so we can safely disconncet now.
-      iframeAppearanceObserver.disconnect()
+    for mutation in mutations
+      setUpEditors mutation.addedNodes
+
+    # TODO it's a problem that this never disconnects...will register all sorts of
+    # duplicate events during editing :(
+    # maybe we just want to do this for the first editor? And then do the others
+    # differently? Erg...
 
   iframeAppearanceObserver.observe document.body, {attributes: true, childList: true}
 )(document, setUpEditor)

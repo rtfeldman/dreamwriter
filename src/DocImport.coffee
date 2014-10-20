@@ -1,6 +1,5 @@
-wrapInDoc    =                 require("./templates/Doc.mustache")
-blankDocHtml = wrapInDoc body: require("./templates/BlankDocBody.mustache")()
-introDocHtml = wrapInDoc body: require("./templates/IntroDocBody.mustache")()
+blankDocHtml = require("./templates/BlankDocBody.mustache")()
+introDocHtml = require("./templates/IntroDocBody.mustache")()
 
 inferTitleFrom = (node) ->
   node.querySelector("h1")?.textContent
@@ -33,5 +32,4 @@ module.exports = {
   inferChaptersFrom
   docFromHtml
   docFromFile
-  wrapInDoc
 }
