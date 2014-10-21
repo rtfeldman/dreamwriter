@@ -1,5 +1,6 @@
-blankDocHtml = require("./templates/BlankDocBody.mustache")()
-introDocHtml = require("./templates/IntroDocBody.mustache")()
+blankDocHtml    = require("./templates/BlankDocBody.mustache")()
+introDocHtml    = require("./templates/IntroDocBody.mustache")()
+wrapInDocMarkup = require("./templates/Doc.mustache")
 
 htmlUntil = (node, predicate) ->
   if predicate node
@@ -57,4 +58,5 @@ module.exports = {
   inferChaptersFrom
   docFromHtml
   docFromFile
+  wrapInDocMarkup
 }

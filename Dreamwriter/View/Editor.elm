@@ -28,8 +28,8 @@ view currentDoc state =
         div [class "toolbar-section toolbar-button flaticon-expand"] []
       ],
       div [id "document-page"] <| [
-        h1  [id "edit-title",        contenteditable True, spellcheck True] [text currentDoc.title],
-        div [id "edit-description",  contenteditable True, spellcheck True] []
+        h1  [id "edit-title",        class "editable", contenteditable True, spellcheck True] [text currentDoc.title],
+        div [id "edit-description",  class "editable", contenteditable True, spellcheck True] []
       ] ++ map viewChapter currentDoc.chapters,
       div [id "editor-footer"] [
         div [id "doc-word-count"] [text "23,124 words saved"],

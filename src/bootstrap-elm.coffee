@@ -89,23 +89,23 @@ readDocFromFile = (file, onSuccess, onError) ->
 
     reader.readAsText file
 
+
+whenPresent = (getElem, onSuccess, onError, attemptsRemaining = 10000) ->
+  elem = getElem()
+
+  if elem?
+    onSuccess elem
+  else if attemptsRemaining
+    requestAnimationFrame ->
+      whenPresent getElem, onSuccess, onError, attemptsRemaining - 1
+  else
+    onError()
+
 write = (id, html) ->
-  attempts = 1
-
-  writeWhenReady = ->
-    elem = document.getElementById id
-
-    if elem
-      elem.innerHTML = html
-    else
-      attempts++
-
-      if attempts > 10000
-        console.error "Aborting write after 10,000 attempts:", id, html
-      else
-        requestAnimationFrame writeWhenReady
-
-  writeWhenReady()
+  whenPresent (-> document.getElementById id),
+    ((elem) -> elem.innerHTML = html),
+    ((err) -> console.error "Could not write after 10,000 attempts:", id, html),
+    10000
 
 refreshDocList = -> sync.listDocs().then (docs) ->
   app.ports.listDocs.send docs
@@ -123,8 +123,19 @@ app.ports.newDoc.subscribe ->
   refreshDocList()
 
 app.ports.downloadDoc.subscribe ({filename, contentType}) ->
-  withEditor (editor) ->
-    saveAs new Blob([editor.getHtml()], {type: contentType}), filename
+  whenPresent (-> document.getElementById "document-page"),
+    ((elem) ->
+      clone = document.getElementById("document-page").cloneNode true
+
+      for editable in clone.querySelectorAll("[contentEditable=true]")
+        editable.contentEditable = false
+        editable.spellcheck = false
+
+      html = DocImport.wrapInDocMarkup {body: clone.innerHTML}
+      saveAs new Blob([html], {type: contentType}), filename
+    ),
+    ((err) -> console.error "Could not download from page after 10,000 attempts"),
+    10000
 
 app.ports.printDoc.subscribe ->
   window.print()
