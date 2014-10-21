@@ -35,5 +35,8 @@ openFromFileInput = Input.input ()
 navigateToChapterIdInput : Input.Input Identifier
 navigateToChapterIdInput = Input.input ""
 
+navigateToTitleInput : Input.Input ()
+navigateToTitleInput = Input.input ()
+
 printInput : Input.Input ()
 printInput = Input.input ()

@@ -26,7 +26,8 @@ view currentDoc =
   }
   in
     div [key "current-doc-view", id "current-doc-view"] [
-      div [id "title"] [text currentDoc.title],
+      div [id "title", onclick navigateToTitleInput.handle (always ())]
+        [text currentDoc.title],
       div [id "file-buttons"] [
         span [class "file-button flaticon-download14", title "Download",
           onclick downloadInput.handle (always downloadOptions)] [],

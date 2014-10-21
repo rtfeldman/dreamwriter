@@ -77,3 +77,6 @@ port printDoc = printInput.signal
 
 port navigateToChapterId : Signal Identifier
 port navigateToChapterId = navigateToChapterIdInput.signal
+
+port navigateToTitle : Signal ()
+port navigateToTitle = navigateToTitleInput.signal

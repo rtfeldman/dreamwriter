@@ -146,6 +146,9 @@ app.ports.navigateToChapterId.subscribe (chapterId) ->
 
   editorFrame.scrollTop = chapterHeading.offsetTop
 
+app.ports.navigateToTitle.subscribe ->
+  document.getElementById("editor-frame").scrollTop = 0
+
 app.ports.openFromFile.subscribe ->
   showFileChooser().then (files) ->
     saveAndLoadFromFile = (file) ->
