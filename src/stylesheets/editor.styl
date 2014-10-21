@@ -6,7 +6,6 @@ editor-header-width = editor-width - 40
 #edit-description
   text-align center
 
-
 #editor-frame
   display block
   overflow auto
@@ -23,9 +22,8 @@ editor-header-width = editor-width - 40
 
   left 20px
   z-index 1
-  height 40px
   text-align center
-  padding 6px
+  padding 8px 0
   background-color white
   width editor-header-width
   line-height 28px
@@ -44,13 +42,20 @@ editor-header-width = editor-width - 40
   border 1px solid #aaa
 
   .toolbar-button
+    padding 6px 0
     text-shadow 2px 2px 1px #EEE
+    cursor pointer
+
+    &:hover
+      color black
 
   #editor-header
     top 0
+    height 58px
 
   #editor-footer
     bottom 0
+    height 48px
 
   .toolbar-section
     flex 1
@@ -73,7 +78,7 @@ editor-header-width = editor-width - 40
 
   .toolbar-font-button
     position relative
-    top 0
+    top 4px
     line-height 1.1em
     text-shadow 1px 1px 1px #fff
     color #252525

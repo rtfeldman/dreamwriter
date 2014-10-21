@@ -20,10 +20,10 @@ view currentDoc state =
     div [id "editor-frame"] [
       div [id "editor-header"] [
         div [class "toolbar-section toolbar-button flaticon-zoom19"] [],
-        div [class "toolbar-section toolbar-button"] [
-          span [class "font-control toolbar-font-button", id "toggle-bold"] [text "B"],
-          span [class "font-control toolbar-font-button", id "toggle-italics"] [text "I"],
-          span [class "font-control toolbar-font-button", id "toggle-strikethrough"] [text "\xA0S\xA0"]
+        div [class "toolbar-section"] [
+          span [class "font-control toolbar-button toolbar-font-button", id "toggle-bold"] [text "B"],
+          span [class "font-control toolbar-button toolbar-font-button", id "toggle-italics"] [text "I"],
+          span [class "font-control toolbar-button toolbar-font-button", id "toggle-strikethrough"] [text "\xA0S\xA0"]
         ],
         div [class "toolbar-section toolbar-button flaticon-expand"] []
       ],
