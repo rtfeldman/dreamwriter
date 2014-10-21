@@ -3,14 +3,12 @@
 dark-brown = #644B2B
 
 #file-buttons
-  text-align center
   margin-bottom 25px
 
 #add-chapter
+  margin-left 5px
   cursor pointer
-  width 36px
   font-size 36px
-  margin 0 auto
 
   &:hover
     color black
@@ -41,15 +39,18 @@ dark-brown = #644B2B
   min-height 1em
   margin 0
   cursor default
-  text-align center
 
-  text-align center
   page-text()
 
   font-size 16px
 
   &:hover
     background-color #e0c59e
+
+#outline li
+  text-overflow ellipsis
+  white-space nowrap
+  overflow hidden
 
 #title
   font-size 24px
