@@ -126,6 +126,9 @@ app.ports.downloadDoc.subscribe ({filename, contentType}) ->
   withEditor (editor) ->
     saveAs new Blob([editor.getHtml()], {type: contentType}), filename
 
+app.ports.printDoc.subscribe ->
+  window.print()
+
 app.ports.navigateToChapterId.subscribe (chapterId) ->
   editorFrame    = document.getElementById("editor-frame")
   chapterHeading = document.getElementById("edit-chapter-heading-#{chapterId}")
