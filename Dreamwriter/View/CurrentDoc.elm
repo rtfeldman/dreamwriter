@@ -28,12 +28,16 @@ view currentDoc =
     div [key "current-doc-view", id "current-doc-view"] [
       div [id "title"] [text currentDoc.title],
       div [id "file-buttons"] [
-        span [class "file-button",
-          onclick downloadInput.handle (always downloadOptions)] [text "download"],
-        span [class "file-button"] [text "stats"]
+        span [class "file-button flaticon-download14", title "Download",
+          onclick downloadInput.handle (always downloadOptions)] [],
+        span [class "file-button flaticon-ascendant6", title "Statistics"] [],
+        span [class "file-button flaticon-printer70", title "Print",
+          onclick printInput.handle (always ())] []
       ],
 
-      viewOutline currentDoc.chapters
+      viewOutline currentDoc.chapters,
+
+      div [id "add-chapter", class "flaticon-add139"] []
     ]
 
 viewOutline : [Chapter] -> Html

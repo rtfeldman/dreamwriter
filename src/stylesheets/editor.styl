@@ -6,6 +6,34 @@ editor-header-width = editor-width - 40
 #edit-description
   text-align center
 
+
+#editor-frame
+  display block
+  overflow auto
+  border none
+  width editor-width px
+  box-sizing border-box
+
+#editor-header, #editor-footer
+  position absolute
+  display flex
+  flex-direction row
+  justify-content center
+  align-items stretch
+
+  left 20px
+  z-index 1
+  height 40px
+  text-align center
+  padding 6px
+  background-color white
+  width editor-header-width
+  line-height 28px
+
+  font-size 18px
+  font-family Ubuntu, Verdana
+  color #777
+
 #editor-container
   position relative
   display flex
@@ -14,33 +42,6 @@ editor-header-width = editor-width - 40
   background #fff
   box-shadow 0.4em 0.4em 0.4em #644b2b
   border 1px solid #aaa
-
-  #editor-frame
-    display block
-    overflow auto
-    border none
-    width editor-width px
-    box-sizing border-box
-
-  #editor-header, #editor-footer
-    position absolute
-    display flex
-    flex-direction row
-    justify-content center
-    align-items stretch
-
-    left 20px
-    z-index 1
-    height 40px
-    text-align center
-    padding 6px
-    background-color white
-    width editor-header-width
-    line-height 28px
-
-    font-size 18px
-    font-family Ubuntu, Verdana
-    color #777
 
   .toolbar-button
     text-shadow 2px 2px 1px #EEE
@@ -83,24 +84,32 @@ editor-header-width = editor-width - 40
     color inherit
     min-width 44px
 
-  #toggle-bold
-    font-weight bold
+#doc-word-count
+  position absolute
+  left 0
 
-  #toggle-italics
-    font-style italic
+#dropbox-sync
+  position absolute
+  right 0
 
-  #toggle-strikethrough
-    text-decoration line-through
+#toggle-bold
+  font-weight bold
 
-  #loaded-document
-    background #fff
+#toggle-italics
+  font-style italic
 
-    width 600px
-    padding 6em 1.5em 6em 1.5em
-    margin 0 auto
-    box-sizing border-box
+#toggle-strikethrough
+  text-decoration line-through
 
-    page-text()
+#loaded-document
+  background #fff
+
+  width 600px
+  padding 6em 1.5em 6em 1.5em
+  margin 0 auto
+  box-sizing border-box
+
+  page-text()
 
 #document-page
   margin: 0.8cm

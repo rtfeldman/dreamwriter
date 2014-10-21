@@ -18,10 +18,23 @@ view : Doc -> AppState -> Html
 view currentDoc state =
   div [id "editor-container"] [
     div [id "editor-frame"] [
+      div [id "editor-header"] [
+        div [class "toolbar-section toolbar-button flaticon-zoom19"] [],
+        div [class "toolbar-section toolbar-button"] [
+          span [class "font-control toolbar-font-button", id "toggle-bold"] [text "B"],
+          span [class "font-control toolbar-font-button", id "toggle-italics"] [text "I"],
+          span [class "font-control toolbar-font-button", id "toggle-strikethrough"] [text "\xA0S\xA0"]
+        ],
+        div [class "toolbar-section toolbar-button flaticon-expand"] []
+      ],
       div [id "document-page"] <| [
         h1  [id "edit-title",        contenteditable True, spellcheck True] [text currentDoc.title],
         div [id "edit-description",  contenteditable True, spellcheck True] []
-      ] ++ map viewChapter currentDoc.chapters
+      ] ++ map viewChapter currentDoc.chapters,
+      div [id "editor-footer"] [
+        div [id "doc-word-count"] [text "23,124 words saved"],
+        div [id "dropbox-sync"] [text "enable Dropbox syncing"]
+      ]
     ]
   ]
 
