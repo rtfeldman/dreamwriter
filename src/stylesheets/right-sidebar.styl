@@ -1,5 +1,9 @@
 @require "mixins/page-text"
 
+dark-brown = #644B2B
+header-control-color = #E0C59E
+header-control-hover = #F4F0EC
+
 #right-sidebar-container
   position relative
   flex-grow 1
@@ -9,22 +13,38 @@
   box-sizing border-box
 
   color #644b2b
-  opacity 0.8
 
-  &:hover, &:focus
-    background-color #e0c59e
-    color #644b2b
-    opacity 1
+#right-sidebar-header
+  display flex
 
-  #notes
-    padding 20px
-    margin-left 10px
-    box-sizing border-box
+#notes-search-button
+  color dark-brown
+  text-shadow none
+  margin-left 6px
 
-    page-text()
+  &:hover
+    color black
 
-    font-size 16px
-    line-height 1.62em
+#notes-search-text
+  font-family "Ubuntu"
+  border none
+  padding 0 12px
+  background-color dark-brown
+  flex-grow 1
+  color header-control-color
+  font-size 18px
+  height 36px
+  margin-top 2px
 
-    p
-      text-indent 0
+#notes
+  padding 20px
+  margin-left 10px
+  box-sizing border-box
+
+  page-text()
+
+  font-size 16px
+  line-height 1.62em
+
+  p
+    text-indent 0
