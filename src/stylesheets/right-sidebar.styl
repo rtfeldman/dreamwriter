@@ -12,29 +12,30 @@ header-control-hover = #F4F0EC
   overflow auto
   box-sizing border-box
 
-  color #644b2b
+  color dark-brown
 
 #right-sidebar-header
   display flex
 
 #notes-search-button
-  color dark-brown
-  text-shadow none
-  margin-left 6px
-
-  &:hover
-    color black
+  margin-left 8px
 
 #notes-search-text
+  text-shadow none
+  box-shadow 2px 2px 2px dark-brown
+  cursor text
+  background-color header-control-color
+  color dark-brown
   font-family "Ubuntu"
   border none
   padding 0 12px
-  background-color dark-brown
   flex-grow 1
-  color header-control-color
   font-size 18px
   height 36px
   margin-top 2px
+
+::-webkit-input-placeholder
+  color #846B4B
 
 #notes
   padding 20px
