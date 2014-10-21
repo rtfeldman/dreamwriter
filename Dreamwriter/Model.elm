@@ -1,9 +1,11 @@
 module Dreamwriter.Model where
 
-import Dreamwriter.Doc (..)
 import Dreamwriter (Identifier)
 
 data LeftSidebarView = CurrentDocView | OpenMenuView
+
+type MsSinceEpoch = Int
+type HtmlString   = String
 
 type AppState =
   { leftSidebarView : LeftSidebarView
@@ -18,4 +20,22 @@ emptyState =
   , docs         = []
   , currentDoc   = Nothing
   , currentDocId = Nothing
+  }
+
+type Doc =
+  { id               : Identifier
+  , title            : String
+  , description      : HtmlString
+  , chapters         : [Chapter]
+  , words            : Int
+  , creationTime     : MsSinceEpoch
+  , lastModifiedTime : MsSinceEpoch
+  }
+
+type Chapter =
+  { id               : Identifier
+  , heading          : String
+  , words            : Int
+  , creationTime     : MsSinceEpoch
+  , lastModifiedTime : MsSinceEpoch
   }

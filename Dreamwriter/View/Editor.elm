@@ -1,6 +1,5 @@
 module Dreamwriter.View.Editor where
 
-import Dreamwriter.Doc (..)
 import Dreamwriter.Model (..)
 
 import String

@@ -1,6 +1,6 @@
 module Dreamwriter.View.OpenMenu (view) where
 
-import Dreamwriter.Doc (..)
+import Dreamwriter.Model (..)
 import Dreamwriter.Action (..)
 
 import Html (..)

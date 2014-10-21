@@ -1,7 +1,6 @@
 module Dreamwriter.Action where
 
 import Dreamwriter (..)
-import Dreamwriter.Doc (..)
 import Dreamwriter.Model (..)
 
 import Graphics.Input

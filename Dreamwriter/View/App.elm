@@ -1,6 +1,5 @@
 module Dreamwriter.View.App where
 
-import Dreamwriter.Doc (..)
 import Dreamwriter.Model (..)
 import Dreamwriter.View.LeftSidebar as LeftSidebar
 import Dreamwriter.View.RightSidebar as RightSidebar

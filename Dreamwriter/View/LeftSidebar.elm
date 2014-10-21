@@ -2,7 +2,6 @@ module Dreamwriter.View.LeftSidebar (view) where
 
 import Dreamwriter.Action (..)
 import Dreamwriter.Model (..)
-import Dreamwriter.Doc (..)
 import Dreamwriter.View.CurrentDoc as CurrentDoc
 import Dreamwriter.View.OpenMenu as OpenMenu
 
