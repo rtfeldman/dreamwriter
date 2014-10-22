@@ -29,9 +29,9 @@ view currentDoc state =
       , sidebarBody   = RefEq.lazy2 OpenMenu.view state.docs currentDoc
       }
     CurrentDocView ->
-        { sidebarHeader = RefEq.lazy viewCurrentDocHeader currentDoc
-        , sidebarBody   = RefEq.lazy CurrentDoc.view currentDoc
-        }
+      { sidebarHeader = RefEq.lazy viewCurrentDocHeader currentDoc
+      , sidebarBody   = RefEq.lazy CurrentDoc.view currentDoc
+      }
   in
     div [id "left-sidebar-container", class "sidebar"] [
       sidebarHeader,
