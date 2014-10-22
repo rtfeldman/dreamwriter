@@ -31,16 +31,26 @@ viewEditor currentDoc =
         ],
         div [class "toolbar-section toolbar-button flaticon-expand"] []
       ],
+
       div [id "document-page"] <| [
-        h1  [id "edit-title",        class "editable", contenteditable True, spellcheck True] [text currentDoc.title],
-        div [id "edit-description",  class "editable", contenteditable True, spellcheck True] []
+        RefEq.lazy viewTitle       currentDoc.id,
+        RefEq.lazy viewDescription currentDoc.id
       ] ++ map (lazyViewChapter << .id) currentDoc.chapters,
+
       div [id "editor-footer"] [
         div [id "doc-word-count"] [text "23,124 words saved"],
         div [id "dropbox-sync"] [text "enable Dropbox syncing"]
       ]
     ]
   ]
+
+viewTitle : Identifier -> Html
+viewTitle docId = h1 [key ("edit-title-" ++ docId),
+  class "editable", id "edit-title", contenteditable True, spellcheck True] []
+
+viewDescription : Identifier -> Html
+viewDescription docId = div [key ("edit-description-" ++ docId),
+  class "editable", id "edit-description", contenteditable True, spellcheck True] []
 
 lazyViewChapter : Identifier -> Html
 lazyViewChapter chapterId = RefEq.lazy viewChapter chapterId
