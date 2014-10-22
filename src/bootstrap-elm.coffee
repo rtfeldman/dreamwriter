@@ -143,9 +143,10 @@ app.ports.printDoc.subscribe ->
 
 app.ports.navigateToChapterId.subscribe (chapterId) ->
   editorFrame    = document.getElementById("editor-frame")
+  editorHeader   = document.getElementById("editor-header")
   chapterHeading = document.getElementById("edit-chapter-heading-#{chapterId}")
 
-  editorFrame.scrollTop = chapterHeading.offsetTop
+  editorFrame.scrollTop = chapterHeading.offsetTop - editorHeader.offsetHeight
 
 app.ports.navigateToTitle.subscribe ->
   document.getElementById("editor-frame").scrollTop = 0
