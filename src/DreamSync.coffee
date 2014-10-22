@@ -31,7 +31,6 @@ module.exports = class DreamSync
   saveDoc:      (doc)      => @db.docs.update      doc
   saveSnapshot: (snapshot) => @db.snapshots.update snapshot
 
-
   # Mutates the LIVING HELL out of the doc you give it, so watch out!
   # Assumes the chapters on the doc you give it will have an "html" field,
   # which this deletes before persisting those fields as snapshots.
@@ -77,8 +76,7 @@ module.exports = class DreamSync
 
 persistDocAndSnapshot = (db, doc, snapshot) ->
   new Promise (resolve, reject) ->
-    doc.snapshotId ?= snapshot.id ? DreamSync.getRandomSha()
-    snapshot.id    ?= doc.snapshotId
+    snapshot.id    ?= DreamSync.getRandomSha()
 
     currentTime = new Date().getTime()
 

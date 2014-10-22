@@ -1,6 +1,7 @@
 module Dreamwriter.View.Editor where
 
 import Dreamwriter.Model (..)
+import Dreamwriter (..)
 
 import String
 import Html (..)
@@ -19,7 +20,7 @@ view currentDoc state =
   RefEq.lazy viewEditor currentDoc
 
 viewEditor currentDoc =
-  div [id "editor-container"] [
+  div [key ("editor-for-" ++ currentDoc.id), id "editor-container"] [
     div [id "editor-frame"] [
       div [id "editor-header"] [
         div [class "toolbar-section toolbar-button flaticon-zoom19"] [],
@@ -33,7 +34,7 @@ viewEditor currentDoc =
       div [id "document-page"] <| [
         h1  [id "edit-title",        class "editable", contenteditable True, spellcheck True] [text currentDoc.title],
         div [id "edit-description",  class "editable", contenteditable True, spellcheck True] []
-      ] ++ map viewChapter currentDoc.chapters,
+      ] ++ map (lazyViewChapter << .id) currentDoc.chapters,
       div [id "editor-footer"] [
         div [id "doc-word-count"] [text "23,124 words saved"],
         div [id "dropbox-sync"] [text "enable Dropbox syncing"]
@@ -41,13 +42,16 @@ viewEditor currentDoc =
     ]
   ]
 
-viewChapter : Chapter -> Html
-viewChapter chapter =
-  div [key ("chapter " ++ chapter.id)] [
+lazyViewChapter : Identifier -> Html
+lazyViewChapter chapterId = RefEq.lazy viewChapter chapterId
+
+viewChapter : Identifier -> Html
+viewChapter chapterId =
+  div [key ("chapter " ++ chapterId)] [
     h2  [contenteditable True, spellcheck True,
-      id ("edit-chapter-heading-" ++ chapter.id),
-      class "editable chapter-heading"] [text chapter.heading],
+      id ("edit-chapter-heading-" ++ chapterId),
+      class "editable chapter-heading"] [],
     div [contenteditable True, spellcheck True,
-      id ("edit-chapter-body-" ++ chapter.id),    
+      id ("edit-chapter-body-" ++ chapterId),    
       class "editable chapter-body"] []
   ]

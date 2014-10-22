@@ -14,44 +14,47 @@ app = Elm.fullscreen Elm.App, {
 # This will be initialized once a connection to the db has been established.
 sync = null
 
-# This will be initialized once the iframe has been added to the DOM.
-maybeEditor = null
-
-withEditor = (callback) ->
-  if maybeEditor?
-    callback maybeEditor
-  else
-    # If the editor isn't initialized yet, yield and try again until it's ready.
-    setTimeout (-> withEditor callback), 0
-
 # Looks up the doc and snapshot associated with the given docId,
 # writes the snapshot to the editor, and tells Elm about the new currentDocId
 loadDocId = (docId) ->
   sync.getDoc(docId).then (doc) ->
     app.ports.loadAsCurrentDoc.send doc
 
-    doc.chapters.forEach (chapter) ->
-      write "edit-chapter-heading-#{chapter.id}", chapter.heading
+    setUpEditor "edit-title", doc.title, (mutations, node) ->
+      sync.getDoc(docId).then (doc) ->
+        doc.title = node.textContent
+        sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
 
-      sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
-        write "edit-chapter-body-#{chapter.id}", snapshot.html
+    setUpEditor "edit-description", doc.description, (mutations, node) ->
+      sync.getDoc(docId).then (doc) ->
+        doc.description = node.textContent
+        sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
+
+    doc.chapters.forEach setUpChapter
+
+setUpChapter = (chapter) ->
+  chapterId = chapter.id
+
+  setUpEditor "edit-chapter-heading-#{chapterId}", chapter.heading, (mutations, node) ->
+    sync.getCurrentDocId().then (currentDocId) ->
+      sync.getDoc(currentDocId).then (doc) ->
+        for chapter in doc.chapters
+          if chapter.id == targetChapterId
+            chapter.heading = node.textContent
+
+        sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
+
+  sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
+    setUpEditor "edit-chapter-body-#{chapterId}", snapshot.html, (mutations, node) ->
+      sync.getCurrentDocId().then (currentDocId) ->
+        sync.getDoc(currentDocId).then (doc) ->
+          sync.saveSnapshot({id: chapter.snapshotId, html: node.innerHTML})
+            .then (->) # TODO send a word count update
+
 
 saveHtmlAndLoadDoc = (html) ->
   sync.saveFreshDoc(DocImport.docFromHtml html)
     .then app.ports.loadAsCurrentDoc.send
-
-setUpEditor = (iframe) ->
-  mutationObserverOptions =
-    { subtree: true, childList: true, attributes: true, characterData: true }
-
-  maybeEditor = new Editor iframe, mutationObserverOptions, (mutations, node) ->
-    sync.getCurrentDocId().then (currentDocId) ->
-      sync.getDoc(currentDocId).then (doc) ->
-        doc.title    = DocImport.inferTitleFrom(node) ? doc.title ? ""
-        doc.chapters = DocImport.inferChaptersFrom(node)
-
-        sync.saveDocWithSnapshot(doc, {html: node.innerHTML})
-          .then app.ports.loadAsCurrentDoc.send
 
 showFileChooser = ->
   new Promise (resolve, reject) ->
@@ -102,9 +105,21 @@ whenPresent = (getElem, onSuccess, onError, attemptsRemaining = 10000) ->
   else
     onError()
 
-write = (id, html) ->
+editors = new WeakMap()
+mutationObserverOptions =
+  { subtree: true, childList: true, attributes: true, characterData: true }
+
+getEditorFor = (elem, onMutate) ->
+  if editors.has elem
+    editors.get elem
+  else
+    editor = new Editor elem, mutationObserverOptions, onMutate
+    editors.set elem, editor
+    editor
+
+setUpEditor = (id, html, onMutate) ->
   whenPresent (-> document.getElementById id),
-    ((elem) -> elem.innerHTML = html),
+    ((elem) -> getEditorFor(elem, onMutate).writeHtml html),
     ((err) -> console.error "Could not write after 10,000 attempts:", id, html),
     10000
 
