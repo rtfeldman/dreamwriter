@@ -173,7 +173,6 @@ app.ports.searchNotes.subscribe (query) ->
   # TODO just have the signal send this along
   query = document.getElementById("notes-search-text").value
 
-  console.debug "TODO: search notes database for", query
   notes = [
     {id: "1", title: "Awesome Note", snapshotId: "1234", creationTime: 0, lastModifiedTime: 0}
     {id: "2", title: "Great Scott!", snapshotId: "1234", creationTime: 0, lastModifiedTime: 0}
