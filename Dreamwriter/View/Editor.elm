@@ -5,6 +5,7 @@ import Dreamwriter.Model (..)
 import String
 import Html (..)
 import Html.Attributes (..)
+import Html.Optimize.RefEq as RefEq
 import Html.Events (..)
 import Html.Tags (..)
 import Maybe
@@ -15,6 +16,9 @@ contenteditable = toggle "contentEditable"
 
 view : Doc -> AppState -> Html
 view currentDoc state =
+  RefEq.lazy viewEditor currentDoc
+
+viewEditor currentDoc =
   div [id "editor-container"] [
     div [id "editor-frame"] [
       div [id "editor-header"] [

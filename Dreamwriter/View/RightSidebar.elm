@@ -7,6 +7,7 @@ import Html (..)
 import Html.Attributes (..)
 import Html.Tags (..)
 import Html.Events (..)
+import Html.Optimize.RefEq as RefEq
 import Maybe
 
 -- TODO remove this once it's fixed in elm-html
@@ -15,10 +16,8 @@ contenteditable = toggle "contentEditable"
 view : Doc -> AppState -> Html
 view currentDoc state =
   let sidebarBody = case state.currentNote of
-    Nothing ->
-      div [id "note-listings"] <| map viewNoteListing state.notes
-    Just currentNote ->
-      viewCurrentNote currentNote
+    Nothing          -> RefEq.lazy viewNoteListings state.notes
+    Just currentNote -> RefEq.lazy viewCurrentNote  currentNote
   in
     div [id "right-sidebar-container", class "sidebar"] [
       div [id "right-sidebar-header", class "sidebar-header"] [
@@ -31,6 +30,9 @@ view currentDoc state =
         sidebarBody
       ]
     ]
+
+viewNoteListings notes =
+  div [id "note-listings"] <| map viewNoteListing notes
 
 viewNoteListing : Note -> Html
 viewNoteListing note =

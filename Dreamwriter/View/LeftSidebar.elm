@@ -9,6 +9,7 @@ import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
 import Html.Tags (..)
+import Html.Optimize.RefEq as RefEq
 import Maybe
 import Regex (..)
 
@@ -22,47 +23,51 @@ downloadContentType = "text/plain;charset=UTF-8"
 
 view : Doc -> AppState -> Html
 view currentDoc state =
-  let {headerNodes, bodyNode} = case state.leftSidebarView of
+  let {sidebarHeader, sidebarBody} = case state.leftSidebarView of
     OpenMenuView  ->
-      { headerNodes = [
-          span [class "sidebar-header-control",
-            onclick actions.handle (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
-        ]
-
-      , bodyNode = OpenMenu.view state.docs currentDoc
+      { sidebarHeader = viewOpenMenuHeader
+      , sidebarBody   = RefEq.lazy2 OpenMenu.view state.docs currentDoc
       }
     CurrentDocView ->
-      let downloadOptions = {
-        filename    = (legalizeFilename currentDoc.title) ++ ".html",
-        contentType = downloadContentType
-      }
-      in
-        { headerNodes = [
-            span [
-              title "New",
-              class "sidebar-header-control flaticon-add26",
-              onclick newDocInput.handle (always ())] [],
-            span [
-              title "Open",
-              class "sidebar-header-control flaticon-folder63",
-              onclick actions.handle (\_ -> SetLeftSidebarView OpenMenuView)] [],
-            span [
-              title "Download",
-              class "sidebar-header-control flaticon-cloud134",
-              onclick downloadInput.handle (always downloadOptions)] [],
-            span [
-              title "Print",
-              class "sidebar-header-control flaticon-printer70",
-              onclick printInput.handle (always ())] [],
-            span [
-              title "Settings",
-              class "sidebar-header-control flaticon-machine2"] []
-          ]
-
-        , bodyNode = CurrentDoc.view currentDoc
+        { sidebarHeader = RefEq.lazy viewCurrentDocHeader currentDoc
+        , sidebarBody   = RefEq.lazy CurrentDoc.view currentDoc
         }
   in
     div [id "left-sidebar-container", class "sidebar"] [
-      div [id "left-sidebar-header", class "sidebar-header"] headerNodes,
-      div [id "left-sidebar-body"] [bodyNode]
+      sidebarHeader,
+      div [id "left-sidebar-body"] [sidebarBody]
+    ]
+
+viewOpenMenuHeader =
+  div [key "open-menu-header", id "left-sidebar-header", class "sidebar-header"] [
+    span [class "sidebar-header-control",
+      onclick actions.handle (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
+  ]
+
+viewCurrentDocHeader currentDoc =
+  let downloadOptions = {
+    filename    = (legalizeFilename currentDoc.title) ++ ".html",
+    contentType = downloadContentType
+  }
+  in
+    div [key ("current-doc-header-" ++ currentDoc.title), id "left-sidebar-header", class "sidebar-header"] [
+      span [
+        title "New",
+        class "sidebar-header-control flaticon-add26",
+        onclick newDocInput.handle (always ())] [],
+      span [
+        title "Open",
+        class "sidebar-header-control flaticon-folder63",
+        onclick actions.handle (\_ -> SetLeftSidebarView OpenMenuView)] [],
+      span [
+        title "Download",
+        class "sidebar-header-control flaticon-cloud134",
+        onclick downloadInput.handle (always downloadOptions)] [],
+      span [
+        title "Print",
+        class "sidebar-header-control flaticon-printer70",
+        onclick printInput.handle (always ())] [],
+      span [
+        title "Settings",
+        class "sidebar-header-control flaticon-machine2"] []
     ]
