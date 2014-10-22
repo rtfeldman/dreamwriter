@@ -11,6 +11,8 @@ data Action
   | LoadAsCurrentDoc Doc
   | OpenDocId Identifier
   | ListDocs [Doc]
+  | ListNotes [Note]
+  | SetCurrentNote (Maybe Note)
   | SetLeftSidebarView LeftSidebarView
 
 -- actions from user input
@@ -39,3 +41,10 @@ navigateToTitleInput = Input.input ()
 
 printInput : Input.Input ()
 printInput = Input.input ()
+
+-- TODO make this Input.Input String, with the String being the search query
+searchNotesInput : Input.Input ()
+searchNotesInput = Input.input ()
+
+newNoteInput : Input.Input ()
+newNoteInput = Input.input ()

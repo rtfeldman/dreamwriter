@@ -17,8 +17,11 @@ header-control-hover = #F4F0EC
 #right-sidebar-header
   display flex
 
+#right-sidebar-body
+  padding 8px
+
 #notes-search-button
-  margin-left 8px
+  margin-left 5px
 
 #notes-search-text
   text-shadow none
@@ -49,3 +52,73 @@ header-control-hover = #F4F0EC
 
   p
     text-indent 0
+
+
+#note-listings
+  padding 6px
+
+.note-listing
+  font-size 18px
+  font-family Georgia
+  padding 6px
+  cursor pointer
+  display flex
+
+  &:hover
+    color black
+
+.note-listing-title
+  flex 1
+
+.note-listing-icon
+  margin-right 6px
+
+#current-note
+  padding 12px
+
+#current-note-title-container
+  font-size 24px
+  display flex
+
+#current-note-title
+  flex-grow 1
+  font-family Georgia
+
+#close-current-note
+  font-size 18px
+  padding 3px
+  min-width 24px
+  cursor pointer
+
+  &:hover
+    color black
+
+#current-note-controls
+  display flex
+  justify-content space-between
+  padding 12px
+  padding-bottom 0
+  margin 18px 0
+
+.current-note-control
+  font-size 24px
+  width 42px
+  text-align center
+  cursor pointer
+
+  &:hover
+    color black
+
+  &.flaticon-cloud134
+    font-size 28px
+    position relative
+    top -1px
+
+  &.flaticon-closed18
+    font-size 34px
+    position relative
+    top -5px
+
+#current-note-body
+  font-family Georgia
+  font-size 18px

@@ -34,6 +34,12 @@ step action state =
     ListDocs docs ->
       {state | docs <- docs}
 
+    ListNotes notes ->
+      {state | notes <- notes}
+
+    SetCurrentNote currentNote ->
+      {state | currentNote <- currentNote}
+
     SetLeftSidebarView mode ->
       {state | leftSidebarView <- mode}
 
@@ -45,6 +51,7 @@ userInput =
   merges
   [ lift LoadAsCurrentDoc loadAsCurrentDoc
   , lift ListDocs         listDocs
+  , lift ListNotes        listNotes
   , actions.signal
   ]
 
@@ -58,6 +65,7 @@ state = foldp step emptyState userInput
 
 port loadAsCurrentDoc : Signal Doc
 port listDocs : Signal [Doc]
+port listNotes : Signal [Note]
 
 port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = lift .currentDocId state
@@ -79,3 +87,9 @@ port navigateToChapterId = navigateToChapterIdInput.signal
 
 port navigateToTitle : Signal ()
 port navigateToTitle = navigateToTitleInput.signal
+
+port newNote : Signal ()
+port newNote = newNoteInput.signal
+
+port searchNotes : Signal ()
+port searchNotes = searchNotesInput.signal

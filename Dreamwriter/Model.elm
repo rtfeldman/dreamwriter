@@ -12,6 +12,8 @@ type AppState =
   , docs         : [Doc]
   , currentDoc   : Maybe Doc
   , currentDocId : Maybe Identifier
+  , currentNote  : Maybe Note
+  , notes        : [Note]
   }
 
 emptyState : AppState
@@ -20,6 +22,15 @@ emptyState =
   , docs         = []
   , currentDoc   = Nothing
   , currentDocId = Nothing
+  , currentNote  = Nothing
+  , notes        = []
+  }
+
+type Note =
+  { id               : Identifier
+  , title            : String
+  , creationTime     : MsSinceEpoch
+  , lastModifiedTime : MsSinceEpoch
   }
 
 type Doc =

@@ -8,6 +8,7 @@ blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, l
 app = Elm.fullscreen Elm.App, {
   loadAsCurrentDoc: blankDoc
   listDocs: []
+  listNotes: []
 }
 
 # This will be initialized once a connection to the db has been established.
@@ -148,6 +149,22 @@ app.ports.navigateToChapterId.subscribe (chapterId) ->
 
 app.ports.navigateToTitle.subscribe ->
   document.getElementById("editor-frame").scrollTop = 0
+
+app.ports.newNote.subscribe ->
+  console.debug "TODO: create a new note from template, persist it, then send it over."
+
+app.ports.searchNotes.subscribe (query) ->
+  # TODO just have the signal send this along
+  query = document.getElementById("notes-search-text").value
+
+  console.debug "TODO: search notes database for", query
+  notes = [
+    {id: "1", title: "Awesome Note", snapshotId: "1234", creationTime: 0, lastModifiedTime: 0}
+    {id: "2", title: "Great Scott!", snapshotId: "1234", creationTime: 0, lastModifiedTime: 0}
+    {id: "3", title: "This note has a ridiculously long title for basically no reason at all", snapshotId: "1234", creationTime: 0, lastModifiedTime: 0}
+  ]
+
+  app.ports.listNotes.send notes
 
 app.ports.openFromFile.subscribe ->
   showFileChooser().then (files) ->
