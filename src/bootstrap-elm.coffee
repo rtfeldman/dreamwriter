@@ -17,20 +17,22 @@ sync = null
 # Looks up the doc and snapshot associated with the given docId,
 # writes the snapshot to the editor, and tells Elm about the new currentDocId
 loadDocId = (docId) ->
-  sync.getDoc(docId).then (doc) ->
-    app.ports.loadAsCurrentDoc.send doc
+  sync.getDoc(docId).then loadAsCurrentDoc
 
-    setUpEditor "edit-title", doc.title, (mutations, node) ->
-      sync.getDoc(docId).then (doc) ->
-        doc.title = node.textContent
-        sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
+loadAsCurrentDoc = (doc) ->
+  app.ports.loadAsCurrentDoc.send doc
 
-    setUpEditor "edit-description", doc.description, (mutations, node) ->
-      sync.getDoc(docId).then (doc) ->
-        doc.description = node.textContent
-        sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
+  setUpEditor "edit-title", doc.title, (mutations, node) ->
+    sync.getDoc(doc.id).then (doc) ->
+      doc.title = node.textContent
+      sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
 
-    doc.chapters.forEach setUpChapter
+  setUpEditor "edit-description", doc.description, (mutations, node) ->
+    sync.getDoc(doc.id).then (doc) ->
+      doc.description = node.textContent
+      sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
+
+  doc.chapters.forEach setUpChapter
 
 setUpChapter = (chapter) ->
   chapterId = chapter.id
@@ -38,9 +40,9 @@ setUpChapter = (chapter) ->
   setUpEditor "edit-chapter-heading-#{chapterId}", chapter.heading, (mutations, node) ->
     sync.getCurrentDocId().then (currentDocId) ->
       sync.getDoc(currentDocId).then (doc) ->
-        for chapter in doc.chapters
-          if chapter.id == targetChapterId
-            chapter.heading = node.textContent
+        for currentChapter in doc.chapters
+          if currentChapter.id == chapterId
+            currentChapter.heading = node.textContent
 
         sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
 
@@ -51,10 +53,8 @@ setUpChapter = (chapter) ->
           sync.saveSnapshot({id: chapter.snapshotId, html: node.innerHTML})
             .then (->) # TODO send a word count update
 
-
 saveHtmlAndLoadDoc = (html) ->
-  sync.saveFreshDoc(DocImport.docFromHtml html)
-    .then app.ports.loadAsCurrentDoc.send
+  sync.saveFreshDoc(DocImport.docFromHtml html).then loadAsCurrentDoc
 
 showFileChooser = ->
   new Promise (resolve, reject) ->
@@ -119,7 +119,7 @@ getEditorFor = (elem, onMutate) ->
 
 setUpEditor = (id, html, onMutate) ->
   whenPresent (-> document.getElementById id),
-    ((elem) -> getEditorFor(elem, onMutate).writeHtml html),
+    ((elem) -> getEditorFor(elem, onMutate).writeHtml html, true),
     ((err) -> console.error "Could not write after 10,000 attempts:", id, html),
     10000
 
