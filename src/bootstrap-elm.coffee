@@ -194,6 +194,20 @@ app.ports.openFromFile.subscribe ->
 
     Promise.all(saveAndLoadFromFile file for file in files).then refreshDocList
 
+
+# Polyfill fullScreen
+document.fullScreen = if document.fullScreen? then document.fullScreen else if document.mozFullScreen? then document.mozFullScreen else if document.webkitIsFullScreen? then document.webkitIsFullScreen
+
+app.ports.fullscreen.subscribe (desiredMode) ->
+  fullscreenTarget = document.body
+
+  fullscreenTarget.onwebkitfullscreenchange = -> $(window).resize()
+  fullscreenTarget.onmozfullscreenchange = -> $(window).resize()
+  fullscreenTarget.fullscreenchange = -> $(window).resize()
+
+  bindTarget 'fullscreeneventchange'
+  bindTarget 'webkitfullscreenchange'
+
 DreamSync.connect().then (instance) ->
   sync = instance
 

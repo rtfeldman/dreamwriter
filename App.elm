@@ -93,3 +93,6 @@ port newNote = newNoteInput.signal
 
 port searchNotes : Signal ()
 port searchNotes = searchNotesInput.signal
+
+port fullscreen : Signal Bool
+port fullscreen = fullscreenInput.signal

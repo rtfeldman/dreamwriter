@@ -1,6 +1,7 @@
 module Dreamwriter.View.Editor where
 
 import Dreamwriter.Model (..)
+import Dreamwriter.Action (..)
 import Dreamwriter (..)
 
 import String
@@ -17,9 +18,9 @@ contenteditable = toggle "contentEditable"
 
 view : Doc -> AppState -> Html
 view currentDoc state =
-  RefEq.lazy viewEditor currentDoc
+  RefEq.lazy2 viewEditor currentDoc state.fullscreen
 
-viewEditor currentDoc =
+viewEditor currentDoc fullscreen =
   div [key ("editor-for-" ++ currentDoc.id), id "editor-container"] [
     div [id "editor-frame"] [
       div [id "editor-header"] [
@@ -29,7 +30,7 @@ viewEditor currentDoc =
           span [class "font-control toolbar-button toolbar-font-button", id "toggle-italics"] [text "I"],
           span [class "font-control toolbar-button toolbar-font-button", id "toggle-strikethrough"] [text "\xA0S\xA0"]
         ],
-        div [class "toolbar-section toolbar-button flaticon-expand"] []
+        RefEq.lazy viewFullscreenButton fullscreen
       ],
 
       div [id "document-page"] <| [
@@ -43,6 +44,21 @@ viewEditor currentDoc =
       ]
     ]
   ]
+
+viewFullscreenButton fullscreen =
+  let {fullscreenClass, targetMode} = case fullscreen of
+    True ->
+      { fullscreenClass = "flaticon-collapse"
+      , targetMode      = False
+      }
+    False ->
+      { fullscreenClass = "flaticon-expand"
+      , targetMode      = True
+      }
+  in
+    div [class ("toolbar-section toolbar-button " ++ fullscreenClass),
+      onclick fullscreenInput.handle (always targetMode)
+    ] []
 
 viewTitle : Identifier -> Html
 viewTitle docId = h1 [key ("edit-title-" ++ docId),

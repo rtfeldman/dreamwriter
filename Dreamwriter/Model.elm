@@ -7,6 +7,9 @@ data LeftSidebarView = CurrentDocView | OpenMenuView
 type MsSinceEpoch = Int
 type HtmlString   = String
 
+-- TODO make this a proper ADT once outbound ports can accept them
+type FullscreenState = Bool
+
 type AppState =
   { leftSidebarView : LeftSidebarView
   , docs         : [Doc]
@@ -14,6 +17,7 @@ type AppState =
   , currentDocId : Maybe Identifier
   , currentNote  : Maybe Note
   , notes        : [Note]
+  , fullscreen   : FullscreenState
   }
 
 emptyState : AppState
@@ -24,6 +28,7 @@ emptyState =
   , currentDocId = Nothing
   , currentNote  = Nothing
   , notes        = []
+  , fullscreen   = False
   }
 
 type Note =

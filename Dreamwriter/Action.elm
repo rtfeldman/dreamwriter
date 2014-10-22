@@ -48,3 +48,6 @@ searchNotesInput = Input.input ()
 
 newNoteInput : Input.Input ()
 newNoteInput = Input.input ()
+
+fullscreenInput : Input.Input Bool
+fullscreenInput = Input.input False
