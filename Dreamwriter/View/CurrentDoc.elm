@@ -16,7 +16,9 @@ view currentDoc =
 
     viewOutline currentDoc.chapters,
 
-    span [id "add-chapter", class "flaticon-add139"] []
+    span [id "add-chapter",
+      title "Add Chapter",
+      class "flaticon-add139"] []
   ]
 
 viewOutline : [Chapter] -> Html
