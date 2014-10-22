@@ -38,8 +38,11 @@ view currentDoc state =
       div [id "left-sidebar-body"] [sidebarBody]
     ]
 
+sidebarHeaderId    = "left-sidebar-header"
+sidebarHeaderClass = "sidebar-header"
+
 viewOpenMenuHeader =
-  div [key "open-menu-header", id "left-sidebar-header", class "sidebar-header"] [
+  div [key "open-menu-header", id sidebarHeaderId, class sidebarHeaderClass] [
     span [class "sidebar-header-control",
       onclick actions.handle (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
   ]
@@ -50,7 +53,7 @@ viewCurrentDocHeader currentDoc =
     contentType = downloadContentType
   }
   in
-    div [key ("current-doc-header-" ++ currentDoc.title), id "left-sidebar-header", class "sidebar-header"] [
+    div [key ("current-doc-header-" ++ currentDoc.title), id sidebarHeaderId, class sidebarHeaderClass] [
       span [
         title "New",
         class "sidebar-header-control flaticon-add26",
