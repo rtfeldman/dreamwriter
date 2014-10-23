@@ -14,6 +14,7 @@ data Action
   | ListNotes [Note]
   | SetCurrentNote (Maybe Note)
   | SetLeftSidebarView LeftSidebarView
+  | SetChapters [Chapter]
 
 -- actions from user input
 actions : Input.Input Action

@@ -7,6 +7,7 @@ blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, l
 
 app = Elm.fullscreen Elm.App, {
   loadAsCurrentDoc: blankDoc
+  setChapters: []
   listDocs: []
   listNotes: []
 }
@@ -44,7 +45,7 @@ setUpChapter = (chapter) ->
           if currentChapter.id == chapterId
             currentChapter.heading = node.textContent
 
-        sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
+        sync.saveDoc(doc).then -> app.ports.setChapters.send doc.chapters
 
   sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
     setUpEditor "edit-chapter-body-#{chapterId}", snapshot.html, (mutations, node) ->
