@@ -35,10 +35,10 @@ loadAsCurrentDoc = (doc) ->
 
   doc.chapters.forEach setUpChapter
 
-setUpChapter = (chapter) ->
+setUpChapter = (chapter, scrollToIt = false) ->
   chapterId = chapter.id
 
-  setUpEditor "edit-chapter-heading-#{chapterId}", chapter.heading, (mutations, node) ->
+  setUpEditor("edit-chapter-heading-#{chapterId}", chapter.heading, (mutations, node) ->
     sync.getCurrentDocId().then (currentDocId) ->
       sync.getDoc(currentDocId).then (doc) ->
         for currentChapter in doc.chapters
@@ -46,6 +46,9 @@ setUpChapter = (chapter) ->
             currentChapter.heading = node.textContent
 
         sync.saveDoc(doc).then -> app.ports.setChapters.send doc.chapters
+  ).then ->
+    if scrollToIt
+      scrollToChapterId chapterId
 
   sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
     setUpEditor "edit-chapter-body-#{chapterId}", snapshot.html, (mutations, node) ->
