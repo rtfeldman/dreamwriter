@@ -3,7 +3,7 @@ module App where
 import Dreamwriter (Identifier)
 import Dreamwriter.Action (..)
 import Dreamwriter.Model (..)
-import Dreamwriter.View.App (view)
+import Dreamwriter.View.Page (view)
 
 import String
 import Html (..)

@@ -1,4 +1,4 @@
-module Dreamwriter.View.App where
+module Dreamwriter.View.Page where
 
 import Dreamwriter.Model (..)
 import Dreamwriter.View.LeftSidebar as LeftSidebar
