@@ -95,16 +95,17 @@ readDocFromFile = (file, onSuccess, onError) ->
     reader.readAsText file
 
 
-whenPresent = (getElem, onSuccess, onError, attemptsRemaining = 10000) ->
-  elem = getElem()
+whenPresent = (getElem, attemptsRemaining = 10000) ->
+  new Promise (resolve, reject) ->
+    elem = getElem()
 
-  if elem?
-    onSuccess elem
-  else if attemptsRemaining
-    requestAnimationFrame ->
-      whenPresent getElem, onSuccess, onError, attemptsRemaining - 1
-  else
-    onError()
+    if elem?
+      resolve elem
+    else if attemptsRemaining
+      requestAnimationFrame ->
+        whenPresent(getElem, attemptsRemaining - 1).then resolve, reject
+    else
+      reject()
 
 editors = new WeakMap()
 mutationObserverOptions =
@@ -119,10 +120,9 @@ getEditorFor = (elem, onMutate) ->
     editor
 
 setUpEditor = (id, html, onMutate) ->
-  whenPresent (-> document.getElementById id),
-    ((elem) -> getEditorFor(elem, onMutate).writeHtml html, true),
-    ((err) -> console.error "Could not write after 10,000 attempts:", id, html),
-    10000
+  whenPresent((-> document.getElementById id), 10000)
+    .then ((elem) -> getEditorFor(elem, onMutate).writeHtml html, true),
+          ((err)  -> console.error "Could not write after 10,000 attempts:", id, html)
 
 refreshDocList = -> sync.listDocs().then (docs) ->
   app.ports.listDocs.send docs
@@ -140,8 +140,8 @@ app.ports.newDoc.subscribe ->
   refreshDocList()
 
 app.ports.downloadDoc.subscribe ({filename, contentType}) ->
-  whenPresent (-> document.getElementById "document-page"),
-    ((elem) ->
+  whenPresent((-> document.getElementById "document-page"), 10000)
+    .then ((elem) ->
       clone = document.getElementById("document-page").cloneNode true
 
       for editable in clone.querySelectorAll("[contentEditable=true]")
