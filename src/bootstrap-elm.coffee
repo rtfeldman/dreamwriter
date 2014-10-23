@@ -83,6 +83,20 @@ readDocFromFile = (file, onSuccess, onError) ->
 
     FileIO.readTextFromFile(file).then onSuccess, reject
 
+downloadDoc = (filename, contentType) ->
+  whenPresent((-> document.getElementById "document-page"), 10000)
+    .then ((elem) ->
+      clone = document.getElementById("document-page").cloneNode true
+
+      for editable in clone.querySelectorAll("[contentEditable=true]")
+        editable.contentEditable = false
+        editable.spellcheck = false
+
+      html = DocImport.wrapInDocMarkup {body: clone.innerHTML}
+      FileIO.saveAs new Blob([html], {type: contentType}), filename
+    ),
+    ((err) -> console.error "Could not download from page after 10,000 attempts"),
+
 # TODO when there's some way to receive a Signal (or something) that a real DOM
 # node has been created, replace this hackery with that.
 whenPresent = (getElem, attemptsRemaining = 10000) ->
@@ -136,22 +150,9 @@ app.ports.newDoc.subscribe ->
   saveHtmlAndLoadDoc DocImport.blankDocHtml
   refreshDocList()
 
-app.ports.downloadDoc.subscribe ({filename, contentType}) ->
-  whenPresent((-> document.getElementById "document-page"), 10000)
-    .then ((elem) ->
-      clone = document.getElementById("document-page").cloneNode true
+app.ports.downloadDoc.subscribe ({filename, contentType}) -> downloadDoc filename, contentType
 
-      for editable in clone.querySelectorAll("[contentEditable=true]")
-        editable.contentEditable = false
-        editable.spellcheck = false
-
-      html = DocImport.wrapInDocMarkup {body: clone.innerHTML}
-      FileIO.saveAs new Blob([html], {type: contentType}), filename
-    ),
-    ((err) -> console.error "Could not download from page after 10,000 attempts"),
-
-app.ports.printDoc.subscribe ->
-  window.print()
+app.ports.printDoc.subscribe -> window.print()
 
 app.ports.navigateToChapterId.subscribe scrollToChapterId
 
