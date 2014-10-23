@@ -217,8 +217,6 @@ module.exports = function(grunt) {
           '/App.js                         /cache/App.js',
           '/vendor.js                      /cache/vendor.js',
           '/bootstrap-elm.js               /cache/bootstrap-elm.js',
-          '/fonts/robot-slab-bold.woff     /cache/fonts/roboto-slab-bold.woff',
-          '/fonts/roboto-slab-regular.woff /cache/fonts/roboto-slab-regular.woff',
           '/fonts/ubuntu.woff              /cache/fonts/ubuntu.woff',
           '/images/dlogo.png               /cache/images/dlogo.png',
           '/images/dropbox-logo.png        /cache/images/dropbox-logo.png',
