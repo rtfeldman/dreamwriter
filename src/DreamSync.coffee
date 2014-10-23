@@ -28,6 +28,11 @@ module.exports = class DreamSync
   getDoc:      (id) => @db.docs.get      id
   getSnapshot: (id) => @db.snapshots.get id
 
+  getCurrentDoc: =>
+    new Promise (resolve, reject) =>
+      @getCurrentDocId().then (id) =>
+        @getDoc(id).then resolve, reject
+
   saveDoc:      (doc)      => @db.docs.update      doc
   saveSnapshot: (snapshot) => @db.snapshots.update snapshot
 
