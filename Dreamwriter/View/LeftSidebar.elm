@@ -21,21 +21,35 @@ legalizeFilename = replace All illegalFilenameCharMatcher (\_ -> "_")
 
 downloadContentType = "text/plain;charset=UTF-8"
 
+viewOpenMenuFooter : Html
+viewOpenMenuFooter = span [] []
+
+viewCurrentDocFooter : Html
+viewCurrentDocFooter =
+  div [id "left-sidebar-footer", class "sidebar-footer"] [
+    span [id "add-chapter",
+      title "Add Chapter",
+      onclick newChapterInput.handle (always ()),
+      class "flaticon-add139"] []]
+
 view : Doc -> AppState -> Html
 view currentDoc state =
-  let {sidebarHeader, sidebarBody} = case state.leftSidebarView of
+  let {sidebarHeader, sidebarBody, sidebarFooter} = case state.leftSidebarView of
     OpenMenuView  ->
       { sidebarHeader = viewOpenMenuHeader
       , sidebarBody   = RefEq.lazy2 OpenMenu.view state.docs currentDoc
+      , sidebarFooter = viewOpenMenuFooter
       }
     CurrentDocView ->
       { sidebarHeader = RefEq.lazy viewCurrentDocHeader currentDoc
       , sidebarBody   = RefEq.lazy CurrentDoc.view currentDoc
+      , sidebarFooter = viewCurrentDocFooter
       }
   in
     div [id "left-sidebar-container", class "sidebar"] [
       sidebarHeader,
-      div [id "left-sidebar-body"] [sidebarBody]
+      div [id "left-sidebar-body", class "sidebar-body"] [sidebarBody],
+      sidebarFooter
     ]
 
 sidebarHeaderId    = "left-sidebar-header"

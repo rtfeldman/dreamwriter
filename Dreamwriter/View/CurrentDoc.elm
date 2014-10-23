@@ -14,12 +14,7 @@ view currentDoc =
     div [id "title", onclick navigateToTitleInput.handle (always ())]
       [text currentDoc.title],
 
-    viewOutline currentDoc.chapters,
-
-    span [id "add-chapter",
-      title "Add Chapter",
-      onclick newChapterInput.handle (always ()),
-      class "flaticon-add139"] []
+    viewOutline currentDoc.chapters
   ]
 
 viewOutline : [Chapter] -> Html

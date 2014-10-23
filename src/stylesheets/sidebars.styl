@@ -3,12 +3,16 @@ header-control-hover = #F4F0EC
 
 .sidebar
   font-family 'Ubuntu', Helvetica, Arial, sans-serif
+  display flex
+  flex-direction column
 
 .sidebar-header
   display flex
   justify-content space-between
   box-sizing border-box
   padding 8px 16px
+  height 58px
+  flex-shrink 0
 
 .sidebar-header-control
   font-size 32px
@@ -19,3 +23,11 @@ header-control-hover = #F4F0EC
 
   &:hover
     color header-control-hover
+
+.sidebar-body
+  overflow auto
+
+.sidebar-footer
+  height 48px
+  padding 8px
+  flex-shrink 0

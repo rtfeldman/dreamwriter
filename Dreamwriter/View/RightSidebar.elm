@@ -15,9 +15,15 @@ contenteditable = toggle "contentEditable"
 
 view : Doc -> AppState -> Html
 view currentDoc state =
-  let sidebarBody = case state.currentNote of
-    Nothing          -> RefEq.lazy viewNoteListings state.notes
-    Just currentNote -> RefEq.lazy viewCurrentNote  currentNote
+  let {sidebarBody, sidebarFooter} = case state.currentNote of
+    Nothing ->
+      { sidebarBody   = RefEq.lazy viewNoteListings state.notes
+      , sidebarFooter = span [] []
+      }
+    Just currentNote ->
+      { sidebarBody   = RefEq.lazy viewCurrentNoteBody   currentNote
+      , sidebarFooter = RefEq.lazy viewCurrentNoteFooter currentNote
+      }
   in
     div [id "right-sidebar-container", class "sidebar"] [
       div [id "right-sidebar-header", class "sidebar-header"] [
@@ -26,9 +32,10 @@ view currentDoc state =
         span [id "notes-search-button", class "sidebar-header-control flaticon-pencil90",
           onclick newNoteInput.handle (always ())] []
       ],
-      div [id "right-sidebar-body"] [
+      div [id "right-sidebar-body", class "sidebar-body"] [
         sidebarBody
-      ]
+      ],
+      sidebarFooter
     ]
 
 viewNoteListings notes =
@@ -42,8 +49,8 @@ viewNoteListing note =
       div [class "note-listing-title"] [text note.title]
     ]
 
-viewCurrentNote : Note -> Html
-viewCurrentNote note =
+viewCurrentNoteBody : Note -> Html
+viewCurrentNoteBody note =
   div [key ("current-note-" ++ note.id), id "current-note"] [
     div [id "current-note-title-container"] [
       div [id "current-note-title"] [text note.title],
@@ -51,19 +58,22 @@ viewCurrentNote note =
         title "Close Note",
         onclick actions.handle (\_ -> SetCurrentNote Nothing)] []
     ],
-    div [id "current-note-body", contenteditable True] [text "TODO: Write a note here!"],
-    div [id "current-note-controls"] [
-      span [id "download-current-note",
-        title "Download Note",
-        class "flaticon-cloud134 current-note-control"] [],
-      span [id "print-current-note",
-        title "Print Note",
-        class "flaticon-printer70 current-note-control"] [],
-      span [id "current-note-settings",
-        title "Note Settings",
-        class "flaticon-machine2 current-note-control"] [],
-      span [id "delete-current-note",
-        title "Delete Note",
-        class "flaticon-closed18 current-note-control"] []
-    ]
+    div [id "current-note-body", contenteditable True] [text "TODO: Write a note here!"]
+  ]
+
+viewCurrentNoteFooter : Note -> Html
+viewCurrentNoteFooter note =
+  div [id "current-note-controls", class "sidebar-footer"] [
+    span [id "download-current-note",
+      title "Download Note",
+      class "flaticon-cloud134 current-note-control"] [],
+    span [id "print-current-note",
+      title "Print Note",
+      class "flaticon-printer70 current-note-control"] [],
+    span [id "current-note-settings",
+      title "Note Settings",
+      class "flaticon-machine2 current-note-control"] [],
+    span [id "delete-current-note",
+      title "Delete Note",
+      class "flaticon-closed18 current-note-control"] []
   ]
