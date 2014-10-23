@@ -36,6 +36,28 @@ module.exports = class DreamSync
   saveDoc:      (doc)      => @db.docs.update      doc
   saveSnapshot: (snapshot) => @db.snapshots.update snapshot
 
+  addChapter: (doc, heading, html) =>
+    snapshot = {id: DreamSync.getRandomSha(), html}
+
+    currentTime = new Date().getTime()
+
+    chapter = {
+      id:               DreamSync.getRandomSha()
+      heading:          heading
+      lastModifiedTime: currentTime
+      creationTime:     currentTime
+      snapshotId:       snapshot.id
+      words:            0 # TODO count words!
+    }
+
+    doc.chapters.push chapter
+
+    new Promise (resolve, reject) =>
+      Promise.all([
+        (@saveSnapshot snapshot)
+        (@saveDoc      doc)
+      ]).then (-> resolve doc), reject
+
   # Mutates the LIVING HELL out of the doc you give it, so watch out!
   # Assumes the chapters on the doc you give it will have an "html" field,
   # which this deletes before persisting those fields as snapshots.

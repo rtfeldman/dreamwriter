@@ -101,6 +101,9 @@ port navigateToTitle = navigateToTitleInput.signal
 port newNote : Signal ()
 port newNote = newNoteInput.signal
 
+port newChapter : Signal ()
+port newChapter = newChapterInput.signal
+
 port searchNotes : Signal ()
 port searchNotes = searchNotesInput.signal
 

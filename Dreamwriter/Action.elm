@@ -50,5 +50,8 @@ searchNotesInput = Input.input ()
 newNoteInput : Input.Input ()
 newNoteInput = Input.input ()
 
+newChapterInput : Input.Input ()
+newChapterInput = Input.input ()
+
 fullscreenInput : Input.Input Bool
 fullscreenInput = Input.input False

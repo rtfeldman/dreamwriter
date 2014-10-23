@@ -18,6 +18,7 @@ view currentDoc =
 
     span [id "add-chapter",
       title "Add Chapter",
+      onclick newChapterInput.handle (always ()),
       class "flaticon-add139"] []
   ]
 

@@ -35,10 +35,12 @@ loadAsCurrentDoc = (doc) ->
 
   doc.chapters.forEach setUpChapter
 
-setUpChapter = (chapter, scrollToIt = false) ->
+setUpChapter = (chapter) ->
   chapterId = chapter.id
+  headingEditorElemId = "edit-chapter-heading-#{chapterId}"
+  bodyEditorElemId    = "edit-chapter-body-#{chapterId}"
 
-  setUpEditor("edit-chapter-heading-#{chapterId}", chapter.heading, (mutations, node) ->
+  editorHeadingPromise = setUpEditor headingEditorElemId, chapter.heading, (mutations, node) ->
     sync.getCurrentDocId().then (currentDocId) ->
       sync.getDoc(currentDocId).then (doc) ->
         for currentChapter in doc.chapters
@@ -46,16 +48,28 @@ setUpChapter = (chapter, scrollToIt = false) ->
             currentChapter.heading = node.textContent
 
         sync.saveDoc(doc).then -> app.ports.setChapters.send doc.chapters
-  ).then ->
-    if scrollToIt
-      scrollToChapterId chapterId
 
-  sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
-    setUpEditor "edit-chapter-body-#{chapterId}", snapshot.html, (mutations, node) ->
-      sync.getCurrentDocId().then (currentDocId) ->
-        sync.getDoc(currentDocId).then (doc) ->
-          sync.saveSnapshot({id: chapter.snapshotId, html: node.innerHTML})
-            .then (->) # TODO send a word count update
+  editorBodyPromise = new Promise (resolve, reject) ->
+    sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
+      setUpEditor bodyEditorElemId, snapshot.html, (mutations, node) ->
+        sync.getCurrentDocId().then (currentDocId) ->
+          sync.getDoc(currentDocId).then (doc) ->
+            sync.saveSnapshot({id: chapter.snapshotId, html: node.innerHTML})
+              .then resolve, reject
+
+  Promise.all [editorHeadingPromise, editorBodyPromise]
+
+app.ports.newChapter.subscribe ->
+  sync.getCurrentDoc().then (doc) ->
+    sync.addChapter(doc,
+      DocImport.blankChapterHeading, DocImport.blankChapterHtml).then (doc) ->
+        app.ports.setChapters.send doc.chapters
+
+        newChapter = doc.chapters[doc.chapters.length - 1]
+        setUpChapter(newChapter).then (editorHeading, editorBody) ->
+          scrollToChapterId newChapter.id
+          document.getElementById("edit-chapter-heading-#{newChapter.id}").focus()
+          # TODO now select all!
 
 saveHtmlAndLoadDoc = (html) ->
   sync.saveFreshDoc(DocImport.docFromHtml html).then loadAsCurrentDoc

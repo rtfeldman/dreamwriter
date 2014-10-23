@@ -1,6 +1,8 @@
-blankDocHtml    = require("./templates/BlankDocBody.mustache")()
-introDocHtml    = require("./templates/IntroDocBody.mustache")()
-wrapInDocMarkup = require("./templates/Doc.mustache")
+blankDocHtml        = require("./templates/BlankDocBody.mustache")()
+introDocHtml        = require("./templates/IntroDocBody.mustache")()
+blankChapterHtml    = require("./templates/BlankChapterBody.mustache")()
+wrapInDocMarkup     = require("./templates/Doc.mustache")
+blankChapterHeading = "Amazing Chapter"
 
 htmlUntil = (node, predicate) ->
   if predicate node
@@ -54,6 +56,8 @@ docFromFile = (filename, lastModifiedTime, html) ->
 module.exports = {
   blankDocHtml
   introDocHtml
+  blankChapterHtml
+  blankChapterHeading
   inferTitleFrom
   inferChaptersFrom
   docFromHtml
