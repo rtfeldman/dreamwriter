@@ -1,7 +1,7 @@
 Editor    = require "./Editor.coffee"
 DreamSync = require "./DreamSync.coffee"
 DocImport = require "./DocImport.coffee"
-saveAs    = require "FileSaver.js"
+FileIO    = require "./FileIO.coffee"
 
 blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, lastModifiedTime: 0, words: 0}
 
@@ -72,44 +72,19 @@ app.ports.newChapter.subscribe ->
 saveHtmlAndLoadDoc = (html) ->
   sync.saveFreshDoc(DocImport.docFromHtml html).then loadAsCurrentDoc
 
-showFileChooser = ->
-  new Promise (resolve, reject) ->
-    fileChooser = document.createElement "input"
-    clickEvent  = document.createEvent "MouseEvents"
-
-    for name, value of {type: "file", accept: "text/html", multiple: "true"}
-      fileChooser.setAttribute name, value
-
-    fileChooser.addEventListener "change", (event) ->
-      files = fileChooser.files
-
-      # Self-destruct now that we're no longer needed.
-      document.body.removeChild fileChooser
-
-      resolve files
-
-    document.body.appendChild fileChooser
-
-    clickEvent.initMouseEvent "click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null
-
-    fileChooser.dispatchEvent clickEvent
-
 readDocFromFile = (file, onSuccess, onError) ->
   new Promise (resolve, reject) ->
-    reader = new FileReader
-
-    reader.onerror = reject
-    reader.onabort = reject
-    reader.onload = (response) ->
+    onSuccess = (response) ->
       filename         = file.name ? file.fileName
       lastModifiedTime = if file.lastModifiedDate? then (new Date file.lastModifiedDate).getTime() else undefined
       html             = response.target.result
 
       resolve DocImport.docFromFile filename, lastModifiedTime, html
 
-    reader.readAsText file
+    FileIO.readTextFromFile(file).then onSuccess, reject
 
-
+# TODO when there's some way to receive a Signal (or something) that a real DOM
+# node has been created, replace this hackery with that.
 whenPresent = (getElem, attemptsRemaining = 10000) ->
   new Promise (resolve, reject) ->
     elem = getElem()
@@ -171,7 +146,7 @@ app.ports.downloadDoc.subscribe ({filename, contentType}) ->
         editable.spellcheck = false
 
       html = DocImport.wrapInDocMarkup {body: clone.innerHTML}
-      saveAs new Blob([html], {type: contentType}), filename
+      FileIO.saveAs new Blob([html], {type: contentType}), filename
     ),
     ((err) -> console.error "Could not download from page after 10,000 attempts"),
 
@@ -199,7 +174,9 @@ app.ports.searchNotes.subscribe (query) ->
   app.ports.listNotes.send notes
 
 app.ports.openFromFile.subscribe ->
-  showFileChooser().then (files) ->
+  fileChooserAttributes = {accept: "text/html", multiple: "true"}
+
+  FileIO.showFileChooser(fileChooserAttributes).then (files) ->
     saveAndLoadFromFile = (file) ->
       new Promise (resolve, reject) ->
         saveAndResolve = (doc) ->
