@@ -72,6 +72,8 @@ scene state (w, h) =
 state : Signal AppState
 state = foldp step emptyState userInput
 
+-- PORTS --
+
 port loadAsCurrentDoc : Signal Doc
 port setChapters : Signal [Chapter]
 port listDocs : Signal [Doc]
