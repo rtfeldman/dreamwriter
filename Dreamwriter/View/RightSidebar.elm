@@ -51,6 +51,7 @@ viewCurrentNote note =
         title "Close Note",
         onclick actions.handle (\_ -> SetCurrentNote Nothing)] []
     ],
+    div [id "current-note-body", contenteditable True] [text "TODO: Write a note here!"],
     div [id "current-note-controls"] [
       span [id "download-current-note",
         title "Download Note",
@@ -64,6 +65,5 @@ viewCurrentNote note =
       span [id "delete-current-note",
         title "Delete Note",
         class "flaticon-closed18 current-note-control"] []
-    ],
-    div [id "current-note-body", contenteditable True] [text "TODO: Write a note here!"]
+    ]
   ]
