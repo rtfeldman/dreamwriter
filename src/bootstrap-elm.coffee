@@ -41,21 +41,19 @@ setUpChapter = (chapter) ->
   bodyEditorElemId    = "edit-chapter-body-#{chapterId}"
 
   editorHeadingPromise = setUpEditor headingEditorElemId, chapter.heading, (mutations, node) ->
-    sync.getCurrentDocId().then (currentDocId) ->
-      sync.getDoc(currentDocId).then (doc) ->
-        for currentChapter in doc.chapters
-          if currentChapter.id == chapterId
-            currentChapter.heading = node.textContent
+    sync.getCurrentDoc().then (doc) ->
+      for currentChapter in doc.chapters
+        if currentChapter.id == chapterId
+          currentChapter.heading = node.textContent
 
-        sync.saveDoc(doc).then -> app.ports.setChapters.send doc.chapters
+      sync.saveDoc(doc).then -> app.ports.setChapters.send doc.chapters
 
   editorBodyPromise = new Promise (resolve, reject) ->
     sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
       setUpEditor bodyEditorElemId, snapshot.html, (mutations, node) ->
-        sync.getCurrentDocId().then (currentDocId) ->
-          sync.getDoc(currentDocId).then (doc) ->
-            sync.saveSnapshot({id: chapter.snapshotId, html: node.innerHTML})
-              .then resolve, reject
+        sync.getCurrentDoc().then (doc) ->
+          sync.saveSnapshot({id: chapter.snapshotId, html: node.innerHTML})
+            .then resolve, reject
 
   Promise.all [editorHeadingPromise, editorBodyPromise]
 
