@@ -127,6 +127,13 @@ setUpEditor = (id, html, onMutate) ->
 refreshDocList = -> sync.listDocs().then (docs) ->
   app.ports.listDocs.send docs
 
+scrollToChapterId = (chapterId) ->
+  editorFrame    = document.getElementById("editor-frame")
+  editorHeader   = document.getElementById("editor-header")
+  chapterHeading = document.getElementById("edit-chapter-heading-#{chapterId}")
+
+  editorFrame.scrollTop = chapterHeading.offsetTop - editorHeader.offsetHeight
+
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
     # TODO Ideally this would not be Race Condition City...
@@ -152,17 +159,11 @@ app.ports.downloadDoc.subscribe ({filename, contentType}) ->
       saveAs new Blob([html], {type: contentType}), filename
     ),
     ((err) -> console.error "Could not download from page after 10,000 attempts"),
-    10000
 
 app.ports.printDoc.subscribe ->
   window.print()
 
-app.ports.navigateToChapterId.subscribe (chapterId) ->
-  editorFrame    = document.getElementById("editor-frame")
-  editorHeader   = document.getElementById("editor-header")
-  chapterHeading = document.getElementById("edit-chapter-heading-#{chapterId}")
-
-  editorFrame.scrollTop = chapterHeading.offsetTop - editorHeader.offsetHeight
+app.ports.navigateToChapterId.subscribe scrollToChapterId
 
 app.ports.navigateToTitle.subscribe ->
   document.getElementById("editor-frame").scrollTop = 0
