@@ -7,9 +7,9 @@
 # 2. Writes to the element when requested, optionally while disabling the 
 #    mutation observer to avoid spurious updates.
 module.exports = class Editor
-  constructor: (@elem, @mutationObserverOptions, onChange) ->
+  constructor: (@elem, @mutationObserverOptions, @onChange) ->
     @mutationObserver = new MutationObserver (mutations) =>
-      onChange mutations, @elem
+      @onChange mutations, @elem
 
     @enableMutationObserver()
 

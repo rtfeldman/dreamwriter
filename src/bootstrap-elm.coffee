@@ -119,7 +119,9 @@ mutationObserverOptions =
 
 getEditorFor = (elem, onMutate) ->
   if editors.has elem
-    editors.get elem
+    editor = editors.get elem
+    editor.onChange = onMutate
+    editor
   else
     editor = new Editor elem, mutationObserverOptions, onMutate
     editors.set elem, editor
