@@ -8,6 +8,8 @@ blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, l
 app = Elm.fullscreen Elm.App, {
   loadAsCurrentDoc: blankDoc
   setChapters: []
+  setTitle: ""
+  setDescription: ""
   listDocs: []
   listNotes: []
 }
@@ -26,12 +28,12 @@ loadAsCurrentDoc = (doc) ->
   setUpEditor "edit-title", doc.title, (mutations, node) ->
     sync.getDoc(doc.id).then (doc) ->
       doc.title = node.textContent
-      sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
+      sync.saveDoc(doc).then -> app.ports.setTitle.send doc.title
 
   setUpEditor "edit-description", doc.description, (mutations, node) ->
     sync.getDoc(doc.id).then (doc) ->
       doc.description = node.textContent
-      sync.saveDoc(doc).then -> app.ports.loadAsCurrentDoc.send doc
+      sync.saveDoc(doc).then -> app.ports.setDescription.send doc.description
 
   doc.chapters.forEach setUpChapter
 

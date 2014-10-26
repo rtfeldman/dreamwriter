@@ -15,13 +15,12 @@ import Maybe
 -- TODO remove this once it's fixed in elm-html
 contenteditable = toggle "contentEditable" 
 
-
 view : Doc -> AppState -> Html
 view currentDoc state =
   RefEq.lazy2 viewEditor currentDoc state.fullscreen
 
 viewEditor currentDoc fullscreen =
-  div [key ("editor-for-" ++ currentDoc.id), id "editor-container"] [
+  div [id "editor-container"] [
     div [id "editor-frame"] [
       div [id "editor-header"] [
         div [class "toolbar-section toolbar-button flaticon-zoom19"] [],
@@ -34,8 +33,8 @@ viewEditor currentDoc fullscreen =
       ],
 
       div [id "document-page"] <| [
-        RefEq.lazy viewTitle       currentDoc.id,
-        RefEq.lazy viewDescription currentDoc.id
+        h1  [class "editable", id "edit-title",       contenteditable True, spellcheck True] [],
+        div [class "editable", id "edit-description", contenteditable True, spellcheck True] []
       ] ++ map (lazyViewChapter << .id) currentDoc.chapters,
 
       div [id "editor-footer"] [
@@ -59,14 +58,6 @@ viewFullscreenButton fullscreen =
     div [class ("toolbar-section toolbar-button " ++ fullscreenClass),
       onclick fullscreenInput.handle (always targetMode)
     ] []
-
-viewTitle : Identifier -> Html
-viewTitle docId = h1 [key ("edit-title-" ++ docId),
-  class "editable", id "edit-title", contenteditable True, spellcheck True] []
-
-viewDescription : Identifier -> Html
-viewDescription docId = div [key ("edit-description-" ++ docId),
-  class "editable", id "edit-description", contenteditable True, spellcheck True] []
 
 lazyViewChapter : Identifier -> Html
 lazyViewChapter chapterId = RefEq.lazy viewChapter chapterId

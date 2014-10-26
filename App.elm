@@ -48,6 +48,23 @@ step action state =
           in
             {state | currentDoc <- Just newCurrentDoc}
 
+    SetTitle title ->
+      case state.currentDoc of
+        Nothing -> state
+        Just doc ->
+          let newCurrentDoc = {doc | title <- title}
+          in
+            {state | currentDoc <- Just newCurrentDoc}
+
+    SetDescription description ->
+      case state.currentDoc of
+        Nothing -> state
+        Just doc ->
+          let newCurrentDoc = {doc | description <- description}
+          in
+            {state | currentDoc <- Just newCurrentDoc}
+
+
     SetLeftSidebarView mode ->
       {state | leftSidebarView <- mode}
 
@@ -61,6 +78,8 @@ userInput =
   , lift ListDocs         listDocs
   , lift ListNotes        listNotes
   , lift SetChapters      setChapters
+  , lift SetTitle         setTitle
+  , lift SetDescription   setDescription
   , actions.signal
   ]
 
@@ -76,6 +95,8 @@ state = foldp step emptyState userInput
 
 port loadAsCurrentDoc : Signal Doc
 port setChapters : Signal [Chapter]
+port setTitle : Signal String
+port setDescription : Signal String
 port listDocs : Signal [Doc]
 port listNotes : Signal [Note]
 
