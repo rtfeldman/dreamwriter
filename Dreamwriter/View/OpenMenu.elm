@@ -42,9 +42,3 @@ viewOpenDocEntryFor currentDoc doc =
   in
     div [key ("#open-doc-" ++ doc.id), class className,
       onclick actions.handle (\_ -> OpenDocId doc.id)] [text doc.title]
-
-preferDoc : Doc -> Doc -> Doc
-preferDoc preferredDoc doc =
-  if doc.id == preferredDoc.id
-    then preferredDoc
-    else doc
