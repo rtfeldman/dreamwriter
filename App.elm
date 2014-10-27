@@ -28,8 +28,9 @@ step action state =
 
     LoadAsCurrentDoc doc ->
       let stateAfterOpenDocId = step (OpenDocId doc.id) state
+          newState = {stateAfterOpenDocId | currentDoc <- Just doc}
       in
-        {stateAfterOpenDocId | currentDoc <- Just doc}
+        updateCurrentDoc (\_ -> doc) newState
 
     ListDocs docs ->
       {state | docs <- docs}
@@ -41,32 +42,27 @@ step action state =
       {state | currentNote <- currentNote}
 
     SetChapters chapters ->
-      case state.currentDoc of
-        Nothing -> state
-        Just doc ->
-          let newCurrentDoc = {doc | chapters <- chapters}
-          in
-            {state | currentDoc <- Just newCurrentDoc}
+      updateCurrentDoc (\doc -> {doc | chapters <- chapters}) state
 
     SetTitle title ->
-      case state.currentDoc of
-        Nothing -> state
-        Just doc ->
-          let newCurrentDoc = {doc | title <- title}
-          in
-            {state | currentDoc <- Just newCurrentDoc}
+      updateCurrentDoc (\doc -> {doc | title <- title}) state
 
     SetDescription description ->
-      case state.currentDoc of
-        Nothing -> state
-        Just doc ->
-          let newCurrentDoc = {doc | description <- description}
-          in
-            {state | currentDoc <- Just newCurrentDoc}
-
+      updateCurrentDoc (\doc -> {doc | description <- description}) state
 
     SetLeftSidebarView mode ->
       {state | leftSidebarView <- mode}
+
+updateCurrentDoc : (Doc -> Doc) -> AppState -> AppState
+updateCurrentDoc transformCurrentDoc state =
+  case state.currentDoc of
+    Nothing -> state
+    Just currentDoc ->
+      let newCurrentDoc = transformCurrentDoc currentDoc
+          newDocs       = map (preferDoc newCurrentDoc) state.docs
+      in
+        {state | currentDoc <- Just newCurrentDoc
+               , docs       <- newDocs}
 
 main : Signal Element
 main = lift2 scene state Window.dimensions
