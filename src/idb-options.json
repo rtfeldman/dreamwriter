@@ -1,6 +1,6 @@
 {
-  "server": "dreamwriter",
-  "version": "2",
+  "server": "dreamwriter-alpha",
+  "version": "1",
   "schema": {
     "settings": {
       "key": {"keyPath": "id", "autoIncrement": false}
