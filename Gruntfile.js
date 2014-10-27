@@ -48,16 +48,10 @@ module.exports = function(grunt) {
     },
 
     connect: {
-      dev: {
-        options: {
-          port: 8000,
-          base: 'dist'
-        }
-      },
       prod: {
         options: {
-          port: "<%= connect.dev.options.port %>",
-          base: '<%= connect.dev.options.base %>',
+          port: 8000,
+          base: 'dist',
           keepalive: true
         }
       }
@@ -225,6 +219,21 @@ module.exports = function(grunt) {
       }
     },
 
+    browserSync: {
+      dev: {
+        bsFiles: {
+          src : 'dist/**/*'
+        },
+        options: {
+          watchTask: true,
+          port: 8000,
+          server: {
+            baseDir: "dist"
+          }
+        }
+      }
+    },
+
     s3: {
       options: awsCredentials,
 
@@ -235,7 +244,7 @@ module.exports = function(grunt) {
     }
   });
 
-  ["grunt-contrib-watch", "grunt-contrib-htmlmin", "grunt-contrib-cssmin", "grunt-contrib-htmlmin", "grunt-contrib-uglify", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache", "grunt-aws"].forEach(function(plugin) {
+  ["grunt-contrib-watch", "grunt-contrib-htmlmin", "grunt-contrib-cssmin", "grunt-contrib-htmlmin", "grunt-contrib-uglify", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache", "grunt-aws", "grunt-browser-sync"].forEach(function(plugin) {
     grunt.loadNpmTasks(plugin);
   });
 
@@ -246,5 +255,5 @@ module.exports = function(grunt) {
   grunt.registerTask("prod",   ["build:prod", "connect:prod"]);
   grunt.registerTask("deploy", ["clean", "build:prod", "s3"]);
 
-  grunt.registerTask("default", ["clean", "build", "connect:dev", "watch"]);
+  grunt.registerTask("default", ["clean", "build", "browserSync:dev", "watch"]);
 };
