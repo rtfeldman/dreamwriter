@@ -3,6 +3,13 @@
 editor-width = 700px
 editor-header-width = editor-width - 40
 
+user-select()
+  -moz-user-select arguments
+  -khtml-user-select arguments
+  -webkit-user-select arguments
+  -o-user-select arguments
+  user-select arguments
+
 #edit-description
   text-align center
 
@@ -42,6 +49,7 @@ editor-header-width = editor-width - 40
   border 1px solid #aaa
 
   .toolbar-button
+    user-select none
     padding 6px 0
     text-shadow 2px 2px 1px #EEE
     cursor pointer

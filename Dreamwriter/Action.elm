@@ -58,3 +58,6 @@ newChapterInput = Input.input ()
 
 fullscreenInput : Input.Input Bool
 fullscreenInput = Input.input False
+
+execCommandInput : Input.Input String
+execCommandInput = Input.input ""

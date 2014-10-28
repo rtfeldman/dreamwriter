@@ -133,3 +133,6 @@ port searchNotes = searchNotesInput.signal
 
 port fullscreen : Signal Bool
 port fullscreen = fullscreenInput.signal
+
+port execCommand : Signal String
+port execCommand = execCommandInput.signal

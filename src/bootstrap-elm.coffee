@@ -167,6 +167,9 @@ app.ports.navigateToTitle.subscribe ->
 app.ports.newNote.subscribe ->
   console.debug "TODO: create a new note from template, persist it, then send it over."
 
+app.ports.execCommand.subscribe (command) ->
+  document.execCommand command, false, null
+
 app.ports.searchNotes.subscribe (query) ->
   # TODO just have the signal send this along
   query = document.getElementById("notes-search-text").value
