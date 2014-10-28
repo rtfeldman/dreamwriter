@@ -10,8 +10,13 @@ fullscreen-style()
     border none !important
     box-shadow none !important
 
-  // button, a
-  //   text-shadow none !important
+  #left-sidebar-container, #right-sidebar-container, #editor-header, #editor-footer
+    opacity 0
+    transition opacity .1s ease-out
+
+    &:hover
+      transition opacity .1s ease-in
+      opacity 1
 
 @media screen
   :-webkit-full-screen
