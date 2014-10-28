@@ -47,7 +47,7 @@ viewEditor currentDoc fullscreen =
 viewFullscreenButton fullscreen =
   let {fullscreenClass, targetMode} = case fullscreen of
     True ->
-      { fullscreenClass = "flaticon-collapse"
+      { fullscreenClass = "flaticon-collapsing"
       , targetMode      = False
       }
     False ->

@@ -1,0 +1,27 @@
+med-brown = #846B4B
+
+fullscreen-style()
+  background white
+
+  #page
+    background white
+
+  #editor-container
+    border none !important
+    box-shadow none !important
+
+  // button, a
+  //   text-shadow none !important
+
+@media screen
+  :-webkit-full-screen
+    fullscreen-style()
+
+  :-moz-full-screen
+    fullscreen-style()
+
+  :-ms-fullscreen
+    fullscreen-style()
+
+  :fullscreen
+    fullscreen-style()

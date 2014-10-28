@@ -12,6 +12,7 @@ app = Elm.fullscreen Elm.App, {
   setDescription: ""
   listDocs: []
   listNotes: []
+  setFullscreen: false
 }
 
 # This will be initialized once a connection to the db has been established.
@@ -194,18 +195,20 @@ app.ports.openFromFile.subscribe ->
     Promise.all(saveAndLoadFromFile file for file in files).then refreshDocList
 
 
-# Polyfill fullScreen
-document.fullScreen = if document.fullScreen? then document.fullScreen else if document.mozFullScreen? then document.mozFullScreen else if document.webkitIsFullScreen? then document.webkitIsFullScreen
+isFullscreen = -> document.webkitCurrentFullScreenElement? ? window.navigator.standalone ? document.fullscreenElement? ? document.fullScreenElement? ? document.fullScreen ? document.fullscreen ? document.mozFullScreen ? document.webkitIsFullScreen ? document.webkitIsFullscreen ? document.webkitFullsc
+requestFullScreen = (document.body.requestFullScreen ? document.body.webkitRequestFullScreen ? document.body.mozRequestFullScreen).bind document.body
+exitFullscreen = (document.cancelFullScreen ? document.webkitCancelFullScreen ? document.mozCancelFullScreen ? document.exitFullScreen).bind document
+
+onFullscreenChange = -> app.ports.setFullscreen.send isFullscreen()
+
+document.body.addEventListener "fullscreeneventchange",  onFullscreenChange
+document.body.addEventListener "webkitfullscreenchange", onFullscreenChange
 
 app.ports.fullscreen.subscribe (desiredMode) ->
-  fullscreenTarget = document.body
-
-  fullscreenTarget.onwebkitfullscreenchange = -> $(window).resize()
-  fullscreenTarget.onmozfullscreenchange = -> $(window).resize()
-  fullscreenTarget.fullscreenchange = -> $(window).resize()
-
-  bindTarget 'fullscreeneventchange'
-  bindTarget 'webkitfullscreenchange'
+  if desiredMode
+    requestFullScreen Element.ALLOW_KEYBOARD_INPUT
+  else
+    exitFullscreen()
 
 DreamSync.connect().then (instance) ->
   sync = instance

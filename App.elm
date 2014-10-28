@@ -50,6 +50,9 @@ step action state =
     SetDescription description ->
       updateCurrentDoc (\doc -> {doc | description <- description}) state
 
+    SetFullscreen enabled ->
+      {state | fullscreen <- enabled}
+
     SetLeftSidebarView mode ->
       {state | leftSidebarView <- mode}
 
@@ -76,6 +79,7 @@ userInput =
   , lift SetChapters      setChapters
   , lift SetTitle         setTitle
   , lift SetDescription   setDescription
+  , lift SetFullscreen    setFullscreen
   , actions.signal
   ]
 
@@ -93,6 +97,7 @@ port loadAsCurrentDoc : Signal Doc
 port setChapters : Signal [Chapter]
 port setTitle : Signal String
 port setDescription : Signal String
+port setFullscreen : Signal Bool
 port listDocs : Signal [Doc]
 port listNotes : Signal [Note]
 

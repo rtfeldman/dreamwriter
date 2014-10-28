@@ -17,6 +17,7 @@ data Action
   | SetChapters [Chapter]
   | SetTitle String
   | SetDescription String
+  | SetFullscreen FullscreenState
 
 -- actions from user input
 actions : Input.Input Action
