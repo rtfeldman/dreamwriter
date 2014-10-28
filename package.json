@@ -1,6 +1,6 @@
 {
   "name": "Dreamwriter",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Streamlined writing software.",
   "scripts": {
     "test": "grunt test"
