@@ -2,6 +2,8 @@ dreamwriter
 ===============
 Streamlined writing software. Written in [Elm](http://elm-lang.org).
 
+Try it at [dreamwriter.io](https://dreamwriter.io)
+
 ## Features
 
 Dreamwriter is a browser-based writing app with a few goals in mind. (Not all of these have been reimplemented yet.)
