@@ -194,15 +194,16 @@ app.ports.openFromFile.subscribe ->
 
     Promise.all(saveAndLoadFromFile file for file in files).then refreshDocList
 
+isFullscreen = -> !!(document.mozFullScreenElement ? document.webkitCurrentFullScreenElement?)
 
-isFullscreen = -> document.webkitCurrentFullScreenElement? ? window.navigator.standalone ? document.fullscreenElement? ? document.fullScreenElement? ? document.fullScreen ? document.fullscreen ? document.mozFullScreen ? document.webkitIsFullScreen ? document.webkitIsFullscreen ? document.webkitFullsc
 requestFullScreen = (document.body.requestFullScreen ? document.body.webkitRequestFullScreen ? document.body.mozRequestFullScreen).bind document.body
 exitFullscreen = (document.cancelFullScreen ? document.webkitCancelFullScreen ? document.mozCancelFullScreen ? document.exitFullScreen).bind document
 
 onFullscreenChange = -> app.ports.setFullscreen.send isFullscreen()
 
-document.body.addEventListener "fullscreeneventchange",  onFullscreenChange
-document.body.addEventListener "webkitfullscreenchange", onFullscreenChange
+document.addEventListener "fullscreenchange",       onFullscreenChange
+document.addEventListener "webkitfullscreenchange", onFullscreenChange
+document.addEventListener "mozfullscreenchange",    onFullscreenChange
 
 app.ports.fullscreen.subscribe (desiredMode) ->
   if desiredMode
