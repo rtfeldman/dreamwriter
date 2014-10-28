@@ -45,17 +45,20 @@ viewEditor currentDoc fullscreen =
   ]
 
 viewFullscreenButton fullscreen =
-  let {fullscreenClass, targetMode} = case fullscreen of
+  let {fullscreenClass, targetMode, fullscreenTitle} = case fullscreen of
     True ->
       { fullscreenClass = "flaticon-collapsing"
       , targetMode      = False
+      , fullscreenTitle = "Leave Fullscreen Mode"
       }
     False ->
       { fullscreenClass = "flaticon-expand"
       , targetMode      = True
+      , fullscreenTitle = "Enter Fullscreen Mode"
       }
   in
     div [class ("toolbar-section toolbar-button " ++ fullscreenClass),
+      title fullscreenTitle,
       onclick fullscreenInput.handle (always targetMode)
     ] []
 
