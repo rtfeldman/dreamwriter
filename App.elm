@@ -63,13 +63,14 @@ step action state =
 updateCurrentDoc : (Doc -> Doc) -> AppState -> AppState
 updateCurrentDoc transformCurrentDoc state =
   case state.currentDoc of
-    Nothing -> state
+    Nothing         -> state
     Just currentDoc ->
       let newCurrentDoc = transformCurrentDoc currentDoc
           newDocs       = map (preferDoc newCurrentDoc) state.docs
       in
         {state | currentDoc <- Just newCurrentDoc
-               , docs       <- newDocs}
+               , docs       <- newDocs
+        }
 
 preferDoc : Doc -> Doc -> Doc
 preferDoc preferredDoc doc =
