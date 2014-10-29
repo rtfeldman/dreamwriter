@@ -1,6 +1,7 @@
 module Dreamwriter.Model where
 
 import Dreamwriter (Identifier)
+import Dict
 
 data LeftSidebarView = CurrentDocView | OpenMenuView
 
@@ -18,6 +19,7 @@ type AppState =
   , currentNote  : Maybe Note
   , notes        : [Note]
   , fullscreen   : FullscreenState
+  , snapshots    : Dict.Dict Identifier Snapshot
   }
 
 emptyState : AppState
@@ -29,6 +31,7 @@ emptyState =
   , currentNote  = Nothing
   , notes        = []
   , fullscreen   = False
+  , snapshots    = Dict.empty
   }
 
 type Note =
@@ -54,4 +57,10 @@ type Chapter =
   , words            : Int
   , creationTime     : MsSinceEpoch
   , lastModifiedTime : MsSinceEpoch
+  , snapshotId       : Identifier
+  }
+
+type Snapshot =
+  { id               : Identifier
+  , html             : String
   }
