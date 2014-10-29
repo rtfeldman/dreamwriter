@@ -13,6 +13,7 @@ import Html.Tags (..)
 import Html.Optimize.RefEq as Ref
 import Maybe
 import Window
+import Dict
 
 -- ACTIONS --
 
@@ -56,6 +57,9 @@ step action state =
     SetLeftSidebarView mode ->
       {state | leftSidebarView <- mode}
 
+    PutSnapshot snapshot ->
+      {state | snapshots <- Dict.insert snapshot.id snapshot state.snapshots}
+
 updateCurrentDoc : (Doc -> Doc) -> AppState -> AppState
 updateCurrentDoc transformCurrentDoc state =
   case state.currentDoc of
@@ -86,6 +90,7 @@ userInput =
   , lift SetTitle         setTitle
   , lift SetDescription   setDescription
   , lift SetFullscreen    setFullscreen
+  , lift PutSnapshot      putSnapshot
   , actions.signal
   ]
 
@@ -106,6 +111,7 @@ port setDescription : Signal String
 port setFullscreen : Signal Bool
 port listDocs : Signal [Doc]
 port listNotes : Signal [Note]
+port putSnapshot : Signal Snapshot
 
 port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = lift .currentDocId state

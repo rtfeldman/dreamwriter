@@ -18,6 +18,7 @@ data Action
   | SetTitle String
   | SetDescription String
   | SetFullscreen FullscreenState
+  | PutSnapshot Snapshot
 
 -- actions from user input
 actions : Input.Input Action

@@ -13,6 +13,7 @@ app = Elm.fullscreen Elm.App, {
   listDocs: []
   listNotes: []
   setFullscreen: false
+  putSnapshot: {id: "", html: ""}
 }
 
 # This will be initialized once a connection to the db has been established.
@@ -54,9 +55,14 @@ setUpChapter = (chapter) ->
   editorBodyPromise = new Promise (resolve, reject) ->
     sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
       setUpEditor bodyEditorElemId, snapshot.html, (mutations, node) ->
+        snapshot = {id: chapter.snapshotId, html: node.innerHTML}
+
         sync.getCurrentDoc().then (doc) ->
-          sync.saveSnapshot({id: chapter.snapshotId, html: node.innerHTML})
-            .then resolve, reject
+          sync.saveSnapshot(snapshot)
+            .then (->
+                app.ports.putSnapshot.send snapshot
+                resolve()
+              ), reject
 
   Promise.all [editorHeadingPromise, editorBodyPromise]
 
