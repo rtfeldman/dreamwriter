@@ -67,6 +67,12 @@ updateCurrentDoc transformCurrentDoc state =
         {state | currentDoc <- Just newCurrentDoc
                , docs       <- newDocs}
 
+preferDoc : Doc -> Doc -> Doc
+preferDoc preferredDoc doc =
+  if doc.id == preferredDoc.id
+    then preferredDoc
+    else doc
+
 main : Signal Element
 main = lift2 scene state Window.dimensions
 

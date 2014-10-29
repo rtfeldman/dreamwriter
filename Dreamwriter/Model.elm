@@ -55,9 +55,3 @@ type Chapter =
   , creationTime     : MsSinceEpoch
   , lastModifiedTime : MsSinceEpoch
   }
-
-preferDoc : Doc -> Doc -> Doc
-preferDoc preferredDoc doc =
-  if doc.id == preferredDoc.id
-    then preferredDoc
-    else doc

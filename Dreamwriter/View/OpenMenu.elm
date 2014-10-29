@@ -10,13 +10,8 @@ import Html.Tags (..)
 
 view : [Doc] -> Doc -> Html
 view docs currentDoc =
-  -- Prefer the current doc over the docs in the list, since it is refreshed
-  -- more often and thus may have more up-to-date information. (Noticeable if
-  -- the user is editing the title in real-time with the Open menu showing.)
-  let docsPreferringCurrent = map (preferDoc currentDoc) docs
-
-      sortedDocs : [Doc]
-      sortedDocs = sortBy (negate << .lastModifiedTime) docsPreferringCurrent
+  let sortedDocs : [Doc]
+      sortedDocs = sortBy (negate << .lastModifiedTime) docs
 
       docNodes : [Html]
       docNodes = map (viewOpenDocEntryFor currentDoc) sortedDocs
