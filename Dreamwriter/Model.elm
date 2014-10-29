@@ -63,4 +63,5 @@ type Chapter =
 type Snapshot =
   { id               : Identifier
   , html             : String
+  , text             : String
   }
