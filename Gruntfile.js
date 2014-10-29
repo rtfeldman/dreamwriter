@@ -212,6 +212,7 @@ module.exports = function(grunt) {
           '/vendor.js                      /cache/vendor.js',
           '/bootstrap-elm.js               /cache/bootstrap-elm.js',
           '/fonts/ubuntu.woff              /cache/fonts/ubuntu.woff',
+          '/fonts/flaticon.woff            /cache/fonts/flaticon.woff',
           '/images/dlogo.png               /cache/images/dlogo.png',
           '/images/dropbox-logo.png        /cache/images/dropbox-logo.png',
           '/images/favicon.ico             /cache/images/favicon.ico',
