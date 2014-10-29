@@ -14,6 +14,7 @@ import Html.Optimize.RefEq as Ref
 import Maybe
 import Window
 import Dict
+import Set
 
 -- ACTIONS --
 
@@ -32,6 +33,7 @@ step action state =
           newState = {stateAfterOpenDocId | currentDoc <- Just doc}
       in
         updateCurrentDoc (\_ -> doc) newState
+          |> pruneSnapshots
 
     ListDocs docs ->
       {state | docs <- docs}
@@ -44,6 +46,7 @@ step action state =
 
     SetChapters chapters ->
       updateCurrentDoc (\doc -> {doc | chapters <- chapters}) state
+        |> pruneSnapshots
 
     SetTitle title ->
       updateCurrentDoc (\doc -> {doc | title <- title}) state
@@ -59,6 +62,18 @@ step action state =
 
     PutSnapshot snapshot ->
       {state | snapshots <- Dict.insert snapshot.id snapshot state.snapshots}
+
+-- Throw out any snapshots that are no longer relevant, so they can be GC'd.
+pruneSnapshots : AppState -> AppState
+pruneSnapshots state =
+  case state.currentDoc of
+    Nothing         -> state
+    Just currentDoc ->
+      let allSnapshotIds = Set.fromList <| map .snapshotId currentDoc.chapters
+          newSnapshots   = state.snapshots
+            |> Dict.filter (\id _ -> Set.member id allSnapshotIds)
+      in
+        {state | snapshots <- newSnapshots}
 
 updateCurrentDoc : (Doc -> Doc) -> AppState -> AppState
 updateCurrentDoc transformCurrentDoc state =
