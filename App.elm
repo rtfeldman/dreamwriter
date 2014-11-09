@@ -16,6 +16,9 @@ import Window
 import Dict
 import Set
 
+debounce : Time -> Signal a -> Signal a
+debounce wait signal = sampleOn (since wait signal |> dropRepeats) signal
+
 -- ACTIONS --
 
 step : Action -> AppState -> AppState
@@ -157,7 +160,7 @@ port newChapter : Signal ()
 port newChapter = newChapterInput.signal
 
 port searchNotes : Signal ()
-port searchNotes = searchNotesInput.signal
+port searchNotes = debounce 500 searchNotesInput.signal
 
 port fullscreen : Signal Bool
 port fullscreen = fullscreenInput.signal
