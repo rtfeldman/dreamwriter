@@ -19,6 +19,9 @@ module.exports = class DreamSync
   getCurrentDocId:       => @getSetting  "currentDocId"
   saveCurrentDocId: (id) => @saveSetting "currentDocId", id
 
+  getCurrentNoteId:       => @getSetting  "currentNoteId"
+  saveCurrentNoteId: (id) => @saveSetting "currentNoteId", id
+
   saveSetting: (id, value) => @db.settings.update {id, value}
   getSetting:  (id) =>
     new Promise (resolve, reject) =>
@@ -27,15 +30,30 @@ module.exports = class DreamSync
   listDocs: => @db.docs.query().all().execute()
 
   getDoc:      (id) => @db.docs.get      id
+  getNote:     (id) => @db.notes.get     id
   getSnapshot: (id) => @db.snapshots.get id
+
+  getNotes: (ids) =>
+    new Promise (resolve, reject) =>
+      @db.notes.query().execute().done (notes) ->
+        resolve notes.filter (note) -> note.id in ids
 
   getCurrentDoc: =>
     new Promise (resolve, reject) =>
       @getCurrentDocId().then (id) =>
         @getDoc(id).then resolve, reject
 
+  getCurrentNote: =>
+    new Promise (resolve, reject) =>
+      @getCurrentNoteId().then (id) =>
+        @getNote(id).then resolve, reject
+
   saveDoc:      (doc)      => @db.docs.update      doc
+  saveNote:     (note)     => @db.notes.update     note
   saveSnapshot: (snapshot) => @db.snapshots.update snapshot
+
+  saveNotesIndex: (index) => @saveSetting "notesIndex", index
+  getNotesIndex:          => @getSetting  "notesIndex"
 
   addChapter: (doc, heading, html) =>
     snapshot = {id: DreamSync.getRandomSha(), html}
