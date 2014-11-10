@@ -31,6 +31,7 @@
     "grunt-contrib-watch": "0.6.1",
     "grunt-elm": "0.3.0",
     "hogan.js": "3.0.2",
+    "lunr": "0.5.6",
     "sha1": "1.1.0"
   },
   "readmeFilename": "README.md"
