@@ -37,8 +37,7 @@ emptyState =
 type Note =
   { id               : Identifier
   , title            : String
-  , creationTime     : MsSinceEpoch
-  , lastModifiedTime : MsSinceEpoch
+  , body             : HtmlString
   }
 
 type Doc =
