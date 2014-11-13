@@ -84,7 +84,7 @@ updateCurrentDoc transformation state =
     Nothing         -> state
     Just currentDoc ->
       let newCurrentDoc = transformation currentDoc
-          newDocs       = map (preferDoc newCurrentDoc) state.docs
+          newDocs       = map (preferById newCurrentDoc) state.docs
       in
         {state | currentDoc <- Just (refreshWordCount newCurrentDoc)
                , docs       <- newDocs
@@ -95,11 +95,10 @@ refreshWordCount doc =
   let words = foldl (\currentChapter sum -> sum + currentChapter.words) 0 doc.chapters
   in {doc | words <- words}
 
-preferDoc : Doc -> Doc -> Doc
-preferDoc preferredDoc doc =
-  if doc.id == preferredDoc.id
-    then preferredDoc
-    else doc
+preferById preferred given =
+  if preferred.id == given.id
+    then preferred
+    else given
 
 main : Signal Element
 main = lift2 scene state Window.dimensions
