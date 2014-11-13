@@ -87,35 +87,3 @@ module.exports = class DreamSync
         throw new Error "Unable to save doc #{JSON.stringify doc}"
 
       Promise.all(allPromises).then onSuccess, onError
-
-  saveDocWithSnapshot: (doc, snapshot) ->
-    if doc.id?
-      new Promise (resolve, reject) =>
-        @getDoc(doc.id).then (existingDoc) =>
-          if existingDoc.lastModifiedTime > doc.lastModifiedTime
-            # TODO handle this by re-rendering etc
-            alert "Your document is out of sync! Please refresh."
-          else
-            persistDocAndSnapshot(@db, doc, snapshot).then resolve, reject
-    else
-      doc.id = DreamSync.getRandomSha()
-      persistDocAndSnapshot @db, doc, snapshot
-
-persistDocAndSnapshot = (db, doc, snapshot) ->
-  new Promise (resolve, reject) ->
-    snapshot.id    ?= DreamSync.getRandomSha()
-
-    currentTime = new Date().getTime()
-
-    doc.creationTime           ||= currentTime
-    doc.lastModifiedTime         = currentTime
-    snapshot.creationTime      ||= doc.creationTime
-    snapshot.lastModifiedTime    = doc.lastModifiedTime
-
-    for chapter in doc.chapters
-      chapter.id ||= DreamSync.getRandomSha()
-
-    Promise.all([
-      db.docs.update(doc)
-      db.snapshots.update(snapshot)
-    ]).then (-> resolve doc), reject
