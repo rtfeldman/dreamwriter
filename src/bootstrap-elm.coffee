@@ -78,7 +78,7 @@ app.ports.newChapter.subscribe ->
         setUpChapter(newChapter).then (editorHeading, editorBody) ->
           scrollToChapterId newChapter.id
           document.getElementById("edit-chapter-heading-#{newChapter.id}").focus()
-          # TODO now select all!
+          document.execCommand "selectall"
 
 saveHtmlAndLoadDoc = (html) ->
   sync.saveFreshDoc(DocImport.docFromHtml html).then loadAsCurrentDoc
