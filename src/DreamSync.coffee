@@ -76,7 +76,7 @@ module.exports = class DreamSync
       chapter.creationTime      ||= doc.creationTime
       chapter.id                ||= DreamSync.getRandomSha()
       chapter.snapshotId          = snapshot.id
-      chapter.words               = countWords chapter.html
+      chapter.words               = countWords snapshot.html
 
       @saveSnapshot snapshot
 
