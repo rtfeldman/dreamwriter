@@ -66,6 +66,17 @@ setUpChapter = (chapter) ->
           sync.saveSnapshot({id: snapshotId, html})
             .then (->
                 app.ports.putSnapshot.send {id: snapshotId, html, text}
+
+                # TODO don't update all the chapters...only one chapter is
+                # actually changing. Make a port for just updating one chapter.
+                updatedChapters = for currentChapter in doc.chapters
+                  if currentChapter.id == chapter.id
+                    currentChapter.words = countWords html
+
+                  currentChapter
+
+                app.ports.setChapters.send updatedChapters
+
                 resolve()
               ), reject
 
