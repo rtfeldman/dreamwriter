@@ -1,7 +1,8 @@
-Editor    = require "./Editor.coffee"
-DreamSync = require "./DreamSync.coffee"
-DocImport = require "./DocImport.coffee"
-FileIO    = require "./FileIO.coffee"
+Editor     = require "./Editor.coffee"
+DreamSync  = require "./DreamSync.coffee"
+DocImport  = require "./DocImport.coffee"
+FileIO     = require "./FileIO.coffee"
+countWords = require "./WordCount.coffee"
 
 blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, lastModifiedTime: 0, words: 0}
 
@@ -48,7 +49,9 @@ setUpChapter = (chapter) ->
     sync.getCurrentDoc().then (doc) ->
       for currentChapter in doc.chapters
         if currentChapter.id == chapterId
-          currentChapter.heading = node.textContent
+          heading = node.textContent
+          currentChapter.heading = heading
+          currentChapter.words   = countWords heading
 
       sync.saveDoc(doc).then -> app.ports.setChapters.send doc.chapters
 

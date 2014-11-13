@@ -38,7 +38,7 @@ viewEditor currentDoc fullscreen =
       ] ++ map (lazyViewChapter << .id) currentDoc.chapters,
 
       div [id "editor-footer"] [
-        div [id "doc-word-count"] [text "23,124 words saved"],
+        div [id "doc-word-count"] [text <| (show currentDoc.words) ++ " words saved"],
         div [id "dropbox-sync"] [text "enable Dropbox syncing"]
       ]
     ]

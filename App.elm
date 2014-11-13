@@ -86,9 +86,14 @@ updateCurrentDoc transformation state =
       let newCurrentDoc = transformation currentDoc
           newDocs       = map (preferDoc newCurrentDoc) state.docs
       in
-        {state | currentDoc <- Just newCurrentDoc
+        {state | currentDoc <- Just (refreshWordCount newCurrentDoc)
                , docs       <- newDocs
         }
+
+refreshWordCount : Doc -> Doc
+refreshWordCount doc =
+  let words = foldl (\currentChapter sum -> sum + currentChapter.words) 0 doc.chapters
+  in {doc | words <- words}
 
 preferDoc : Doc -> Doc -> Doc
 preferDoc preferredDoc doc =
