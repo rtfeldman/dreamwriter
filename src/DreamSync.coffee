@@ -2,9 +2,10 @@
 #
 # Handles synchronizing data to/from IndexedDB, remote, etc.
 
-dbjs      = require "db.js"
-sha1      = require "sha1"
-dbOptions = require "./idb-options.json"
+dbjs       = require "db.js"
+sha1       = require "sha1"
+dbOptions  = require "./idb-options.json"
+countWords = require "./WordCount.coffee"
 
 module.exports = class DreamSync
   constructor: (@db) ->
@@ -47,7 +48,7 @@ module.exports = class DreamSync
       lastModifiedTime: currentTime
       creationTime:     currentTime
       snapshotId:       snapshot.id
-      words:            0 # TODO count words!
+      words:            countWords(heading)
     }
 
     doc.chapters.push chapter
@@ -75,6 +76,7 @@ module.exports = class DreamSync
       chapter.creationTime      ||= doc.creationTime
       chapter.id                ||= DreamSync.getRandomSha()
       chapter.snapshotId          = snapshot.id
+      chapter.words               = countWords chapter.html
 
       @saveSnapshot snapshot
 
