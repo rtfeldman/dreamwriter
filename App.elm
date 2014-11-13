@@ -51,6 +51,10 @@ step action state =
       updateCurrentDoc (\doc -> {doc | chapters <- chapters}) state
         |> pruneSnapshots
 
+    UpdateChapter chapter ->
+      updateCurrentDoc (\doc -> {doc | chapters <- (map (preferById chapter) doc.chapters)}) state
+        |> pruneSnapshots
+
     SetTitle title ->
       updateCurrentDoc (\doc -> {doc | title <- title}) state
 
@@ -110,6 +114,7 @@ userInput =
   , lift ListDocs         listDocs
   , lift ListNotes        listNotes
   , lift SetChapters      setChapters
+  , lift UpdateChapter    updateChapter
   , lift SetTitle         setTitle
   , lift SetDescription   setDescription
   , lift SetFullscreen    setFullscreen
@@ -129,6 +134,7 @@ state = foldp step emptyState userInput
 
 port loadAsCurrentDoc : Signal Doc
 port setChapters : Signal [Chapter]
+port updateChapter : Signal Chapter
 port setTitle : Signal String
 port setDescription : Signal String
 port setFullscreen : Signal Bool

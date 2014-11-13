@@ -9,6 +9,7 @@ blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, l
 app = Elm.fullscreen Elm.App, {
   loadAsCurrentDoc: blankDoc
   setChapters: []
+  updateChapter: { id: "", heading: "", words: 0, creationTime: 0, lastModifiedTime: 0, snapshotId: ""}
   setTitle: ""
   setDescription: ""
   listDocs: []
@@ -47,13 +48,11 @@ setUpChapter = (chapter) ->
 
   editorHeadingPromise = setUpEditor headingEditorElemId, chapter.heading, (mutations, node) ->
     sync.getCurrentDoc().then (doc) ->
-      for currentChapter in doc.chapters
-        if currentChapter.id == chapterId
-          heading = node.textContent
-          currentChapter.heading = heading
-          currentChapter.words   = countWords heading
+      heading = node.textContent
+      chapter.heading = heading
+      chapter.words   = countWords heading
 
-      sync.saveDoc(doc).then -> app.ports.setChapters.send doc.chapters
+      sync.saveDoc(doc).then -> app.ports.updateChapter.send chapter
 
   editorBodyPromise = new Promise (resolve, reject) ->
     sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
@@ -66,16 +65,9 @@ setUpChapter = (chapter) ->
           sync.saveSnapshot({id: snapshotId, html})
             .then (->
                 app.ports.putSnapshot.send {id: snapshotId, html, text}
+                chapter.words = countWords html
 
-                # TODO don't update all the chapters...only one chapter is
-                # actually changing. Make a port for just updating one chapter.
-                updatedChapters = for currentChapter in doc.chapters
-                  if currentChapter.id == chapter.id
-                    currentChapter.words = countWords html
-
-                  currentChapter
-
-                app.ports.setChapters.send updatedChapters
+                app.ports.updateChapter.send chapter
 
                 resolve()
               ), reject

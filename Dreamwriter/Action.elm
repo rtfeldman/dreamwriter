@@ -15,6 +15,7 @@ data Action
   | SetCurrentNote (Maybe Note)
   | SetLeftSidebarView LeftSidebarView
   | SetChapters [Chapter]
+  | UpdateChapter Chapter
   | SetTitle String
   | SetDescription String
   | SetFullscreen FullscreenState
