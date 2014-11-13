@@ -79,11 +79,11 @@ pruneSnapshots state =
         {state | snapshots <- newSnapshots}
 
 updateCurrentDoc : (Doc -> Doc) -> AppState -> AppState
-updateCurrentDoc transformCurrentDoc state =
+updateCurrentDoc transformation state =
   case state.currentDoc of
     Nothing         -> state
     Just currentDoc ->
-      let newCurrentDoc = transformCurrentDoc currentDoc
+      let newCurrentDoc = transformation currentDoc
           newDocs       = map (preferDoc newCurrentDoc) state.docs
       in
         {state | currentDoc <- Just newCurrentDoc
