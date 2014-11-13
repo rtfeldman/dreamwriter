@@ -38,11 +38,17 @@ viewEditor currentDoc fullscreen =
       ] ++ map (lazyViewChapter << .id) currentDoc.chapters,
 
       div [id "editor-footer"] [
-        div [id "doc-word-count"] [text <| (show currentDoc.words) ++ " words saved"],
+        div [id "doc-word-count"] [text <| (pluralize "word" currentDoc.words) ++ " saved"],
         div [id "dropbox-sync"] [text "enable Dropbox syncing"]
       ]
     ]
   ]
+
+pluralize : String -> Int -> String
+pluralize noun quantity =
+  if quantity == 1
+    then "1 " ++ noun
+    else (show quantity) ++ " " ++ noun ++ "s"
 
 viewFullscreenButton fullscreen =
   let {fullscreenClass, targetMode, fullscreenTitle} = case fullscreen of
