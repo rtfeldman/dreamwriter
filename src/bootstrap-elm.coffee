@@ -1,3 +1,5 @@
+require "promises-done-polyfill"
+
 Editor     = require "./Editor.coffee"
 DreamSync  = require "./DreamSync.coffee"
 DreamNotes = require "./DreamNotes.coffee"
@@ -27,20 +29,20 @@ notes = null
 # Looks up the doc and snapshot associated with the given docId,
 # writes the snapshot to the editor, and tells Elm about the new currentDocId
 loadDocId = (docId) ->
-  sync.getDoc(docId).then loadAsCurrentDoc
+  sync.getDoc(docId).done loadAsCurrentDoc
 
 loadAsCurrentDoc = (doc) ->
   app.ports.loadAsCurrentDoc.send doc
 
   setUpEditor "edit-title", doc.title, (mutations, node) ->
-    sync.getDoc(doc.id).then (doc) ->
+    sync.getDoc(doc.id).done (doc) ->
       doc.title = node.textContent
-      sync.saveDoc(doc).then -> app.ports.setTitle.send doc.title
+      sync.saveDoc(doc).done -> app.ports.setTitle.send doc.title
 
   setUpEditor "edit-description", doc.description, (mutations, node) ->
-    sync.getDoc(doc.id).then (doc) ->
+    sync.getDoc(doc.id).done (doc) ->
       doc.description = node.textContent
-      sync.saveDoc(doc).then -> app.ports.setDescription.send doc.description
+      sync.saveDoc(doc).done -> app.ports.setDescription.send doc.description
 
   doc.chapters.forEach setUpChapter
 
@@ -50,21 +52,21 @@ setUpChapter = (chapter) ->
   bodyEditorElemId    = "edit-chapter-body-#{chapterId}"
 
   editorHeadingPromise = setUpEditor headingEditorElemId, chapter.heading, (mutations, node) ->
-    sync.getCurrentDoc().then (doc) ->
+    sync.getCurrentDoc().done (doc) ->
       heading = node.textContent
       chapter.heading = heading
       chapter.words   = countWords heading
 
-      sync.saveDoc(doc).then -> app.ports.updateChapter.send chapter
+      sync.saveDoc(doc).done -> app.ports.updateChapter.send chapter
 
   editorBodyPromise = new Promise (resolve, reject) ->
-    sync.getSnapshot(chapter.snapshotId).then (snapshot) ->
+    sync.getSnapshot(chapter.snapshotId).done (snapshot) ->
       setUpEditor bodyEditorElemId, snapshot.html, (mutations, node) ->
         snapshotId = chapter.snapshotId
         html       = node.innerHTML
         text       = node.textContent
 
-        sync.getCurrentDoc().then (doc) ->
+        sync.getCurrentDoc().done (doc) ->
           sync.saveSnapshot({id: snapshotId, html})
             .then (->
                 app.ports.putSnapshot.send {id: snapshotId, html, text}
@@ -78,19 +80,19 @@ setUpChapter = (chapter) ->
   Promise.all [editorHeadingPromise, editorBodyPromise]
 
 app.ports.newChapter.subscribe ->
-  sync.getCurrentDoc().then (doc) ->
+  sync.getCurrentDoc().done (doc) ->
     sync.addChapter(doc,
-      DocImport.blankChapterHeading, DocImport.blankChapterHtml).then (doc) ->
+      DocImport.blankChapterHeading, DocImport.blankChapterHtml).done (doc) ->
         app.ports.setChapters.send doc.chapters
 
         newChapter = doc.chapters[doc.chapters.length - 1]
-        setUpChapter(newChapter).then (editorHeading, editorBody) ->
+        setUpChapter(newChapter).done (editorHeading, editorBody) ->
           scrollToChapterId newChapter.id
           document.getElementById("edit-chapter-heading-#{newChapter.id}").focus()
           document.execCommand "selectall"
 
 saveHtmlAndLoadDoc = (html) ->
-  sync.saveFreshDoc(DocImport.docFromHtml html).then loadAsCurrentDoc
+  sync.saveFreshDoc(DocImport.docFromHtml html).done loadAsCurrentDoc
 
 readDocFromFile = (file, onSuccess, onError) ->
   new Promise (resolve, reject) ->
@@ -150,7 +152,7 @@ setUpEditor = (id, html, onMutate) ->
     .then ((elem) -> getEditorFor(elem, onMutate).writeHtml html, true),
           ((err)  -> console.error "Could not write after 10,000 attempts:", id, html)
 
-refreshDocList = -> sync.listDocs().then (docs) ->
+refreshDocList = -> sync.listDocs().done (docs) ->
   app.ports.listDocs.send docs
 
 scrollToChapterId = (chapterId) ->
@@ -163,9 +165,9 @@ scrollToChapterId = (chapterId) ->
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
     # TODO Ideally this would not be Race Condition City...
-    sync.getCurrentDocId().then (currentDocId) ->
+    sync.getCurrentDocId().done (currentDocId) ->
       if currentDocId != newDocId
-        sync.saveCurrentDocId(newDocId).then ->
+        sync.saveCurrentDocId(newDocId).done ->
           loadDocId newDocId
 
 app.ports.newDoc.subscribe ->
@@ -185,7 +187,7 @@ app.ports.newNote.subscribe ->
   newNote = {title: "Brilliant Note"}
   html = "<p><br/></p>"
 
-  sync.saveNoteWithSnapshot(newNote, html).then (note) ->
+  sync.saveNoteWithSnapshot(newNote, html).done (note) ->
     app.ports.setCurrentNote.send note
     console.debug "TODO load up the note editor with the current html"
 
@@ -195,22 +197,22 @@ app.ports.execCommand.subscribe (command) ->
 app.ports.searchNotes.subscribe (query) ->
   query = document.getElementById("notes-search-text").value
 
-  notes.search(query).then app.ports.listNotes.send
+  notes.search(query).done app.ports.listNotes.send
 
 app.ports.openFromFile.subscribe ->
   fileChooserAttributes = {accept: "text/html", multiple: "true"}
 
-  FileIO.showFileChooser(fileChooserAttributes).then (files) ->
+  FileIO.showFileChooser(fileChooserAttributes).done (files) ->
     saveAndLoadFromFile = (file) ->
       new Promise (resolve, reject) ->
         saveAndResolve = (doc) ->
-          sync.saveFreshDoc(doc).then (newCurrentDoc) ->
+          sync.saveFreshDoc(doc).done (newCurrentDoc) ->
             app.ports.loadAsCurrentDoc.send newCurrentDoc
             resolve()
 
         readDocFromFile(file).then saveAndResolve, reject
 
-    Promise.all(saveAndLoadFromFile file for file in files).then refreshDocList
+    Promise.all(saveAndLoadFromFile file for file in files).done refreshDocList
 
 isFullscreen = -> !!(document.mozFullScreenElement ? document.webkitCurrentFullScreenElement?)
 
@@ -229,7 +231,7 @@ app.ports.fullscreen.subscribe (desiredMode) ->
   else
     exitFullscreen()
 
-DreamSync.connect().then (instance) ->
+DreamSync.connect().done (instance) ->
   sync = instance
 
   notes = new DreamNotes sync
@@ -247,7 +249,7 @@ DreamSync.connect().then (instance) ->
     notes.save {title}, body
 
   # Initialize the app based on the stored currentDocId
-  sync.getCurrentDocId().then (id) ->
+  sync.getCurrentDocId().done (id) ->
     if id?
       loadDocId id
     else
