@@ -1,11 +1,14 @@
 {
-  "server": "dreamwriter-alpha",
+  "server": "dreamwriter-beta",
   "version": "1",
   "schema": {
     "settings": {
       "key": {"keyPath": "id", "autoIncrement": false}
     },
     "docs": {
+      "key": {"keyPath": "id", "autoIncrement": false}
+    },
+    "notes": {
       "key": {"keyPath": "id", "autoIncrement": false}
     },
     "snapshots": {

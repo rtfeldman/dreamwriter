@@ -119,6 +119,7 @@ userInput =
   , lift SetDescription   setDescription
   , lift SetFullscreen    setFullscreen
   , lift PutSnapshot      putSnapshot
+  , lift (SetCurrentNote << Just) setCurrentNote
   , actions.signal
   ]
 
@@ -138,6 +139,7 @@ port updateChapter : Signal Chapter
 port setTitle : Signal String
 port setDescription : Signal String
 port setFullscreen : Signal Bool
+port setCurrentNote : Signal Note
 port listDocs : Signal [Doc]
 port listNotes : Signal [Note]
 port putSnapshot : Signal Snapshot

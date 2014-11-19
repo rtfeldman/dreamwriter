@@ -23,11 +23,11 @@ module.exports = class DreamNotes
         indexableNote = {id: savedNote.id, title: savedNote.title, body}
 
         if note.id?
-          @index.add    indexableNote
-        else
           @index.update indexableNote
+        else
+          @index.add    indexableNote
 
-        @saveIndex().then (=> resolve indexableNote), reject
+        @saveIndex().then (-> resolve indexableNote), reject
 
       # Always persist the note first! If something goes wrong, prioritize
       # saving what the user wrote.

@@ -1,5 +1,6 @@
 Editor     = require "./Editor.coffee"
 DreamSync  = require "./DreamSync.coffee"
+DreamNotes = require "./DreamNotes.coffee"
 DocImport  = require "./DocImport.coffee"
 FileIO     = require "./FileIO.coffee"
 countWords = require "./WordCount.coffee"
@@ -15,11 +16,13 @@ app = Elm.fullscreen Elm.App, {
   listDocs: []
   listNotes: []
   setFullscreen: false
+  setCurrentNote: {id: "", title: "", snapshotId: "", creationTime: 0, lastModifiedTime: 0}
   putSnapshot: {id: "", html: "", text: ""}
 }
 
 # This will be initialized once a connection to the db has been established.
 sync = null
+notes = null
 
 # Looks up the doc and snapshot associated with the given docId,
 # writes the snapshot to the editor, and tells Elm about the new currentDocId
@@ -179,22 +182,20 @@ app.ports.navigateToTitle.subscribe ->
   document.getElementById("editor-frame").scrollTop = 0
 
 app.ports.newNote.subscribe ->
-  console.debug "TODO: create a new note from template, persist it, then send it over."
+  newNote = {title: "Brilliant Note"}
+  html = "<p><br/></p>"
+
+  sync.saveNoteWithSnapshot(newNote, html).then (note) ->
+    app.ports.setCurrentNote.send note
+    console.debug "TODO load up the note editor with the current html"
 
 app.ports.execCommand.subscribe (command) ->
   document.execCommand command, false, null
 
 app.ports.searchNotes.subscribe (query) ->
-  # TODO just have the signal send this along
   query = document.getElementById("notes-search-text").value
 
-  notes = [
-    {id: "1", title: "Awesome Note", snapshotId: "1234", creationTime: 0, lastModifiedTime: 0}
-    {id: "2", title: "Great Scott!", snapshotId: "1234", creationTime: 0, lastModifiedTime: 0}
-    {id: "3", title: "This note has a ridiculously long title for basically no reason at all", snapshotId: "1234", creationTime: 0, lastModifiedTime: 0}
-  ]
-
-  app.ports.listNotes.send notes
+  notes.search(query).then app.ports.listNotes.send
 
 app.ports.openFromFile.subscribe ->
   fileChooserAttributes = {accept: "text/html", multiple: "true"}
@@ -230,6 +231,20 @@ app.ports.fullscreen.subscribe (desiredMode) ->
 
 DreamSync.connect().then (instance) ->
   sync = instance
+
+  notes = new DreamNotes sync
+
+  [{
+    title: 'Twelfth Night',
+    body: 'If music be the food of love, play on'
+  }, {
+    title: 'Macbeth',
+    body: 'When shall we three meet again, In thunder, lightning, or in rain?'
+  }, {
+    title: 'Richard III',
+    body: 'Now is the winter of our discontent, Made glorious summer by this sun of York;'
+  }].forEach ({title, body}) ->
+    notes.save {title}, body
 
   # Initialize the app based on the stored currentDocId
   sync.getCurrentDocId().then (id) ->

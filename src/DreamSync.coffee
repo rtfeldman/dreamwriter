@@ -34,9 +34,7 @@ module.exports = class DreamSync
   getSnapshot: (id) => @db.snapshots.get id
 
   getNotes: (ids) =>
-    new Promise (resolve, reject) =>
-      @db.notes.query().execute().done (notes) ->
-        resolve notes.filter (note) -> note.id in ids
+    @db.notes.query().filter((note) -> note.id in ids).execute()
 
   getCurrentDoc: =>
     new Promise (resolve, reject) =>
@@ -121,15 +119,17 @@ module.exports = class DreamSync
       doc.id = DreamSync.getRandomSha()
       persistDocAndSnapshot @db, doc, snapshot
 
-  saveNoteWithSnapshot: (note, body) ->
+  saveNoteWithSnapshot: (note, html) ->
+    snapshot = {id: DreamSync.getRandomSha(), html}
+
     if note.id?
       new Promise (resolve, reject) =>
         @getNote(note.id).then (existingNote) =>
-          if existingNote.lastModifiedTime > note.lastModifiedTime
+          if existingNote? && existingNote.lastModifiedTime > note.lastModifiedTime
             # TODO handle this by re-rendering etc
             alert "Your note is out of sync! Please refresh."
           else
-            persistNoteAndSnapsot(@db, note, snapshot).then resolve, reject
+            persistNoteAndSnapshot(@db, note, snapshot).then resolve, reject
     else
       note.id = DreamSync.getRandomSha()
       persistNoteAndSnapshot @db, note, snapshot
@@ -140,10 +140,12 @@ persistNoteAndSnapshot = (db, note, snapshot) ->
 
     updateTimestamps note, snapshot
 
+    note.snapshotId = snapshot.id
+
     Promise.all([
       db.notes.update(note)
       db.snapshots.update(snapshot)
-    ]).then (-> resolve doc), reject
+    ]).then (-> resolve note), reject
 
 persistDocAndSnapshot = (db, doc, snapshot) ->
   new Promise (resolve, reject) ->
