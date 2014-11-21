@@ -30,7 +30,7 @@ viewCurrentDocFooter =
     span [id "add-chapter",
       title "Add Chapter",
       onclick newChapterInput.handle (always ()),
-      class "flaticon-add139"] []]
+      class "flaticon-plus81"] []]
 
 view : Doc -> AppState -> Html
 view currentDoc state =
@@ -86,5 +86,5 @@ viewCurrentDocHeader currentDoc =
         onclick printInput.handle (always ())] [],
       span [
         title "Settings",
-        class "sidebar-header-control flaticon-machine2"] []
+        class "sidebar-header-control flaticon-gear33"] []
     ]

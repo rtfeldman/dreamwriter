@@ -72,7 +72,7 @@ viewCurrentNoteFooter note =
       class "flaticon-printer70 current-note-control"] [],
     span [id "current-note-settings",
       title "Note Settings",
-      class "flaticon-machine2 current-note-control"] [],
+      class "flaticon-gear33 current-note-control"] [],
     span [id "delete-current-note",
       title "Delete Note",
       class "flaticon-closed18 current-note-control"] []
