@@ -1,6 +1,8 @@
 @require "mixins/page-text"
+@require "sidebars"
 
 dark-brown = #644B2B
+outline-elem-background = rgb(135, 130, 145)
 
 #file-buttons
   margin-bottom 25px
@@ -10,8 +12,11 @@ dark-brown = #644B2B
   cursor pointer
   font-size 32px
 
+  color outline-elem-background
+  text-shadow 1px 1px 1px header-control-shadow
+
   &:hover
-    color black
+    color header-control-hover
 
 #left-sidebar-container
   position relative
@@ -20,8 +25,6 @@ dark-brown = #644B2B
   width 100%
   box-sizing border-box
 
-  color #644b2b
-
   // This one looks just a tad small at 32px
   .sidebar-header-control.flaticon-cloud134
     font-size 36px
@@ -29,7 +32,8 @@ dark-brown = #644B2B
     top -1px
 
 #title, #outline li
-  padding 4px
+  box-sizing border-box
+  padding 8px 16px
   min-height 1em
   margin 0
   cursor default
@@ -37,19 +41,22 @@ dark-brown = #644B2B
   page-text()
 
   font-size 16px
-  border 1px solid transparent
+
+  color rgb(52, 54, 90)
+  background-color outline-elem-background
+  box-shadow 1px 1px 1px header-control-shadow
+
+  margin 8px 0
 
   &:hover
-    background-color #e0c59e
-    box-shadow 2px 2px 2px #644b2b
-    border 1px solid #644b2b
+    background-color #fff
 
 #title
   font-size 24px
   margin 12px
   margin-top 42px
-  margin-bottom 6px
-  box-sizing border-box
+  margin-bottom inherit
+
   cursor pointer
 
 #outline

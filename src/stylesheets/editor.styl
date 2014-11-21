@@ -3,6 +3,8 @@
 editor-width = 700px
 editor-header-width = editor-width - 40
 
+header-control-shadow = rgb(52, 54, 90)
+
 user-select()
   -moz-user-select arguments
   -khtml-user-select arguments
@@ -45,8 +47,7 @@ user-select()
   width editor-width px
   min-width editor-width px
   background #fff
-  box-shadow 0.4em 0.4em 0.4em #644b2b
-  border 1px solid #aaa
+  box-shadow 1px 1px 1px header-control-shadow
 
   .toolbar-button
     user-select none
@@ -136,16 +137,6 @@ user-select()
   margin-left auto
   margin-right auto
   word-wrap break-word
-
-  :selection
-    background #e0e0e0
-    color inherit
-    text-shadow inherit
-
-  :-moz-selection 
-    background #e0e0e0
-    color inherit
-    text-shadow inherit
   
   h1, h2, h3, h4 
     font-weight normal

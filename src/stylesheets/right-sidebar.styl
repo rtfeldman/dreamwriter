@@ -1,8 +1,8 @@
 @require "mixins/page-text"
+@require "sidebars"
 
 dark-brown = #644B2B
-header-control-color = #E0C59E
-header-control-hover = #F4F0EC
+notes-input-background-color = rgb(135, 130, 145)
 
 #right-sidebar-container
   position relative
@@ -28,10 +28,7 @@ header-control-hover = #F4F0EC
 #notes-search-text
   font-family 'Ubuntu', Helvetica, Arial, sans-serif
   text-shadow none
-  box-shadow 2px 2px 2px dark-brown
   cursor text
-  background-color header-control-color
-  color dark-brown
   border none
   padding 0 12px
   flex-grow 1
@@ -39,8 +36,18 @@ header-control-hover = #F4F0EC
   height 36px
   margin-top 2px
 
+  color #fff
+  background-color notes-input-background-color
+  box-shadow 1px 1px 1px header-control-shadow
+
+  &:hover
+    background-color header-control-color
+
+    &:focus
+      background-color notes-input-background-color
+
 ::-webkit-input-placeholder
-  color #846B4B
+  color rgb(52, 54, 90)
 
 #notes
   padding 20px
