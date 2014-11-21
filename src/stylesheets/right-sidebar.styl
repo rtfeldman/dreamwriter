@@ -1,25 +1,24 @@
 @require "mixins/page-text"
 @require "sidebars"
 
-dark-brown = #644B2B
 notes-input-background-color = rgb(135, 130, 145)
+
+note-text       = rgb(4, 3, 5)
+note-background = rgb(193, 170, 149)
+note-hover      = #fff
 
 #right-sidebar-container
   position relative
   flex-grow 1
 
+  margin-left 8px
+
   width 100%
   box-sizing border-box
-
-  color dark-brown
 
 #right-sidebar-header
   padding-bottom 0
   margin-bottom 0
-
-#right-sidebar-body
-  padding 8px
-  padding-bottom 0
 
 #notes-search-button
   font-size 34px
@@ -62,18 +61,20 @@ notes-input-background-color = rgb(135, 130, 145)
   p
     text-indent 0
 
-
-#note-listings
-  padding 0 6px
-
 .note-listing
   font-size 18px
-  padding 6px
+  padding 8px
   cursor pointer
   display flex
 
+  margin-bottom 8px
+
+  color note-text
+  
+  background-color note-background
+
   &:hover
-    color black
+    background-color note-hover
 
 .note-listing-title
   flex 1
@@ -82,7 +83,10 @@ notes-input-background-color = rgb(135, 130, 145)
   margin-right 6px
 
 #current-note
-  padding 0 12px
+  padding 16px
+  margin-bottom 8px
+  color note-text
+  background-color note-background
 
 #current-note-title-container
   font-size 24px
