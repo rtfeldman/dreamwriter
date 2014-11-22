@@ -56,9 +56,10 @@ setUpChapter = (chapter) ->
   wasChapterRemoved = (words, mutations) ->
     # Returns true iff there's no text content in either the body or the heading
     words == 0 &&
-      # Don't do this unless nodes were removed; otherwise we can get false
-      # positives while the chapter is being added, causing it to be deleted. :(
-      (mutations.some ({removedNodes}) -> removedNodes.length > 0) &&
+      # Don't do this if nodes were added or removed; otherwise we can get false
+      # positives while the chapter is being created, causing it to be deleted.
+      (!mutations.some ({addedNodes, removedNodes}) ->
+        addedNodes.length > 0 || removedNodes.length > 0) &&
       !document.getElementById(headingEditorElemId).textContent.match(/\S/) &&
       !document.getElementById(bodyEditorElemId).textContent.match(/\S/)
 
