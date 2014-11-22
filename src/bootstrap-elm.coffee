@@ -34,12 +34,12 @@ loadDocId = (docId) ->
 loadAsCurrentDoc = (doc) ->
   app.ports.loadAsCurrentDoc.send doc
 
-  setUpEditor "edit-title", doc.title, false, (mutations, node) ->
+  setUpEditor getTitleElem, doc.title, false, (mutations, node) ->
     sync.getDoc(doc.id).done (doc) ->
       doc.title = node.textContent
       sync.saveDoc(doc).done -> app.ports.setTitle.send doc.title
 
-  setUpEditor "edit-description", doc.description, false, (mutations, node) ->
+  setUpEditor getDescriptionElem, doc.description, false, (mutations, node) ->
     sync.getDoc(doc.id).done (doc) ->
       doc.description = node.textContent
       sync.saveDoc(doc).done -> app.ports.setDescription.send doc.description
@@ -48,8 +48,6 @@ loadAsCurrentDoc = (doc) ->
 
 setUpChapter = (chapter) ->
   chapterId = chapter.id
-  headingEditorElemId = "edit-chapter-heading-#{chapterId}"
-  bodyEditorElemId    = "edit-chapter-body-#{chapterId}"
 
   # If you delete the chapter's body and heading, assume you want it gone.
   # (If you didn't, you can just re-add it; there couldn't have been data loss.)
@@ -60,10 +58,10 @@ setUpChapter = (chapter) ->
       # positives while the chapter is being created, causing it to be deleted.
       (!mutations.some ({addedNodes, removedNodes}) ->
         addedNodes.length > 0 || removedNodes.length > 0) &&
-      !document.getElementById(headingEditorElemId).textContent.match(/\S/) &&
-      !document.getElementById(bodyEditorElemId).textContent.match(/\S/)
+      !getChapterHeadingElem(chapterId).textContent.match(/\S/) &&
+      !getChapterBodyElem(chapterId).textContent.match(/\S/)
 
-  editorHeadingPromise = setUpEditor headingEditorElemId, chapter.heading, false, (mutations, node) ->
+  editorHeadingPromise = setUpEditor (-> getChapterHeadingElem chapterId), chapter.heading, false, (mutations, node) ->
     sync.getCurrentDoc().done (doc) ->
       heading = node.textContent
 
@@ -83,7 +81,7 @@ setUpChapter = (chapter) ->
 
   editorBodyPromise = new Promise (resolve, reject) ->
     sync.getSnapshot(chapter.snapshotId).done (snapshot) ->
-      setUpEditor bodyEditorElemId, snapshot.html, true, (mutations, node) ->
+      setUpEditor (-> getChapterBodyElem chapterId), snapshot.html, true, (mutations, node) ->
         snapshotId    = chapter.snapshotId
         html          = node.innerHTML
         text          = node.textContent
@@ -174,8 +172,8 @@ getEditorFor = (elem, enableRichText, onMutate) ->
     editors.set elem, editor
     editor
 
-setUpEditor = (id, html, enableRichText, onMutate) ->
-  whenPresent((-> document.getElementById id), 10000)
+setUpEditor = (getElem, html, enableRichText, onMutate) ->
+  whenPresent(getElem, 10000)
     .then ((elem) -> getEditorFor(elem, enableRichText, onMutate).writeHtml html, true),
           ((err)  -> console.error "Could not write after 10,000 attempts:", id, html)
 
@@ -185,9 +183,21 @@ refreshDocList = -> sync.listDocs().done (docs) ->
 scrollToChapterId = (chapterId) ->
   editorFrame    = document.getElementById("editor-frame")
   editorHeader   = document.getElementById("editor-header")
-  chapterHeading = document.getElementById("edit-chapter-heading-#{chapterId}")
+  chapterHeading = getChapterHeadingElem chapterId
 
   editorFrame.scrollTop = chapterHeading.offsetTop - editorHeader.offsetHeight
+
+getTitleElem = ->
+  document.getElementById "edit-title"
+
+getDescriptionElem = ->
+  document.getElementById "edit-description"
+
+getChapterHeadingElem = (id) ->
+  document.getElementById "edit-chapter-heading-#{id}"
+
+getChapterBodyElem = (id) ->
+  document.getElementById "edit-chapter-body-#{id}"
 
 deleteChapter = (chapter) ->
   sync.deleteChapter(chapter).done (newChapters) ->
