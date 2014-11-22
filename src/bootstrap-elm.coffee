@@ -200,6 +200,10 @@ getChapterBodyElem = (id) ->
   document.getElementById "edit-chapter-body-#{id}"
 
 deleteChapter = (chapter) ->
+  # TODO focus on the END of the previous sibling, once I've figured out
+  # how to do that reliably (e.g. when the user presses the up arrow...)
+  getChapterHeadingElem(chapter.id).previousSibling.focus()
+
   sync.deleteChapter(chapter).done (newChapters) ->
     app.ports.setChapters.send newChapters
 
