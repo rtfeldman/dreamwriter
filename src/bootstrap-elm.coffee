@@ -70,6 +70,12 @@ setUpChapter = (chapter) ->
       chapter.heading = heading
       chapter.words   = countWords heading
 
+      doc.chapters = for existingChapter in doc.chapters
+        if existingChapter.id == chapter.id
+          chapter
+        else
+          existingChapter
+
       if wasChapterRemoved chapter.words, mutations
         deleteChapter chapter
       else
