@@ -67,24 +67,24 @@ viewCurrentDocHeader currentDoc =
     contentType = downloadContentType
   }
   in
-    div [id sidebarHeaderId, class sidebarHeaderClass] [
-      span [
+    menu [id sidebarHeaderId, class sidebarHeaderClass] [
+      menuitem [
         title "New",
         class "sidebar-header-control flaticon-add26",
         onclick newDocInput.handle (always ())] [],
-      span [
+      menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
         onclick actions.handle (\_ -> SetLeftSidebarView OpenMenuView)] [],
-      span [
+      menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
         onclick downloadInput.handle (always downloadOptions)] [],
-      span [
+      menuitem [
         title "Print",
         class "sidebar-header-control flaticon-printer70",
         onclick printInput.handle (always ())] [],
-      span [
+      menuitem [
         title "Settings",
         class "sidebar-header-control flaticon-gear33"] []
     ]
