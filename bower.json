@@ -16,7 +16,7 @@
   "dependencies": {
     "FileSaver.js": "git@github.com:eligrey/FileSaver.js.git",
     "promises-done-polyfill": "1.0.0",
-    "db.js": "~0.9.0"
+    "db.js": "0.9.0"
   },
   "ignore": [
     "**/.*",
