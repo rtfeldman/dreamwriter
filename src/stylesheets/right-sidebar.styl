@@ -36,15 +36,23 @@ search-notes-color = rgb(152, 125, 152)
   height 36px
   margin-top 2px
 
-  color header-control-color
-  background-color search-notes-color
-  box-shadow 1px 1px 1px (header-control-shadow)
+  background-color header-control-color
+  border-top 1px solid rgb(191, 166, 169)
+  border-left 1px solid rgb(191, 166, 169)
+  border-bottom 1px solid rgb(229, 199, 202)
+  border-right 1px solid rgb(229, 199, 202)
+  color inherit
 
   &:hover
-    background-color header-control-color
+    background-color header-control-hover
 
   &:focus
-    background-color header-body-element
+    background-color #fff
+
+    border-top 1px solid rgb(80, 54, 101)
+    border-left 1px solid rgb(80, 54, 101)
+    border-bottom 1px solid rgb(152, 125, 152)
+    border-right 1px solid rgb(152, 125, 152)
 
 #notes
   padding 20px
