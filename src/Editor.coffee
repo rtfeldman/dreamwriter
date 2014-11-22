@@ -50,8 +50,8 @@ module.exports = class Editor
     switch event.keyCode
       when 222 then useSmartHandler @applySmartQuote
       when 189 then useSmartHandler @applySmartEmDash
-      when 38  then useSmartHandler @handleUpPress
-      when 40  then useSmartHandler @handleDownPress
+      when 38  then useSmartHandler @handleUpPress unless event.shiftKey
+      when 40  then useSmartHandler @handleDownPress unless event.shiftKey
       when 83
         # Disable Cmd+S and Ctrl+S
         if event.metaKey || event.ctrlKey
