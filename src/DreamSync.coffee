@@ -94,6 +94,19 @@ module.exports = class DreamSync
         (@saveDoc      doc)
       ]).then (-> resolve doc), reject
 
+  deleteSnapshot: (id) =>
+    @db.snapshots.remove id
+
+  deleteChapter: (chapter) =>
+    new Promise (resolve, reject) =>
+      @getCurrentDoc().then (doc) =>
+        doc.chapters = doc.chapters.filter ({id}) -> id != chapter.id
+
+        Promise.all([
+          (@saveDoc doc)
+          (@deleteSnapshot chapter.snapshotId)
+        ]).then (resolve doc.chapters), reject
+
   # Mutates the LIVING HELL out of the doc you give it, so watch out!
   # Assumes the chapters on the doc you give it will have an "html" field,
   # which this deletes before persisting those fields as snapshots.
