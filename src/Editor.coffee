@@ -11,6 +11,8 @@ module.exports = class Editor
     @mutationObserver = new MutationObserver (mutations) =>
       @onChange mutations, @elem
 
+    @elem.addEventListener "keyup", @handleKeyup
+
     @enableMutationObserver()
 
   writeHtml: (html, skipObserver, onSuccess = (->), onError = onWriteError) =>
@@ -20,6 +22,34 @@ module.exports = class Editor
 
   getHtml: ->
     @elem.innerHTML
+
+  handleKeyup: (event) =>
+    selection = window.getSelection()
+    range     = selection.getRangeAt 0
+    textNode  = range.commonAncestorContainer
+
+    # TODO preventDefault on ctrl+S and cmd+S
+    # TODO intelligently handle Up Arrow at the beginning of a section
+    # TODO intelligently handle Down Arrow at the end of a section
+
+    # The user just typed something and has a collapsed selection.
+    if range.collapsed && @elem.contains textNode
+      # The character right before the caret
+      prevChar = textNode.textContent[range.endOffset - 1]
+
+      switch prevChar
+        when "\""
+          @applySmartQuote      selection
+        when "'"
+          @applySmartApostrophe selection
+        when "-"
+          # If the user typed --, convert to em dash
+          if prevChar == textNode.textContent[range.endOffset - 2]
+            @applySmartEmDash   selection
+
+  applySmartQuote: (selection) =>
+  applySmartApostrophe: (selection) =>
+  applySmartEmDash: (selection) =>
 
   execCommand: (command, skipObserver) =>
     @runWithOptionalObserver skipObserver, =>
