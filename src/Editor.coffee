@@ -45,12 +45,15 @@ module.exports = class Editor
 
       handler.apply this, [event, @elem, caretOffset, textNode]
 
-    # TODO preventDefault on ctrl+S and cmd+S
     # TODO intelligently handle Up Arrow at the beginning of a section
     # TODO intelligently handle Down Arrow at the end of a section
     switch event.keyCode
       when 222 then callHandler @applySmartQuote
       when 189 then callHandler @applySmartEmDash
+      when 83
+        # Disable Cmd+S and Ctrl+S
+        if event.metaKey || event.ctrlKey
+          event.preventDefault()
 
   applySmartQuote: (event, elem, caretOffset, textNode) =>
     event.preventDefault()
