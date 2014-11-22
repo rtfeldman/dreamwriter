@@ -43,7 +43,7 @@ module.exports = class Editor
       caretOffset = range.startOffset
       textNode    = range.commonAncestorContainer
 
-      handler.apply this, [event, @elem, caretOffset, textNode]
+      handler.apply this, [event, caretOffset, textNode]
 
     # TODO intelligently handle Up Arrow at the beginning of a section
     # TODO intelligently handle Down Arrow at the end of a section
@@ -55,7 +55,7 @@ module.exports = class Editor
         if event.metaKey || event.ctrlKey
           event.preventDefault()
 
-  applySmartQuote: (event, elem, caretOffset, textNode) =>
+  applySmartQuote: (event, caretOffset, textNode) =>
     event.preventDefault()
 
     precededByWord = textNode.textContent[caretOffset - 1]?.match /\S/
@@ -67,7 +67,7 @@ module.exports = class Editor
 
     @replaceWith textNode, caretOffset, caretOffset, char
 
-  applySmartEmDash: (event, elem, caretOffset, textNode) =>
+  applySmartEmDash: (event, caretOffset, textNode) =>
     # The user typed "--", which we will now convert to an em dash.
     if "-" == textNode.textContent[caretOffset - 1]
       event.preventDefault()
