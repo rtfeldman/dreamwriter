@@ -32,7 +32,7 @@ viewEditor currentDoc fullscreen =
       div [id "document-page"] <| [
         h1  [id "edit-title"      ] [],
         div [id "edit-description"] []
-      ] ++ map (lazyViewChapter << .id) currentDoc.chapters,
+      ] ++ concatMap (lazyViewChapter << .id) currentDoc.chapters,
 
       div [id "editor-footer"] [
         div [id "doc-word-count"] [text <| (pluralize "word" currentDoc.words) ++ " saved"],
@@ -71,17 +71,23 @@ viewFullscreenButton fullscreen =
       onclick fullscreenInput.handle (always targetMode)
     ] []
 
-lazyViewChapter : Identifier -> Html
-lazyViewChapter chapterId = RefEq.lazy viewChapter chapterId
-
-viewChapter : Identifier -> Html
-viewChapter chapterId =
-  div [key ("chapter " ++ chapterId)] [
-    h2  [id ("edit-chapter-heading-" ++ chapterId),
-      class "chapter-heading"] [],
-    div [id ("edit-chapter-body-" ++ chapterId),
-      class "chapter-body"] []
+lazyViewChapter : Identifier -> [Html]
+lazyViewChapter chapterId = [
+    RefEq.lazy viewChapterHeading chapterId,
+    RefEq.lazy viewChapterBody    chapterId
   ]
+
+viewChapterBody : Identifier -> Html
+viewChapterBody chapterId =
+  div [key ("chapter-body-" ++ chapterId),
+    id ("edit-chapter-body-" ++ chapterId),
+    class "chapter-body"] []
+
+viewChapterHeading : Identifier -> Html
+viewChapterHeading chapterId =
+  h2 [key ("chapter-heading-" ++ chapterId),
+    id ("edit-chapter-heading-" ++ chapterId),
+    class "chapter-heading"] []
 
 viewFontControl : String -> String -> String -> Html
 viewFontControl idAttr label command =
