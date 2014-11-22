@@ -67,8 +67,17 @@ module.exports = class Editor
       focusTarget = event.target.previousSibling
 
       if focusTarget?
-        focusTarget.focus()
-        # TODO move cursor to the end of the focus target's last child.
+        selection = window.getSelection()
+        selection.removeAllRanges()
+
+        caretTarget = veryLastChild focusTarget
+        position    = 0 # TODO determine why caretTarget.textContent.length doesn't work as expected here
+        range       = document.createRange()
+
+        range.setStart caretTarget, position
+        range.setEnd   caretTarget, position
+
+        selection.addRange range
 
   handleDownPress: (event, caretOffset, textNode) =>
     isAtEnd = caretOffset == textNode.textContent.length
@@ -78,6 +87,14 @@ module.exports = class Editor
 
     if isAtEnd && (!hasNextSibling || isEmptyEditor)
       event.target.nextSibling?.focus()
+
+  # Recurses through the given node's lastChild, and that node's lastChild, etc
+  # until it hits a text node and has to stop.
+  veryLastChild = (node) ->
+    if node.lastChild?
+      veryLastChild node.lastChild
+    else
+      node
 
   # Returns true iff the predicate function returns true for the current source
   # and target, as well as every ancestor node of the source, until the target
