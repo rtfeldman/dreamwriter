@@ -16,6 +16,7 @@ module.exports = class Editor
     try
       @medium = new Medium
         element: @elem
+        pasteAsText: false
         mode: if enableRichText then Medium.richMode else Medium.inlineMode
     catch err
       console.error "Error setting up Medium:", err
