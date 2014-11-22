@@ -37,7 +37,7 @@ module.exports = class Editor
     @medium.value()
 
   handleKeydown: (event) =>
-    callHandler = (handler) =>
+    useSmartHandler = (handler) =>
       selection   = window.getSelection()
       range       = selection.getRangeAt 0
       caretOffset = range.startOffset
@@ -48,8 +48,8 @@ module.exports = class Editor
     # TODO intelligently handle Up Arrow at the beginning of a section
     # TODO intelligently handle Down Arrow at the end of a section
     switch event.keyCode
-      when 222 then callHandler @applySmartQuote
-      when 189 then callHandler @applySmartEmDash
+      when 222 then useSmartHandler @applySmartQuote
+      when 189 then useSmartHandler @applySmartEmDash
       when 83
         # Disable Cmd+S and Ctrl+S
         if event.metaKey || event.ctrlKey
