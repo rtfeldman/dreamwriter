@@ -30,8 +30,8 @@ viewEditor currentDoc fullscreen =
       ],
 
       div [id "document-page"] <| [
-        h1  [class "editable", id "edit-title"      ] [],
-        div [class "editable", id "edit-description"] []
+        h1  [id "edit-title"      ] [],
+        div [id "edit-description"] []
       ] ++ map (lazyViewChapter << .id) currentDoc.chapters,
 
       div [id "editor-footer"] [
@@ -78,9 +78,9 @@ viewChapter : Identifier -> Html
 viewChapter chapterId =
   div [key ("chapter " ++ chapterId)] [
     h2  [id ("edit-chapter-heading-" ++ chapterId),
-      class "editable chapter-heading"] [],
+      class "chapter-heading"] [],
     div [id ("edit-chapter-body-" ++ chapterId),
-      class "editable chapter-body"] []
+      class "chapter-body"] []
   ]
 
 viewFontControl : String -> String -> String -> Html
