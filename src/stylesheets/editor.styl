@@ -49,54 +49,45 @@ user-select()
   background #fff
   box-shadow 1px 1px 1px (header-control-shadow)
 
-  .toolbar-button
-    user-select none
-    padding 6px 0
-    text-shadow 2px 2px 1px #EEE
-    cursor pointer
+.toolbar-button
+  user-select none
+  padding 6px 0
+  cursor pointer
 
-    &:hover
-      color black
+  &:hover
+    color black
 
-  #editor-header
-    top 0
-    height 58px
+#editor-header
+  top 0
+  height 58px
 
-  #editor-footer
-    bottom 0
-    height 48px
+#editor-footer
+  bottom 0
+  height 48px
 
-  .toolbar-section
-    flex 1
-    text-align center
+.toolbar-section
+  flex 1
+  text-align center
 
-  .toolbar-section:first-child
-    text-align left
+.toolbar-section:first-child
+  text-align left
 
-  .toolbar-section:last-child
-    text-align right
+.toolbar-section:last-child
+  text-align right
 
-  .font-control
-    font-family Serif
-    width 2.5em
-    height 100%
-    padding 0
-    margin-left 0.5em
-    margin-right 0.5em
-    box-sizing border-box
-
-  .toolbar-font-button
-    position relative
-    top 4px
-    line-height 1.1em
-    text-shadow 1px 1px 1px #fff
-    color #252525
-    margin 0
-    margin-right 0.5em
-    padding-left 1em
-    padding-right 1em
-    color inherit
-    min-width 44px
+.toolbar-font-button
+  box-sizing border-box
+  position relative
+  font-family Libre Baskerville, Georgia, PT Serif, Times New Roman, serif
+  width 2.5em
+  height 100%
+  margin 0
+  padding 0 16px
+  top 5px
+  line-height 1.1em
+  color #252525
+  color inherit
+  min-width 44px
 
 #doc-word-count
   position absolute
@@ -114,6 +105,7 @@ user-select()
 
 #toggle-strikethrough
   text-decoration line-through
+  padding 0 8px
 
 #loaded-document
   background #fff
