@@ -34,12 +34,12 @@ loadDocId = (docId) ->
 loadAsCurrentDoc = (doc) ->
   app.ports.loadAsCurrentDoc.send doc
 
-  setUpEditor "edit-title", doc.title, (mutations, node) ->
+  setUpEditor "edit-title", doc.title, false, (mutations, node) ->
     sync.getDoc(doc.id).done (doc) ->
       doc.title = node.textContent
       sync.saveDoc(doc).done -> app.ports.setTitle.send doc.title
 
-  setUpEditor "edit-description", doc.description, (mutations, node) ->
+  setUpEditor "edit-description", doc.description, false, (mutations, node) ->
     sync.getDoc(doc.id).done (doc) ->
       doc.description = node.textContent
       sync.saveDoc(doc).done -> app.ports.setDescription.send doc.description
@@ -51,7 +51,7 @@ setUpChapter = (chapter) ->
   headingEditorElemId = "edit-chapter-heading-#{chapterId}"
   bodyEditorElemId    = "edit-chapter-body-#{chapterId}"
 
-  editorHeadingPromise = setUpEditor headingEditorElemId, chapter.heading, (mutations, node) ->
+  editorHeadingPromise = setUpEditor headingEditorElemId, chapter.heading, false, (mutations, node) ->
     sync.getCurrentDoc().done (doc) ->
       heading = node.textContent
       chapter.heading = heading
@@ -61,7 +61,7 @@ setUpChapter = (chapter) ->
 
   editorBodyPromise = new Promise (resolve, reject) ->
     sync.getSnapshot(chapter.snapshotId).done (snapshot) ->
-      setUpEditor bodyEditorElemId, snapshot.html, (mutations, node) ->
+      setUpEditor bodyEditorElemId, snapshot.html, true, (mutations, node) ->
         snapshotId = chapter.snapshotId
         html       = node.innerHTML
         text       = node.textContent
@@ -137,19 +137,19 @@ editors = new WeakMap()
 mutationObserverOptions =
   { subtree: true, childList: true, attributes: true, characterData: true }
 
-getEditorFor = (elem, onMutate) ->
+getEditorFor = (elem, enableRichText, onMutate) ->
   if editors.has elem
     editor = editors.get elem
     editor.onChange = onMutate
     editor
   else
-    editor = new Editor elem, mutationObserverOptions, onMutate
+    editor = new Editor elem, mutationObserverOptions, enableRichText, onMutate
     editors.set elem, editor
     editor
 
-setUpEditor = (id, html, onMutate) ->
+setUpEditor = (id, html, enableRichText, onMutate) ->
   whenPresent((-> document.getElementById id), 10000)
-    .then ((elem) -> getEditorFor(elem, onMutate).writeHtml html, true),
+    .then ((elem) -> getEditorFor(elem, enableRichText, onMutate).writeHtml html, true),
           ((err)  -> console.error "Could not write after 10,000 attempts:", id, html)
 
 refreshDocList = -> sync.listDocs().done (docs) ->

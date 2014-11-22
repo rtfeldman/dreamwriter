@@ -6,10 +6,20 @@
 #    new document (title, chapters, etc.) and passes them to a callback.
 # 2. Writes to the element when requested, optionally while disabling the 
 #    mutation observer to avoid spurious updates.
+Medium = require "./medium.js"
+
 module.exports = class Editor
-  constructor: (@elem, @mutationObserverOptions, @onChange) ->
+  constructor: (@elem, @mutationObserverOptions, enableRichText, @onChange) ->
     @mutationObserver = new MutationObserver (mutations) =>
       @onChange mutations, @elem
+
+    try
+      @medium = new Medium
+        element: @elem
+        mode: if enableRichText then Medium.richMode else Medium.inlineMode
+    catch err
+      console.error "Error setting up Medium:", err
+      throw err
 
     @elem.addEventListener "keyup", @handleKeyup
 
@@ -17,11 +27,11 @@ module.exports = class Editor
 
   writeHtml: (html, skipObserver, onSuccess = (->), onError = onWriteError) =>
     @runWithOptionalObserver skipObserver, =>
-      @elem.innerHTML = html
+      @medium.value html
       onSuccess()
 
   getHtml: ->
-    @elem.innerHTML
+    @medium.value()
 
   handleKeyup: (event) =>
     selection = window.getSelection()
