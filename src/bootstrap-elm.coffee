@@ -51,31 +51,48 @@ setUpChapter = (chapter) ->
   headingEditorElemId = "edit-chapter-heading-#{chapterId}"
   bodyEditorElemId    = "edit-chapter-body-#{chapterId}"
 
+  # If you delete the chapter's body and heading, assume you want it gone.
+  # (If you didn't, you can just re-add it; there couldn't have been data loss.)
+  wasChapterRemoved = (words, mutations) ->
+    # Returns true iff there's no text content in either the body or the heading
+    words == 0 &&
+      # Don't do this unless nodes were removed; otherwise we can get false
+      # positives while the chapter is being added, causing it to be deleted. :(
+      (mutations.some ({removedNodes}) -> removedNodes.length > 0) &&
+      !document.getElementById(headingEditorElemId).textContent.match(/\S/) &&
+      !document.getElementById(bodyEditorElemId).textContent.match(/\S/)
+
   editorHeadingPromise = setUpEditor headingEditorElemId, chapter.heading, false, (mutations, node) ->
     sync.getCurrentDoc().done (doc) ->
       heading = node.textContent
+
       chapter.heading = heading
       chapter.words   = countWords heading
 
-      sync.saveDoc(doc).done -> app.ports.updateChapter.send chapter
+      if wasChapterRemoved chapter.words, mutations
+        deleteChapter chapter
+      else
+        sync.saveDoc(doc).done -> app.ports.updateChapter.send chapter
 
   editorBodyPromise = new Promise (resolve, reject) ->
     sync.getSnapshot(chapter.snapshotId).done (snapshot) ->
       setUpEditor bodyEditorElemId, snapshot.html, true, (mutations, node) ->
-        snapshotId = chapter.snapshotId
-        html       = node.innerHTML
-        text       = node.textContent
+        snapshotId    = chapter.snapshotId
+        html          = node.innerHTML
+        text          = node.textContent
+        chapter.words = countWords text
 
-        sync.getCurrentDoc().done (doc) ->
-          sync.saveSnapshot({id: snapshotId, html})
-            .then (->
-                app.ports.putSnapshot.send {id: snapshotId, html, text}
-                chapter.words = countWords html
+        if wasChapterRemoved chapter.words, mutations
+          deleteChapter chapter
+        else
+          sync.getCurrentDoc().done (doc) ->
+            sync.saveSnapshot({id: snapshotId, html})
+              .then (->
+                  app.ports.putSnapshot.send {id: snapshotId, html, text}
+                  app.ports.updateChapter.send chapter
 
-                app.ports.updateChapter.send chapter
-
-                resolve()
-              ), reject
+                  resolve()
+                ), reject
 
   Promise.all [editorHeadingPromise, editorBodyPromise]
 
@@ -164,6 +181,10 @@ scrollToChapterId = (chapterId) ->
   chapterHeading = document.getElementById("edit-chapter-heading-#{chapterId}")
 
   editorFrame.scrollTop = chapterHeading.offsetTop - editorHeader.offsetHeight
+
+deleteChapter = (chapter) ->
+  sync.deleteChapter(chapter).done (newChapters) ->
+    app.ports.setChapters.send newChapters
 
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
