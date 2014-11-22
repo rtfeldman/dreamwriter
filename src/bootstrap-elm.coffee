@@ -88,6 +88,9 @@ app.ports.newChapter.subscribe ->
         newChapter = doc.chapters[doc.chapters.length - 1]
         setUpChapter(newChapter).done (editorHeading, editorBody) ->
           scrollToChapterId newChapter.id
+
+          # TODO refactor this to just make a Range and then invoke range.selectNode() on this node,
+          # rather than doing execCommand "selectall"
           document.getElementById("edit-chapter-heading-#{newChapter.id}").focus()
           document.execCommand "selectall"
 
