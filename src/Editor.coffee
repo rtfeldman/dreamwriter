@@ -75,14 +75,14 @@ module.exports = class Editor
       @replaceWith textNode, caretOffset - 1, caretOffset, emDash
 
   replaceWith: (textNode, startOffset, endOffset, html, callback) =>
-    newRange  = document.createRange()
     selection = window.getSelection()
+    range     = selection.getRangeAt 0
 
-    newRange.setStart textNode, startOffset
-    newRange.setEnd   textNode, endOffset
-
-    selection.removeAllRanges()
-    selection.addRange newRange
+    # We need to have some text selected, so that inserting HTML overrides
+    # the existing content. Thus, if the range is collapsed, expand it.
+    if range.collapsed
+      range.setStart textNode, startOffset
+      range.setEnd   textNode, endOffset
 
     @medium.insertHtml html, callback
 
