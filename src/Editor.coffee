@@ -84,5 +84,5 @@ module.exports = class Editor
     @mutationObserver.disconnect()
 
 onWriteError = (err) ->
-    console.error "Error while trying to write to editor", err
-    throw new Error err
+  console.error "Error while trying to write to editor", err
+  throw new Error err
