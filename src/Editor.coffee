@@ -50,10 +50,36 @@ module.exports = class Editor
     switch event.keyCode
       when 222 then useSmartHandler @applySmartQuote
       when 189 then useSmartHandler @applySmartEmDash
+      when 38  then useSmartHandler @handleUpPress
+      when 40  then useSmartHandler @handleDownPress
       when 83
         # Disable Cmd+S and Ctrl+S
         if event.metaKey || event.ctrlKey
           event.preventDefault()
+
+  handleUpPress: (event, caretOffset, textNode) =>
+    isAtStart = caretOffset == 0
+    hasPreviousSibling = textNode.previousSibling
+    isEmptyEditor = event.target.textContent == "" &&
+      event.target.previousSibling == textNode.previousSibling
+
+    if isAtStart && (!hasPreviousSibling || isEmptyEditor)
+      focusTarget = event.target.previousSibling
+
+      if focusTarget?
+        focusTarget.focus()
+        # TODO move cursor to the end of the focus target's last child.
+
+  handleDownPress: (event, caretOffset, textNode) =>
+    isAtEnd = caretOffset == textNode.textContent.length
+    hasNextSibling = textNode.nextSibling
+    isEmptyEditor = event.target.textContent == "" &&
+      event.target.nextSibling == textNode.nextSibling
+
+    # TODO somtimes detects incorrectly...might be we can't trust event.target,
+    # and might instead need to look at the textNode's first contentEditable ancestor.
+    if isAtEnd && (!hasNextSibling || isEmptyEditor)
+      event.target.nextSibling?.focus()
 
   applySmartQuote: (event, caretOffset, textNode) =>
     event.preventDefault()
