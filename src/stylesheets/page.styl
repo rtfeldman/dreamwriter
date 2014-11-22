@@ -1,3 +1,6 @@
+page-background = rgb(99, 71, 115)
+page-default-text = rgb(48, 28, 69)
+
 #page
   position relative
   display flex
@@ -11,8 +14,10 @@
   margin 0
   padding 8px
 
-  color rgb(127, 122, 145)
-
   overflow hidden
 
-  background-color rgb(74, 76, 104)
+  background-color page-background
+  color page-default-text
+
+::-webkit-input-placeholder
+  color page-default-text

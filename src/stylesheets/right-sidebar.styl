@@ -1,11 +1,12 @@
 @require "mixins/page-text"
+@require "page"
 @require "sidebars"
-
-notes-input-background-color = rgb(135, 130, 145)
 
 note-text       = rgb(4, 3, 5)
 note-background = rgb(193, 170, 149)
 note-hover      = #fff
+
+search-notes-color = rgb(152, 125, 152)
 
 #right-sidebar-container
   position relative
@@ -35,18 +36,15 @@ note-hover      = #fff
   height 36px
   margin-top 2px
 
-  color #fff
-  background-color notes-input-background-color
-  box-shadow 1px 1px 1px header-control-shadow
+  color header-control-color
+  background-color search-notes-color
+  box-shadow 1px 1px 1px (header-control-shadow)
 
   &:hover
     background-color header-control-color
 
-    &:focus
-      background-color notes-input-background-color
-
-::-webkit-input-placeholder
-  color rgb(52, 54, 90)
+  &:focus
+    background-color header-body-element
 
 #notes
   padding 20px
@@ -117,8 +115,10 @@ note-hover      = #fff
   text-align center
   cursor pointer
 
+  color header-control-color
+
   &:hover
-    color black
+    color header-control-hover
 
   &.flaticon-cloud134
     font-size 28px

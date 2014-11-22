@@ -2,7 +2,6 @@
 @require "sidebars"
 
 dark-brown = #644B2B
-outline-elem-background = rgb(135, 130, 145)
 
 #file-buttons
   margin-bottom 25px
@@ -11,11 +10,11 @@ outline-elem-background = rgb(135, 130, 145)
   cursor pointer
   font-size 32px
 
-  color outline-elem-background
-  text-shadow 1px 1px 1px header-control-shadow
+  color header-body-element
+  text-shadow 1px 1px 1px (header-control-shadow)
 
   &:hover
-    color header-control-hover
+    color header-control-color
 
 #left-sidebar-container
   position relative
@@ -47,12 +46,15 @@ outline-elem-background = rgb(135, 130, 145)
 
   font-size 16px
 
-  color rgb(52, 54, 90)
-  background-color outline-elem-background
-  box-shadow 1px 1px 1px header-control-shadow
+  background-color header-body-element
+  box-shadow 1px 1px 1px (header-control-shadow)
+
+  // Leave room for the shadow!
+  margin-right 2px
+  margin-bottom 2px
 
   &:hover
-    background-color #fff
+    background-color header-control-color
 
 #title
   font-size 24px
