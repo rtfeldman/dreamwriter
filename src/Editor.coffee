@@ -59,7 +59,7 @@ module.exports = class Editor
 
   handleUpPress: (event, caretOffset, textNode) =>
     isAtStart = caretOffset == 0
-    hasPreviousSibling = textNode.previousSibling
+    hasPreviousSibling = !allAncestorsUntil(textNode, event.target, (node) -> !node.previousSibling)
     isEmptyEditor = event.target.textContent == "" &&
       event.target.previousSibling == textNode.previousSibling
 
@@ -72,14 +72,24 @@ module.exports = class Editor
 
   handleDownPress: (event, caretOffset, textNode) =>
     isAtEnd = caretOffset == textNode.textContent.length
-    hasNextSibling = textNode.nextSibling
+    hasNextSibling = !allAncestorsUntil(textNode, event.target, (node) -> !node.nextSibling)
     isEmptyEditor = event.target.textContent == "" &&
       event.target.nextSibling == textNode.nextSibling
 
-    # TODO somtimes detects incorrectly...might be we can't trust event.target,
-    # and might instead need to look at the textNode's first contentEditable ancestor.
     if isAtEnd && (!hasNextSibling || isEmptyEditor)
       event.target.nextSibling?.focus()
+
+  # Returns true iff the predicate function returns true for the current source
+  # and target, as well as every ancestor node of the source, until the target
+  # ancestor has been reached.
+  allAncestorsUntil = (source, target, predicate) ->
+    if source == target
+      true
+    else if !source
+      throw new Error "allAncestorsUntil() was called with a source that did not have the target for an ancestor!"
+    else
+      predicate(source) &&
+        allAncestorsUntil(source.parentNode, target, predicate)
 
   applySmartQuote: (event, caretOffset, textNode) =>
     event.preventDefault()
