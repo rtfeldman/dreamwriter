@@ -39,7 +39,13 @@ viewEditor currentDoc fullscreen =
 
       div [id "editor-footer"] [
         div [id "doc-word-count"] [text <| (pluralize "word" currentDoc.words) ++ " saved"],
-        div [id "dropbox-sync"] [text "enable Dropbox syncing"]
+        div [id "dropbox-sync"] [
+          input [id "toggle-dropbox-sync", attr "type" "checkbox"] [],
+          label [for "toggle-dropbox-sync"] [
+            text "sync to ",
+            span [class "dropbox-logo"] []
+          ]
+        ]
       ]
     ]
   ]

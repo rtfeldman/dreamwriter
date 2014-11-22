@@ -6,15 +6,34 @@ dbjs       = require "db.js"
 sha1       = require "sha1"
 dbOptions  = require "./idb-options.json"
 countWords = require "./WordCount.coffee"
+Dropbox    = require "./dropbox.js"
 
 module.exports = class DreamSync
   constructor: (@db) ->
+    @dreamBox = null
 
   @connect: ->
     new Promise (resolve, reject) ->
       dbjs.open(dbOptions).then ((conn) -> resolve new DreamSync conn), reject
 
   @getRandomSha: -> sha1 "#{Math.random()}"[0..16]
+
+  # This can be called either on page load (if there's a token in localStorage)
+  # or mid-session if the user decides to enable Dropbox syncing.
+  connectToDropbox: =>
+    DreamBox.auth().then (dreamBox) =>
+      @dreamBox = dreamBox
+
+      # TODO sync with dropbox, reconcile file changes, etc!
+
+      # TODO move this logic into appropriate saveFooAndBar functions,
+      # and reorganize it to not just write an entire file every single time...
+      console.log "Auth'd with Dropbox:", dreamBox
+      dreamBox.writeFile "Alice.html", document.getElementById("editor").innerHTML, (error, stat) ->
+        console.log "writeFile:", error, stat
+
+  disconnectFromDropbox: =>
+    @dreamBox = null
 
   getCurrentDocId:       => @getSetting  "currentDocId"
   saveCurrentDocId: (id) => @saveSetting "currentDocId", id

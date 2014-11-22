@@ -14,6 +14,7 @@
   "devDependencies": {
     "browserify-mustache": "0.0.4",
     "coffeeify": "0.7.0",
+    "dropbox": "0.10.3",
     "grunt": "0.4.5",
     "grunt-appcache": "0.1.8",
     "grunt-autoprefixer": "1.0.1",
