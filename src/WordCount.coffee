@@ -1,1 +1,1 @@
-module.exports = (html) -> html.match(/\S+/g).length
+module.exports = (text) -> text.match(/\S+/g)?.length ? 0
