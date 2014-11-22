@@ -12,9 +12,6 @@ import Html.Events (..)
 import Html.Tags (..)
 import Maybe
 
--- TODO remove this once it's fixed in elm-html
-contenteditable = toggle "contentEditable" 
-
 view : Doc -> AppState -> Html
 view currentDoc state =
   RefEq.lazy2 viewEditor currentDoc state.fullscreen
@@ -33,8 +30,8 @@ viewEditor currentDoc fullscreen =
       ],
 
       div [id "document-page"] <| [
-        h1  [class "editable", id "edit-title",       contenteditable True, spellcheck True] [],
-        div [class "editable", id "edit-description", contenteditable True, spellcheck True] []
+        h1  [class "editable", id "edit-title"      ] [],
+        div [class "editable", id "edit-description"] []
       ] ++ map (lazyViewChapter << .id) currentDoc.chapters,
 
       div [id "editor-footer"] [
@@ -80,11 +77,9 @@ lazyViewChapter chapterId = RefEq.lazy viewChapter chapterId
 viewChapter : Identifier -> Html
 viewChapter chapterId =
   div [key ("chapter " ++ chapterId)] [
-    h2  [contenteditable True, spellcheck True,
-      id ("edit-chapter-heading-" ++ chapterId),
+    h2  [id ("edit-chapter-heading-" ++ chapterId),
       class "editable chapter-heading"] [],
-    div [contenteditable True, spellcheck True,
-      id ("edit-chapter-body-" ++ chapterId),    
+    div [id ("edit-chapter-body-" ++ chapterId),
       class "editable chapter-body"] []
   ]
 

@@ -10,9 +10,6 @@ import Html.Events (..)
 import Html.Optimize.RefEq as RefEq
 import Maybe
 
--- TODO remove this once it's fixed in elm-html
-contenteditable = toggle "contentEditable" 
-
 view : Doc -> AppState -> Html
 view currentDoc state =
   let {sidebarBody, sidebarFooter} = case state.currentNote of
@@ -58,7 +55,7 @@ viewCurrentNoteBody note =
         title "Close Note",
         onclick actions.handle (\_ -> SetCurrentNote Nothing)] []
     ],
-    div [id "current-note-body", contenteditable True] [text "TODO: Write a note here!"]
+    div [id "current-note-body"] [text "TODO: Write a note here!"]
   ]
 
 viewCurrentNoteFooter : Note -> Html
