@@ -67,7 +67,7 @@ viewCurrentDocHeader currentDoc =
     contentType = downloadContentType
   }
   in
-    div [key ("current-doc-header-" ++ currentDoc.title), id sidebarHeaderId, class sidebarHeaderClass] [
+    div [id sidebarHeaderId, class sidebarHeaderClass] [
       span [
         title "New",
         class "sidebar-header-control flaticon-add26",
