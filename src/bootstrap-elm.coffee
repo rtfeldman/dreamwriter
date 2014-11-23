@@ -7,14 +7,14 @@ DocImport  = require "./DocImport.coffee"
 FileIO     = require "./FileIO.coffee"
 countWords = require "./WordCount.coffee"
 
-blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, lastModifiedTime: 0, words: 0}
+blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, lastModifiedTime: 0, titleWords: 0, descriptionWords: 0}
 
 app = Elm.fullscreen Elm.App, {
   loadAsCurrentDoc: blankDoc
   setChapters: []
-  updateChapter: { id: "", heading: "", words: 0, creationTime: 0, lastModifiedTime: 0, snapshotId: ""}
-  setTitle: ""
-  setDescription: ""
+  updateChapter: { id: "", heading: "", headingWords: 0, bodyWords: 0, creationTime: 0, lastModifiedTime: 0, snapshotId: ""}
+  setTitle: ["", 0]
+  setDescription: ["", 0]
   listDocs: []
   listNotes: []
   setFullscreen: false
@@ -37,12 +37,14 @@ loadAsCurrentDoc = (doc) ->
   setUpEditor getTitleElem, doc.title, false, (mutations, node) ->
     sync.getDoc(doc.id).done (doc) ->
       doc.title = node.textContent
-      sync.saveDoc(doc).done -> app.ports.setTitle.send doc.title
+      doc.titleWords = countWords doc.title
+      sync.saveDoc(doc).done -> app.ports.setTitle.send [doc.title, doc.titleWords]
 
   setUpEditor getDescriptionElem, doc.description, false, (mutations, node) ->
     sync.getDoc(doc.id).done (doc) ->
       doc.description = node.textContent
-      sync.saveDoc(doc).done -> app.ports.setDescription.send doc.description
+      doc.descriptionWords = countWords doc.description
+      sync.saveDoc(doc).done -> app.ports.setDescription.send [doc.description, doc.descriptionWords]
 
   doc.chapters.forEach setUpChapter
 
@@ -65,8 +67,8 @@ setUpChapter = (chapter) ->
     sync.getCurrentDoc().done (doc) ->
       heading = node.textContent
 
-      chapter.heading = heading
-      chapter.words   = countWords heading
+      chapter.heading      = heading
+      chapter.headingWords = countWords heading
 
       doc.chapters = for existingChapter in doc.chapters
         if existingChapter.id == chapter.id
@@ -74,7 +76,7 @@ setUpChapter = (chapter) ->
         else
           existingChapter
 
-      if wasChapterRemoved chapter.words, mutations
+      if wasChapterRemoved chapter.headingWords, mutations
         deleteChapter chapter
       else
         sync.saveDoc(doc).done -> app.ports.updateChapter.send chapter
@@ -82,12 +84,12 @@ setUpChapter = (chapter) ->
   editorBodyPromise = new Promise (resolve, reject) ->
     sync.getSnapshot(chapter.snapshotId).done (snapshot) ->
       setUpEditor (-> getChapterBodyElem chapterId), snapshot.html, true, (mutations, node) ->
-        snapshotId    = chapter.snapshotId
-        html          = node.innerHTML
-        text          = node.textContent
-        chapter.words = countWords text
+        snapshotId        = chapter.snapshotId
+        html              = node.innerHTML
+        text              = node.textContent
+        chapter.bodyWords = countWords text
 
-        if wasChapterRemoved chapter.words, mutations
+        if wasChapterRemoved chapter.bodyWords, mutations
           deleteChapter chapter
         else
           sync.getCurrentDoc().done (doc) ->

@@ -2,6 +2,7 @@ blankDocHtml        = require("./templates/BlankDocBody.mustache")()
 introDocHtml        = require("./templates/IntroDocBody.mustache")()
 blankChapterHtml    = require("./templates/BlankChapterBody.mustache")()
 wrapInDocMarkup     = require("./templates/Doc.mustache")
+countWords          = require("./WordCount.coffee")
 blankChapterHeading = "Amazing Chapter"
 
 htmlUntil = (node, predicate) ->
@@ -25,7 +26,8 @@ inferChaptersFrom = (node) ->
 
     {
       heading:          heading.textContent
-      words:            0 # TODO infer from html
+      headingWords:     0 # TODO infer from html
+      bodyWords:        0 # TODO infer from html
       creationTime:     now
       lastModifiedTime: now
       html:             html
@@ -35,11 +37,15 @@ docFromHtml = (html) ->
   wrapperNode = document.createElement "div"
   wrapperNode.innerHTML = html
 
+  title       = inferTitleFrom(wrapperNode) ? ""
+  description = inferDescriptionFrom(wrapperNode) ? ""
+
   {
-    title:       inferTitleFrom(wrapperNode) ? ""
-    description: inferDescriptionFrom(wrapperNode) ? ""
-    chapters:    inferChaptersFrom(wrapperNode)
-    words:       0 # TODO infer from summed chapters, title, and description
+    title,
+    description,
+    chapters:         inferChaptersFrom(wrapperNode)
+    titleWords:       countWords(title)
+    descriptionWords: countWords(description)
   }
 
 docFromFile = (filename, lastModifiedTime, html) ->

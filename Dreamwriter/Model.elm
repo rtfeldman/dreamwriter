@@ -47,7 +47,8 @@ type Doc =
   , title            : String
   , description      : HtmlString
   , chapters         : [Chapter]
-  , words            : Int
+  , titleWords       : Int
+  , descriptionWords : Int
   , creationTime     : MsSinceEpoch
   , lastModifiedTime : MsSinceEpoch
   }
@@ -55,7 +56,8 @@ type Doc =
 type Chapter =
   { id               : Identifier
   , heading          : String
-  , words            : Int
+  , headingWords     : Int
+  , bodyWords        : Int
   , creationTime     : MsSinceEpoch
   , lastModifiedTime : MsSinceEpoch
   , snapshotId       : Identifier

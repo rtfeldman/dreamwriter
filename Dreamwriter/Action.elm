@@ -16,8 +16,8 @@ data Action
   | SetLeftSidebarView LeftSidebarView
   | SetChapters [Chapter]
   | UpdateChapter Chapter
-  | SetTitle String
-  | SetDescription String
+  | SetTitle (String, Int)
+  | SetDescription (String, Int)
   | SetFullscreen FullscreenState
   | PutSnapshot Snapshot
 

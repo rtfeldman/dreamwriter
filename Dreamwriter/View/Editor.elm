@@ -35,7 +35,10 @@ viewEditor currentDoc fullscreen =
       ] ++ concatMap (lazyViewChapter << .id) currentDoc.chapters,
 
       div [id "editor-footer"] [
-        div [id "doc-word-count"] [text <| (pluralize "word" currentDoc.words) ++ " saved"],
+        let wordCount = currentDoc.titleWords + currentDoc.descriptionWords +
+          (sum <| map (\chap -> chap.headingWords + chap.bodyWords) currentDoc.chapters)
+        in
+          div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
         div [id "dropbox-sync"] [
           input [id "toggle-dropbox-sync", attr "type" "checkbox"] [],
           label [for "toggle-dropbox-sync"] [

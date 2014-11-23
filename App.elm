@@ -55,11 +55,11 @@ step action state =
       updateCurrentDoc (\doc -> {doc | chapters <- (map (preferById chapter) doc.chapters)}) state
         |> pruneSnapshots
 
-    SetTitle title ->
-      updateCurrentDoc (\doc -> {doc | title <- title}) state
+    SetTitle (title, words) ->
+      updateCurrentDoc (\doc -> {doc | title <- title, titleWords <- words}) state
 
-    SetDescription description ->
-      updateCurrentDoc (\doc -> {doc | description <- description}) state
+    SetDescription (description, words) ->
+      updateCurrentDoc (\doc -> {doc | description <- description, descriptionWords <- words}) state
 
     SetFullscreen enabled ->
       {state | fullscreen <- enabled}
@@ -90,14 +90,9 @@ updateCurrentDoc transformation state =
       let newCurrentDoc = transformation currentDoc
           newDocs       = map (preferById newCurrentDoc) state.docs
       in
-        {state | currentDoc <- Just (refreshWordCount newCurrentDoc)
+        {state | currentDoc <- Just newCurrentDoc
                , docs       <- newDocs
         }
-
-refreshWordCount : Doc -> Doc
-refreshWordCount doc =
-  let words = foldl (\currentChapter sum -> sum + currentChapter.words) 0 doc.chapters
-  in {doc | words <- words}
 
 preferById preferred given =
   if preferred.id == given.id
@@ -136,8 +131,8 @@ state = foldp step emptyState userInput
 port loadAsCurrentDoc : Signal Doc
 port setChapters : Signal [Chapter]
 port updateChapter : Signal Chapter
-port setTitle : Signal String
-port setDescription : Signal String
+port setTitle : Signal (String, Int)
+port setDescription : Signal (String, Int)
 port setFullscreen : Signal Bool
 port setCurrentNote : Signal Note
 port listDocs : Signal [Doc]

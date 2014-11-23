@@ -83,7 +83,8 @@ module.exports = class DreamSync
       lastModifiedTime: currentTime
       creationTime:     currentTime
       snapshotId:       snapshot.id
-      words:            countWords(heading)
+      headingWords:     countWords(heading)
+      bodyWords:        0 # New chapters always have empty bodies
     }
 
     doc.chapters.push chapter
