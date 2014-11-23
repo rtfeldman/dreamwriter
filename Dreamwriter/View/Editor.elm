@@ -46,11 +46,24 @@ viewEditor currentDoc fullscreen =
     ]
   ]
 
+withCommas : Int -> String
+withCommas num =
+  if num >= 1000
+    then
+      let extraDigits = floor (num / 1000)
+          prefix      = withCommas extraDigits
+      in
+        -- TODO change this to the equivalent of num[num.length - 3..num.length]
+        -- because otherwise we get badness around zeroes, e.g. 19,034 -> 19,34
+        prefix ++ "," ++ (show <| num - (extraDigits * 1000))
+    else
+      show num
+
 pluralize : String -> Int -> String
 pluralize noun quantity =
   if quantity == 1
     then "1 " ++ noun
-    else (show quantity) ++ " " ++ noun ++ "s"
+    else (withCommas quantity) ++ " " ++ noun ++ "s"
 
 viewFullscreenButton fullscreen =
   let {fullscreenClass, targetMode, fullscreenTitle} = case fullscreen of
