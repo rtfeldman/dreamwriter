@@ -53,12 +53,9 @@ withCommas : Int -> String
 withCommas num =
   if num >= 1000
     then
-      let extraDigits = floor (num / 1000)
-          prefix      = withCommas extraDigits
+      let prefix = withCommas <| floor (num / 1000)
       in
-        -- TODO change this to the equivalent of num[num.length - 3..num.length]
-        -- because otherwise we get badness around zeroes, e.g. 19,034 -> 19,34
-        prefix ++ "," ++ (show <| num - (extraDigits * 1000))
+        prefix ++ "," ++ (String.right 3 <| show num)
     else
       show num
 
