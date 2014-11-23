@@ -20,6 +20,10 @@ module.exports = class Editor
         element: @elem
         pasteAsText: false
         mode: if enableRichText then Medium.richMode else Medium.inlineMode
+        modifiers:
+          b: "bold"
+          i: "italicize"
+          v: "paste"
     catch err
       console.error "Error setting up Medium:", err
       throw err
