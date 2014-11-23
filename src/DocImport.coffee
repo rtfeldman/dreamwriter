@@ -24,10 +24,16 @@ inferChaptersFrom = (node) ->
     html = htmlUntil heading.nextSibling, (node) ->
       node && (node.tagName != "H2") && !(node.querySelector? "h2")
 
+    dummyElem = document.createElement "div"
+    dummyElem.innerHTML = html
+
+    headingText = heading.textContent
+    bodyText    = dummyElem.textContent
+
     {
-      heading:          heading.textContent
-      headingWords:     0 # TODO infer from html
-      bodyWords:        0 # TODO infer from html
+      heading:          headingText
+      headingWords:     countWords(headingText)
+      bodyWords:        countWords(bodyText)
       creationTime:     now
       lastModifiedTime: now
       html:             html
