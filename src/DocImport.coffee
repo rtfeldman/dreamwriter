@@ -5,16 +5,11 @@ wrapInDocMarkup     = require("./templates/Doc.mustache")
 countWords          = require("./WordCount.coffee")
 blankChapterHeading = "Amazing Chapter"
 
-contentUntil = (node, predicate) ->
+htmlUntil = (node, predicate) ->
   if predicate node
-    newHtml = node?.outerHTML   ? ""
-    newText = node?.textContent ? ""
-
-    {html, text} = contentUntil node.nextSibling, predicate
-
-    {html: html + newHtml, text: text + newText}
+    (node?.outerHTML ? "") + (htmlUntil node.nextSibling, predicate)
   else
-    {html: "", text: ""}
+    ""
 
 inferTitleFrom = (node) ->
   node.querySelector("h1")?.textContent
@@ -26,15 +21,13 @@ inferChaptersFrom = (node) ->
   now = new Date().getTime()
 
   for heading in node.querySelectorAll("h2")
-    {html, text} = contentUntil heading.nextSibling, (node) ->
+    html = htmlUntil heading.nextSibling, (node) ->
       node && (node.tagName != "H2") && !(node.querySelector? "h2")
 
-    headingText = heading.textContent
-
     {
-      heading:          headingText
-      headingWords:     countWords(headingText)
-      bodyWords:        countWords(text)
+      heading:          heading.textContent
+      headingWords:     0 # TODO infer from html
+      bodyWords:        0 # TODO infer from html
       creationTime:     now
       lastModifiedTime: now
       html:             html
