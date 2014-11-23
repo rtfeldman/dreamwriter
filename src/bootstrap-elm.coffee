@@ -9,6 +9,13 @@ countWords = require "./WordCount.coffee"
 
 blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, lastModifiedTime: 0, titleWords: 0, descriptionWords: 0}
 
+document.addEventListener "keydown", (event) ->
+  switch event.keyCode
+    when 83
+      # Disable Cmd+S and Ctrl+S
+      if event.metaKey || event.ctrlKey
+        event.preventDefault()
+
 app = Elm.fullscreen Elm.App, {
   loadAsCurrentDoc: blankDoc
   setChapters: []

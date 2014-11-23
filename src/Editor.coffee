@@ -53,10 +53,6 @@ module.exports = class Editor
       when 38  then useSmartHandler @handleUpPress unless event.shiftKey
       when 40  then useSmartHandler @handleDownPress unless event.shiftKey
       when 8   then useSmartHandler @handleBackspace
-      when 83
-        # Disable Cmd+S and Ctrl+S
-        if event.metaKey || event.ctrlKey
-          event.preventDefault()
 
   handleBackspace: (event, caretOffset, textNode) =>
     # If the user pressed backspace in an empty node, fire onChange with
