@@ -39,8 +39,7 @@ viewEditor currentDoc fullscreen =
         div [id "dropbox-sync"] [
           input [id "toggle-dropbox-sync", attr "type" "checkbox"] [],
           label [for "toggle-dropbox-sync"] [
-            text "sync to ",
-            span [class "dropbox-logo"] []
+            text " sync to Dropbox"
           ]
         ]
       ]
