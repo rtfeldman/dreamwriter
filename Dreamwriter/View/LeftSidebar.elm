@@ -29,7 +29,7 @@ viewCurrentDocFooter =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
       title "Add Chapter",
-      onClick <| send newChapterInput (always ()),
+      onClick <| send newChapterInput (),
       class "flaticon-plus81"] []]
 
 view : Doc -> AppState -> Html
@@ -71,7 +71,7 @@ viewCurrentDocHeader currentDoc =
       menuitem [
         title "New",
         class "sidebar-header-control flaticon-add26",
-        onClick <| send newDocInput (always ())] [],
+        onClick <| send newDocInput ()] [],
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
@@ -79,11 +79,11 @@ viewCurrentDocHeader currentDoc =
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
-        onClick <| send downloadInput (always downloadOptions)] [],
+        onClick <| send downloadInput downloadOptions] [],
       menuitem [
         title "Print",
         class "sidebar-header-control flaticon-printer70",
-        onClick <| send printInput (always ())] [],
+        onClick <| send printInput ()] [],
       menuitem [
         title "Settings",
         class "sidebar-header-control flaticon-gear33"] []

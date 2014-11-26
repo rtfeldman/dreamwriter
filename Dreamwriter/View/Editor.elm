@@ -81,7 +81,7 @@ viewFullscreenButton fullscreen =
   in
     div [class ("toolbar-section toolbar-button " ++ fullscreenClass),
       title fullscreenTitle,
-      onClick <| send fullscreenInput (always targetMode)
+      onClick <| send fullscreenInput targetMode
     ] []
 
 lazyViewChapter : Identifier -> List Html
@@ -106,4 +106,4 @@ viewFontControl : String -> String -> String -> Html
 viewFontControl idAttr label command =
   span [class "font-control toolbar-button toolbar-font-button", id idAttr,
     (attr "unselectable" "on"),
-    onClick <| send execCommandInput (always command)] [text label]
+    onClick <| send execCommandInput command] [text label]

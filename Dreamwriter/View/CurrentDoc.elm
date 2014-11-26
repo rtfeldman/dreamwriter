@@ -13,7 +13,7 @@ import Signal (send)
 view : Doc -> Html
 view currentDoc =
   div [key "current-doc-view", id "current-doc-view"] [
-    div [id "title", onClick <| send navigateToTitleInput (always ())]
+    div [id "title", onClick <| send navigateToTitleInput ()]
       [text currentDoc.title],
 
     viewOutline currentDoc.chapters
@@ -27,5 +27,5 @@ viewChapter : Int -> Chapter -> Html
 viewChapter index chapter = li [
     key ("chapter" ++ (toString index)),
     title chapter.heading,
-    onClick <| send navigateToChapterIdInput (always chapter.id)
+    onClick <| send navigateToChapterIdInput chapter.id
   ] [text chapter.heading]
