@@ -6,11 +6,15 @@ import Dreamwriter.Model (..)
 import Dreamwriter.View.Page (view)
 
 import String
+import Graphics.Element (Element)
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
 import Html.Lazy (..)
-import Signal (sampleOn)
+import Signal
+import Signal (Signal, sampleOn, dropRepeats)
+import Time (Time, since)
+import List (..)
 import Maybe
 import Window
 import Dict
