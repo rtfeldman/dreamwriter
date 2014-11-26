@@ -7,6 +7,8 @@ import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
 
+import List (..)
+
 view : Doc -> Html
 view currentDoc =
   div [key "current-doc-view", id "current-doc-view"] [
