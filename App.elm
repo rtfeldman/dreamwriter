@@ -10,6 +10,7 @@ import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
 import Html.Lazy (..)
+import Signal (sampleOn)
 import Maybe
 import Window
 import Dict
