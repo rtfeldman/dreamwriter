@@ -119,7 +119,7 @@ userInput =
   , Signal.map SetFullscreen    setFullscreen
   , Signal.map PutSnapshot      putSnapshot
   , Signal.map (SetCurrentNote << Just) setCurrentNote
-  , actions.signal
+  , Signal.subscribe actions
   ]
 
 scene : AppState -> (Int, Int) -> Element
@@ -147,34 +147,34 @@ port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = Signal.map .currentDocId state
 
 port newDoc : Signal ()
-port newDoc = newDocInput.signal
+port newDoc = Signal.subscribe newDocInput
 
 port openFromFile : Signal ()
-port openFromFile = openFromFileInput.signal
+port openFromFile = Signal.subscribe openFromFileInput
 
 port downloadDoc : Signal DownloadOptions
-port downloadDoc = downloadInput.signal
+port downloadDoc = Signal.subscribe downloadInput
 
 port printDoc : Signal ()
-port printDoc = printInput.signal
+port printDoc = Signal.subscribe printInput
 
 port navigateToChapterId : Signal Identifier
-port navigateToChapterId = navigateToChapterIdInput.signal
+port navigateToChapterId = Signal.subscribe navigateToChapterIdInput
 
 port navigateToTitle : Signal ()
-port navigateToTitle = navigateToTitleInput.signal
+port navigateToTitle = Signal.subscribe navigateToTitleInput
 
 port newNote : Signal ()
-port newNote = newNoteInput.signal
+port newNote = Signal.subscribe newNoteInput
 
 port newChapter : Signal ()
-port newChapter = newChapterInput.signal
+port newChapter = Signal.subscribe newChapterInput
 
 port searchNotes : Signal ()
-port searchNotes = debounce 500 searchNotesInput.signal
+port searchNotes = debounce 500 <| Signal.subscribe searchNotesInput
 
 port fullscreen : Signal Bool
-port fullscreen = fullscreenInput.signal
+port fullscreen = Signal.subscribe fullscreenInput
 
 port execCommand : Signal String
-port execCommand = execCommandInput.signal
+port execCommand = Signal.subscribe execCommandInput
