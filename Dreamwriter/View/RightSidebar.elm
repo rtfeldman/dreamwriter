@@ -26,7 +26,7 @@ view currentDoc state =
         input [id "notes-search-text", class "sidebar-header-control", placeholder "search notes",
           onkeyup searchNotesInput.handle (always ())] [],
         span [id "notes-search-button", class "sidebar-header-control flaticon-pencil90",
-          onclick newNoteInput.handle (always ())] []
+          onClick newNoteInput.handle (always ())] []
       ],
       div [id "right-sidebar-body", class "sidebar-body"] [
         sidebarBody
@@ -40,7 +40,7 @@ viewNoteListings notes =
 viewNoteListing : Note -> Html
 viewNoteListing note =
   div [key ("note-" ++ note.id), class "note-listing",
-    onclick actions.handle (\_ -> SetCurrentNote (Just note))] [
+    onClick actions.handle (\_ -> SetCurrentNote (Just note))] [
       div [class "flaticon-document127 note-listing-icon"] [],
       div [class "note-listing-title"] [text note.title]
     ]
@@ -52,7 +52,7 @@ viewCurrentNoteBody note =
       div [id "current-note-title"] [text note.title],
       div [id "close-current-note", class "flaticon-close15",
         title "Close Note",
-        onclick actions.handle (\_ -> SetCurrentNote Nothing)] []
+        onClick actions.handle (\_ -> SetCurrentNote Nothing)] []
     ],
     div [id "current-note-body"] []
   ]

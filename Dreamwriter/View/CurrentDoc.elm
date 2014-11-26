@@ -10,7 +10,7 @@ import Html.Events (..)
 view : Doc -> Html
 view currentDoc =
   div [key "current-doc-view", id "current-doc-view"] [
-    div [id "title", onclick navigateToTitleInput.handle (always ())]
+    div [id "title", onClick navigateToTitleInput.handle (always ())]
       [text currentDoc.title],
 
     viewOutline currentDoc.chapters
@@ -24,5 +24,5 @@ viewChapter : Int -> Chapter -> Html
 viewChapter index chapter = li [
     key ("chapter" ++ (show index)),
     title chapter.heading,
-    onclick navigateToChapterIdInput.handle (always chapter.id)
+    onClick navigateToChapterIdInput.handle (always chapter.id)
   ] [text chapter.heading]

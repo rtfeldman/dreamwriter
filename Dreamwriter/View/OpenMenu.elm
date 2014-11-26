@@ -18,7 +18,7 @@ view docs currentDoc =
       openFileNodes : List Html
       openFileNodes = [
         div [class "open-entry from-file",
-            onclick openFromFileInput.handle (always ())
+            onClick openFromFileInput.handle (always ())
           ] [
             span [] [text "A "],
             b    [] [text ".html"],
@@ -35,4 +35,4 @@ viewOpenDocEntryFor currentDoc doc =
     else "open-entry"
   in
     div [key ("#open-doc-" ++ doc.id), class className,
-      onclick actions.handle (\_ -> OpenDocId doc.id)] [text doc.title]
+      onClick actions.handle (\_ -> OpenDocId doc.id)] [text doc.title]

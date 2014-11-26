@@ -28,7 +28,7 @@ viewCurrentDocFooter =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
       title "Add Chapter",
-      onclick newChapterInput.handle (always ()),
+      onClick newChapterInput.handle (always ()),
       class "flaticon-plus81"] []]
 
 view : Doc -> AppState -> Html
@@ -57,7 +57,7 @@ sidebarHeaderClass = "sidebar-header"
 viewOpenMenuHeader =
   div [key "open-menu-header", id sidebarHeaderId, class sidebarHeaderClass] [
     span [class "sidebar-header-control",
-      onclick actions.handle (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
+      onClick actions.handle (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
   ]
 
 viewCurrentDocHeader currentDoc =
@@ -70,19 +70,19 @@ viewCurrentDocHeader currentDoc =
       menuitem [
         title "New",
         class "sidebar-header-control flaticon-add26",
-        onclick newDocInput.handle (always ())] [],
+        onClick newDocInput.handle (always ())] [],
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
-        onclick actions.handle (\_ -> SetLeftSidebarView OpenMenuView)] [],
+        onClick actions.handle (\_ -> SetLeftSidebarView OpenMenuView)] [],
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
-        onclick downloadInput.handle (always downloadOptions)] [],
+        onClick downloadInput.handle (always downloadOptions)] [],
       menuitem [
         title "Print",
         class "sidebar-header-control flaticon-printer70",
-        onclick printInput.handle (always ())] [],
+        onClick printInput.handle (always ())] [],
       menuitem [
         title "Settings",
         class "sidebar-header-control flaticon-gear33"] []
