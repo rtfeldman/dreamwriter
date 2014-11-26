@@ -1,0 +1,14 @@
+{
+    "version": "1.0.0",
+    "summary": "Streamlined writing software.",
+    "repository": "https://github.com/rtfeldman/dreamwriter.git",
+    "license": "Apache2",
+    "source-directories": [
+        ".", "Dreamwriter"
+    ],
+    "exposed-modules": [],
+    "dependencies": {
+        "elm-lang/core": "1.0.0 <= v < 2.0.0",
+        "evancz/elm-html": "1.0.0 <= v < 2.0.0"
+    }
+}
