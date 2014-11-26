@@ -28,10 +28,8 @@ node_modules
 .lock-wscript
 
 dist
-cache
-elm_dependencies
+elm-stuff
 bower_components
-build
 .DS_Store
 
 aws-credentials.json
