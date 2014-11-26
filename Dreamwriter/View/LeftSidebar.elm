@@ -8,7 +8,7 @@ import Dreamwriter.View.OpenMenu as OpenMenu
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import Html.Optimize.RefEq as RefEq
+import Html.Lazy (..)
 import Maybe
 import Regex (..)
 
@@ -36,12 +36,12 @@ view currentDoc state =
   let {sidebarHeader, sidebarBody, sidebarFooter} = case state.leftSidebarView of
     OpenMenuView  ->
       { sidebarHeader = viewOpenMenuHeader
-      , sidebarBody   = RefEq.lazy2 OpenMenu.view state.docs currentDoc
+      , sidebarBody   = lazy2 OpenMenu.view state.docs currentDoc
       , sidebarFooter = viewOpenMenuFooter
       }
     CurrentDocView ->
-      { sidebarHeader = RefEq.lazy viewCurrentDocHeader currentDoc
-      , sidebarBody   = RefEq.lazy CurrentDoc.view currentDoc
+      { sidebarHeader = lazy viewCurrentDocHeader currentDoc
+      , sidebarBody   = lazy CurrentDoc.view currentDoc
       , sidebarFooter = viewCurrentDocFooter
       }
   in

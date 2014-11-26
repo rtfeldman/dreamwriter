@@ -7,13 +7,13 @@ import Dreamwriter (..)
 import String
 import Html (..)
 import Html.Attributes (..)
-import Html.Optimize.RefEq as RefEq
+import Html.Lazy (..)
 import Html.Events (..)
 import Maybe
 
 view : Doc -> AppState -> Html
 view currentDoc state =
-  RefEq.lazy2 viewEditor currentDoc state.fullscreen
+  lazy2 viewEditor currentDoc state.fullscreen
 
 viewEditor currentDoc fullscreen =
   div [id "editor-container"] [
@@ -25,7 +25,7 @@ viewEditor currentDoc fullscreen =
           viewFontControl "toggle-italics" "I" "italic",
           viewFontControl "toggle-strikethrough" "\xA0S\xA0" "strikethrough"
         ],
-        RefEq.lazy viewFullscreenButton fullscreen
+        lazy viewFullscreenButton fullscreen
       ],
 
       div [id "document-page"] <| [
@@ -84,8 +84,8 @@ viewFullscreenButton fullscreen =
 
 lazyViewChapter : Identifier -> [Html]
 lazyViewChapter chapterId = [
-    RefEq.lazy viewChapterHeading chapterId,
-    RefEq.lazy viewChapterBody    chapterId
+    lazy viewChapterHeading chapterId,
+    lazy viewChapterBody    chapterId
   ]
 
 viewChapterBody : Identifier -> Html

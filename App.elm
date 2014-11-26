@@ -9,7 +9,7 @@ import String
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import Html.Optimize.RefEq as Ref
+import Html.Lazy (..)
 import Maybe
 import Window
 import Dict

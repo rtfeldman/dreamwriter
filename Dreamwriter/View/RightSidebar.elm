@@ -6,19 +6,19 @@ import Dreamwriter.Action (..)
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import Html.Optimize.RefEq as RefEq
+import Html.Lazy (..)
 import Maybe
 
 view : Doc -> AppState -> Html
 view currentDoc state =
   let {sidebarBody, sidebarFooter} = case state.currentNote of
     Nothing ->
-      { sidebarBody   = RefEq.lazy viewNoteListings state.notes
+      { sidebarBody   = lazy viewNoteListings state.notes
       , sidebarFooter = span [] []
       }
     Just currentNote ->
-      { sidebarBody   = RefEq.lazy viewCurrentNoteBody   currentNote
-      , sidebarFooter = RefEq.lazy viewCurrentNoteFooter currentNote
+      { sidebarBody   = lazy viewCurrentNoteBody   currentNote
+      , sidebarFooter = lazy viewCurrentNoteFooter currentNote
       }
   in
     div [id "right-sidebar-container", class "sidebar"] [
