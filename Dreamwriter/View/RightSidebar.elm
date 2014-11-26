@@ -8,6 +8,7 @@ import Html.Attributes (..)
 import Html.Events (..)
 import Html.Lazy (..)
 import Maybe
+import Signal (send)
 
 view : Doc -> AppState -> Html
 view currentDoc state =
@@ -24,9 +25,9 @@ view currentDoc state =
     div [id "right-sidebar-container", class "sidebar"] [
       div [id "right-sidebar-header", class "sidebar-header"] [
         input [id "notes-search-text", class "sidebar-header-control", placeholder "search notes",
-          onKeyUp searchNotesInput.handle (always ())] [],
+          onKeyUp <| send searchNotesInput (always ())] [],
         span [id "notes-search-button", class "sidebar-header-control flaticon-pencil90",
-          onClick newNoteInput.handle (always ())] []
+          onClick <| send newNoteInput (always ())] []
       ],
       div [id "right-sidebar-body", class "sidebar-body"] [
         sidebarBody
@@ -40,7 +41,7 @@ viewNoteListings notes =
 viewNoteListing : Note -> Html
 viewNoteListing note =
   div [key ("note-" ++ note.id), class "note-listing",
-    onClick actions.handle (\_ -> SetCurrentNote (Just note))] [
+    onClick <| send actions (\_ -> SetCurrentNote (Just note))] [
       div [class "flaticon-document127 note-listing-icon"] [],
       div [class "note-listing-title"] [text note.title]
     ]
@@ -52,7 +53,7 @@ viewCurrentNoteBody note =
       div [id "current-note-title"] [text note.title],
       div [id "close-current-note", class "flaticon-close15",
         title "Close Note",
-        onClick actions.handle (\_ -> SetCurrentNote Nothing)] []
+        onClick <| send actions (\_ -> SetCurrentNote Nothing)] []
     ],
     div [id "current-note-body"] []
   ]

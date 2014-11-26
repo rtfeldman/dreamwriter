@@ -11,6 +11,8 @@ import Html.Lazy (..)
 import Html.Events (..)
 import Maybe
 
+import Signal (send)
+
 view : Doc -> AppState -> Html
 view currentDoc state =
   lazy2 viewEditor currentDoc state.fullscreen
@@ -79,7 +81,7 @@ viewFullscreenButton fullscreen =
   in
     div [class ("toolbar-section toolbar-button " ++ fullscreenClass),
       title fullscreenTitle,
-      onClick fullscreenInput.handle (always targetMode)
+      onClick <| send fullscreenInput (always targetMode)
     ] []
 
 lazyViewChapter : Identifier -> List Html
@@ -104,4 +106,4 @@ viewFontControl : String -> String -> String -> Html
 viewFontControl idAttr label command =
   span [class "font-control toolbar-button toolbar-font-button", id idAttr,
     (attr "unselectable" "on"),
-    onClick execCommandInput.handle (always command)] [text label]
+    onClick <| send execCommandInput (always command)] [text label]

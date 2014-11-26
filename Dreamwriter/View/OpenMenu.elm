@@ -6,7 +6,7 @@ import Dreamwriter.Action (..)
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-
+import Signal (send)
 import List (..)
 
 view : List Doc -> Doc -> Html
@@ -20,7 +20,7 @@ view docs currentDoc =
       openFileNodes : List Html
       openFileNodes = [
         div [class "open-entry from-file",
-            onClick openFromFileInput.handle (always ())
+            onClick <| send openFromFileInput (always ())
           ] [
             span [] [text "A "],
             b    [] [text ".html"],
@@ -37,4 +37,4 @@ viewOpenDocEntryFor currentDoc doc =
     else "open-entry"
   in
     div [key ("#open-doc-" ++ doc.id), class className,
-      onClick actions.handle (\_ -> OpenDocId doc.id)] [text doc.title]
+      onClick <| send actions (\_ -> OpenDocId doc.id)] [text doc.title]

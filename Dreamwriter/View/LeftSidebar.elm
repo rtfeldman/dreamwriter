@@ -11,6 +11,7 @@ import Html.Events (..)
 import Html.Lazy (..)
 import Maybe
 import Regex (..)
+import Signal (send)
 
 -- Replace illegal filename characters with underscores
 illegalFilenameCharMatcher = regex "[/\\<>?|\":*]"
@@ -28,7 +29,7 @@ viewCurrentDocFooter =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
       title "Add Chapter",
-      onClick newChapterInput.handle (always ()),
+      onClick <| send newChapterInput (always ()),
       class "flaticon-plus81"] []]
 
 view : Doc -> AppState -> Html
@@ -57,7 +58,7 @@ sidebarHeaderClass = "sidebar-header"
 viewOpenMenuHeader =
   div [key "open-menu-header", id sidebarHeaderId, class sidebarHeaderClass] [
     span [class "sidebar-header-control",
-      onClick actions.handle (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
+      onClick <| send actions (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
   ]
 
 viewCurrentDocHeader currentDoc =
@@ -70,19 +71,19 @@ viewCurrentDocHeader currentDoc =
       menuitem [
         title "New",
         class "sidebar-header-control flaticon-add26",
-        onClick newDocInput.handle (always ())] [],
+        onClick <| send newDocInput (always ())] [],
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
-        onClick actions.handle (\_ -> SetLeftSidebarView OpenMenuView)] [],
+        onClick <| send actions (\_ -> SetLeftSidebarView OpenMenuView)] [],
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
-        onClick downloadInput.handle (always downloadOptions)] [],
+        onClick <| send downloadInput (always downloadOptions)] [],
       menuitem [
         title "Print",
         class "sidebar-header-control flaticon-printer70",
-        onClick printInput.handle (always ())] [],
+        onClick <| send printInput (always ())] [],
       menuitem [
         title "Settings",
         class "sidebar-header-control flaticon-gear33"] []
