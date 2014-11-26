@@ -25,7 +25,7 @@ data Action
 actions : Input.Input Action
 actions = Input.input NoOp
 
-type DownloadOptions =
+type alias DownloadOptions =
   { filename    : String
   , contentType : String
   }

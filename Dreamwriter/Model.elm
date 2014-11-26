@@ -5,13 +5,13 @@ import Dict
 
 data LeftSidebarView = CurrentDocView | OpenMenuView
 
-type MsSinceEpoch = Int
-type HtmlString   = String
+type alias MsSinceEpoch = Int
+type alias HtmlString   = String
 
 -- TODO make this a proper ADT once outbound ports can accept them
-type FullscreenState = Bool
+type alias FullscreenState = Bool
 
-type AppState =
+type alias AppState =
   { leftSidebarView : LeftSidebarView
   , docs         : [Doc]
   , currentDoc   : Maybe Doc
@@ -34,7 +34,7 @@ emptyState =
   , snapshots    = Dict.empty
   }
 
-type Note =
+type alias Note =
   { id               : Identifier
   , title            : String
   , snapshotId       : HtmlString
@@ -42,7 +42,7 @@ type Note =
   , lastModifiedTime : MsSinceEpoch
   }
 
-type Doc =
+type alias Doc =
   { id               : Identifier
   , title            : String
   , description      : HtmlString
@@ -53,7 +53,7 @@ type Doc =
   , lastModifiedTime : MsSinceEpoch
   }
 
-type Chapter =
+type alias Chapter =
   { id               : Identifier
   , heading          : String
   , headingWords     : Int
@@ -63,7 +63,7 @@ type Chapter =
   , snapshotId       : Identifier
   }
 
-type Snapshot =
+type alias Snapshot =
   { id               : Identifier
   , html             : String
   , text             : String
