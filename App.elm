@@ -6,7 +6,7 @@ import Dreamwriter.Model (..)
 import Dreamwriter.View.Page (view)
 
 import String
-import Graphics.Element (Element)
+import Graphics.Element (Element, container, midTop)
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
