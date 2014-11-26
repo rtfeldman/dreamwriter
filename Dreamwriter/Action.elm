@@ -29,36 +29,36 @@ type alias DownloadOptions =
   , contentType : String
   }
 
-downloadInput : Signal.Channel DownloadOptions
-downloadInput = Signal.channel { filename = "", contentType = "" }
+downloadChannel : Signal.Channel DownloadOptions
+downloadChannel = Signal.channel { filename = "", contentType = "" }
 
-newDocInput : Signal.Channel ()
-newDocInput = Signal.channel ()
+newDocChannel : Signal.Channel ()
+newDocChannel = Signal.channel ()
 
-openFromFileInput : Signal.Channel ()
-openFromFileInput = Signal.channel ()
+openFromFileChannel : Signal.Channel ()
+openFromFileChannel = Signal.channel ()
 
-navigateToChapterIdInput : Signal.Channel Identifier
-navigateToChapterIdInput = Signal.channel ""
+navigateToChapterIdChannel : Signal.Channel Identifier
+navigateToChapterIdChannel = Signal.channel ""
 
-navigateToTitleInput : Signal.Channel ()
-navigateToTitleInput = Signal.channel ()
+navigateToTitleChannel : Signal.Channel ()
+navigateToTitleChannel = Signal.channel ()
 
-printInput : Signal.Channel ()
-printInput = Signal.channel ()
+printChannel : Signal.Channel ()
+printChannel = Signal.channel ()
 
 -- TODO make this Signal.Channel String, with the String being the search query
-searchNotesInput : Signal.Channel ()
-searchNotesInput = Signal.channel ()
+searchNotesChannel : Signal.Channel ()
+searchNotesChannel = Signal.channel ()
 
-newNoteInput : Signal.Channel ()
-newNoteInput = Signal.channel ()
+newNoteChannel : Signal.Channel ()
+newNoteChannel = Signal.channel ()
 
-newChapterInput : Signal.Channel ()
-newChapterInput = Signal.channel ()
+newChapterChannel : Signal.Channel ()
+newChapterChannel = Signal.channel ()
 
-fullscreenInput : Signal.Channel Bool
-fullscreenInput = Signal.channel False
+fullscreenChannel : Signal.Channel Bool
+fullscreenChannel = Signal.channel False
 
-execCommandInput : Signal.Channel String
-execCommandInput = Signal.channel ""
+execCommandChannel : Signal.Channel String
+execCommandChannel = Signal.channel ""

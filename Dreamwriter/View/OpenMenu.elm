@@ -20,7 +20,7 @@ view docs currentDoc =
       openFileNodes : List Html
       openFileNodes = [
         div [class "open-entry from-file",
-            onClick <| send openFromFileInput ()
+            onClick <| send openFromFileChannel ()
           ] [
             span [] [text "A "],
             b    [] [text ".html"],

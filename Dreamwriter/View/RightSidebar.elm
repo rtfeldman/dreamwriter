@@ -26,9 +26,9 @@ view currentDoc state =
     div [id "right-sidebar-container", class "sidebar"] [
       div [id "right-sidebar-header", class "sidebar-header"] [
         input [id "notes-search-text", class "sidebar-header-control", placeholder "search notes",
-          onKeyUp (\_ -> send searchNotesInput ())] [],
+          onKeyUp (\_ -> send searchNotesChannel ())] [],
         span [id "notes-search-button", class "sidebar-header-control flaticon-pencil90",
-          onClick <| send newNoteInput ()] []
+          onClick <| send newNoteChannel ()] []
       ],
       div [id "right-sidebar-body", class "sidebar-body"] [
         sidebarBody

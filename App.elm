@@ -147,34 +147,34 @@ port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = Signal.map .currentDocId state
 
 port newDoc : Signal ()
-port newDoc = Signal.subscribe newDocInput
+port newDoc = Signal.subscribe newDocChannel
 
 port openFromFile : Signal ()
-port openFromFile = Signal.subscribe openFromFileInput
+port openFromFile = Signal.subscribe openFromFileChannel
 
 port downloadDoc : Signal DownloadOptions
-port downloadDoc = Signal.subscribe downloadInput
+port downloadDoc = Signal.subscribe downloadChannel
 
 port printDoc : Signal ()
-port printDoc = Signal.subscribe printInput
+port printDoc = Signal.subscribe printChannel
 
 port navigateToChapterId : Signal Identifier
-port navigateToChapterId = Signal.subscribe navigateToChapterIdInput
+port navigateToChapterId = Signal.subscribe navigateToChapterIdChannel
 
 port navigateToTitle : Signal ()
-port navigateToTitle = Signal.subscribe navigateToTitleInput
+port navigateToTitle = Signal.subscribe navigateToTitleChannel
 
 port newNote : Signal ()
-port newNote = Signal.subscribe newNoteInput
+port newNote = Signal.subscribe newNoteChannel
 
 port newChapter : Signal ()
-port newChapter = Signal.subscribe newChapterInput
+port newChapter = Signal.subscribe newChapterChannel
 
 port searchNotes : Signal ()
-port searchNotes = debounce 500 <| Signal.subscribe searchNotesInput
+port searchNotes = debounce 500 <| Signal.subscribe searchNotesChannel
 
 port fullscreen : Signal Bool
-port fullscreen = Signal.subscribe fullscreenInput
+port fullscreen = Signal.subscribe fullscreenChannel
 
 port execCommand : Signal String
-port execCommand = Signal.subscribe execCommandInput
+port execCommand = Signal.subscribe execCommandChannel
