@@ -54,9 +54,9 @@ withCommas num =
     then
       let prefix = withCommas <| floor (num / 1000)
       in
-        prefix ++ "," ++ (String.right 3 <| show num)
+        prefix ++ "," ++ (String.right 3 <| toString num)
     else
-      show num
+      toString num
 
 pluralize : String -> Int -> String
 pluralize noun quantity =

@@ -24,7 +24,7 @@ viewOutline chapters =
 
 viewChapter : Int -> Chapter -> Html
 viewChapter index chapter = li [
-    key ("chapter" ++ (show index)),
+    key ("chapter" ++ (toString index)),
     title chapter.heading,
     onClick navigateToChapterIdInput.handle (always chapter.id)
   ] [text chapter.heading]
