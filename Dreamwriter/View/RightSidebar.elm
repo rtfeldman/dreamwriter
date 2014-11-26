@@ -42,7 +42,7 @@ viewNoteListings notes =
 viewNoteListing : Note -> Html
 viewNoteListing note =
   div [key ("note-" ++ note.id), class "note-listing",
-    onClick <| send actions (\_ -> SetCurrentNote (Just note))] [
+    onClick <| send actions (SetCurrentNote (Just note))] [
       div [class "flaticon-document127 note-listing-icon"] [],
       div [class "note-listing-title"] [text note.title]
     ]
@@ -54,7 +54,7 @@ viewCurrentNoteBody note =
       div [id "current-note-title"] [text note.title],
       div [id "close-current-note", class "flaticon-close15",
         title "Close Note",
-        onClick <| send actions (\_ -> SetCurrentNote Nothing)] []
+        onClick <| send actions (SetCurrentNote Nothing)] []
     ],
     div [id "current-note-body"] []
   ]

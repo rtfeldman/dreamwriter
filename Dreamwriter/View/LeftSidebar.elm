@@ -58,7 +58,7 @@ sidebarHeaderClass = "sidebar-header"
 viewOpenMenuHeader =
   div [key "open-menu-header", id sidebarHeaderId, class sidebarHeaderClass] [
     span [class "sidebar-header-control",
-      onClick <| send actions (\_ -> SetLeftSidebarView CurrentDocView)] [text "cancel"]
+      onClick <| send actions (SetLeftSidebarView CurrentDocView)] [text "cancel"]
   ]
 
 viewCurrentDocHeader currentDoc =
@@ -75,7 +75,7 @@ viewCurrentDocHeader currentDoc =
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
-        onClick <| send actions (\_ -> SetLeftSidebarView OpenMenuView)] [],
+        onClick <| send actions (SetLeftSidebarView OpenMenuView)] [],
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
