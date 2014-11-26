@@ -3,8 +3,7 @@ module Dreamwriter.Action where
 import Dreamwriter (..)
 import Dreamwriter.Model (..)
 
-import Graphics.Input
-import Graphics.Input as Input
+import Signal
 
 type Action
   = NoOp
@@ -22,44 +21,44 @@ type Action
   | PutSnapshot Snapshot
 
 -- actions from user input
-actions : Input.Input Action
-actions = Input.input NoOp
+actions : Signal.Channel Action
+actions = Signal.channel NoOp
 
 type alias DownloadOptions =
   { filename    : String
   , contentType : String
   }
 
-downloadInput : Input.Input DownloadOptions
-downloadInput = Input.input { filename = "", contentType = "" }
+downloadInput : Signal.Channel DownloadOptions
+downloadInput = Signal.channel { filename = "", contentType = "" }
 
-newDocInput : Input.Input ()
-newDocInput = Input.input ()
+newDocInput : Signal.Channel ()
+newDocInput = Signal.channel ()
 
-openFromFileInput : Input.Input ()
-openFromFileInput = Input.input ()
+openFromFileInput : Signal.Channel ()
+openFromFileInput = Signal.channel ()
 
-navigateToChapterIdInput : Input.Input Identifier
-navigateToChapterIdInput = Input.input ""
+navigateToChapterIdInput : Signal.Channel Identifier
+navigateToChapterIdInput = Signal.channel ""
 
-navigateToTitleInput : Input.Input ()
-navigateToTitleInput = Input.input ()
+navigateToTitleInput : Signal.Channel ()
+navigateToTitleInput = Signal.channel ()
 
-printInput : Input.Input ()
-printInput = Input.input ()
+printInput : Signal.Channel ()
+printInput = Signal.channel ()
 
--- TODO make this Input.Input String, with the String being the search query
-searchNotesInput : Input.Input ()
-searchNotesInput = Input.input ()
+-- TODO make this Signal.Channel String, with the String being the search query
+searchNotesInput : Signal.Channel ()
+searchNotesInput = Signal.channel ()
 
-newNoteInput : Input.Input ()
-newNoteInput = Input.input ()
+newNoteInput : Signal.Channel ()
+newNoteInput = Signal.channel ()
 
-newChapterInput : Input.Input ()
-newChapterInput = Input.input ()
+newChapterInput : Signal.Channel ()
+newChapterInput = Signal.channel ()
 
-fullscreenInput : Input.Input Bool
-fullscreenInput = Input.input False
+fullscreenInput : Signal.Channel Bool
+fullscreenInput = Signal.channel False
 
-execCommandInput : Input.Input String
-execCommandInput = Input.input ""
+execCommandInput : Signal.Channel String
+execCommandInput = Signal.channel ""
