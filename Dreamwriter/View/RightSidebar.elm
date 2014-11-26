@@ -9,6 +9,7 @@ import Html.Events (..)
 import Html.Lazy (..)
 import Maybe
 import Signal (send)
+import List (..)
 
 view : Doc -> AppState -> Html
 view currentDoc state =
