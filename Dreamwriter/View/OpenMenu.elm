@@ -7,6 +7,8 @@ import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
 
+import List (..)
+
 view : List Doc -> Doc -> Html
 view docs currentDoc =
   let sortedDocs : List Doc
