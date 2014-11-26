@@ -12,7 +12,7 @@ import Html.Attributes (..)
 import Html.Events (..)
 import Html.Lazy (..)
 import Signal
-import Signal (Signal, sampleOn, dropRepeats)
+import Signal (Signal, sampleOn, dropRepeats, mergeMany, foldp)
 import Time (Time, since)
 import List (..)
 import Maybe
@@ -104,21 +104,21 @@ preferById preferred given =
     else given
 
 main : Signal Element
-main = lift2 scene state Window.dimensions
+main = Signal.map2 scene state Window.dimensions
 
 userInput : Signal Action
 userInput =
-  merges
-  [ lift LoadAsCurrentDoc loadAsCurrentDoc
-  , lift ListDocs         listDocs
-  , lift ListNotes        listNotes
-  , lift SetChapters      setChapters
-  , lift UpdateChapter    updateChapter
-  , lift SetTitle         setTitle
-  , lift SetDescription   setDescription
-  , lift SetFullscreen    setFullscreen
-  , lift PutSnapshot      putSnapshot
-  , lift (SetCurrentNote << Just) setCurrentNote
+  mergeMany
+  [ Signal.map LoadAsCurrentDoc loadAsCurrentDoc
+  , Signal.map ListDocs         listDocs
+  , Signal.map ListNotes        listNotes
+  , Signal.map SetChapters      setChapters
+  , Signal.map UpdateChapter    updateChapter
+  , Signal.map SetTitle         setTitle
+  , Signal.map SetDescription   setDescription
+  , Signal.map SetFullscreen    setFullscreen
+  , Signal.map PutSnapshot      putSnapshot
+  , Signal.map (SetCurrentNote << Just) setCurrentNote
   , actions.signal
   ]
 
@@ -144,7 +144,7 @@ port listNotes : Signal (List Note)
 port putSnapshot : Signal Snapshot
 
 port setCurrentDocId : Signal (Maybe Identifier)
-port setCurrentDocId = lift .currentDocId state
+port setCurrentDocId = Signal.map .currentDocId state
 
 port newDoc : Signal ()
 port newDoc = newDocInput.signal
