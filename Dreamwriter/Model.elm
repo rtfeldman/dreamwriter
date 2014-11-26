@@ -3,7 +3,7 @@ module Dreamwriter.Model where
 import Dreamwriter (Identifier)
 import Dict
 
-data LeftSidebarView = CurrentDocView | OpenMenuView
+type LeftSidebarView = CurrentDocView | OpenMenuView
 
 type alias MsSinceEpoch = Int
 type alias HtmlString   = String

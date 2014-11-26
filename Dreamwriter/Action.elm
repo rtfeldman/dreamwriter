@@ -6,7 +6,7 @@ import Dreamwriter.Model (..)
 import Graphics.Input
 import Graphics.Input as Input
 
-data Action
+type Action
   = NoOp
   | LoadAsCurrentDoc Doc
   | OpenDocId Identifier
