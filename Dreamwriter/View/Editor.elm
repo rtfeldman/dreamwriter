@@ -10,7 +10,7 @@ import Html.Attributes (..)
 import Html.Lazy (..)
 import Html.Events (..)
 import Maybe
-
+import List (..)
 import Signal (send)
 
 view : Doc -> AppState -> Html
