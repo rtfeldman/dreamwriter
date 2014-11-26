@@ -12,6 +12,7 @@ import Html.Events (..)
 import Maybe
 import List (..)
 import Signal (send)
+import Json.Encode (string)
 
 view : Doc -> AppState -> Html
 view currentDoc state =
@@ -41,7 +42,7 @@ viewEditor currentDoc fullscreen =
         in
           div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
         div [id "dropbox-sync"] [
-          input [id "toggle-dropbox-sync", attr "type" "checkbox"] [],
+          input [id "toggle-dropbox-sync", property "type" (string "checkbox")] [],
           label [for "toggle-dropbox-sync"] [
             text " sync to Dropbox"
           ]
@@ -105,5 +106,5 @@ viewChapterHeading chapterId =
 viewFontControl : String -> String -> String -> Html
 viewFontControl idAttr label command =
   span [class "font-control toolbar-button toolbar-font-button", id idAttr,
-    (attr "unselectable" "on"),
+    (property "unselectable" (string "on")),
     onClick <| send execCommandInput command] [text label]
