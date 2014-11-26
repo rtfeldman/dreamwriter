@@ -13,11 +13,11 @@ type alias FullscreenState = Bool
 
 type alias AppState =
   { leftSidebarView : LeftSidebarView
-  , docs         : [Doc]
+  , docs         : List Doc
   , currentDoc   : Maybe Doc
   , currentDocId : Maybe Identifier
   , currentNote  : Maybe Note
-  , notes        : [Note]
+  , notes        : List Note
   , fullscreen   : FullscreenState
   , snapshots    : Dict.Dict Identifier Snapshot
   }
@@ -46,7 +46,7 @@ type alias Doc =
   { id               : Identifier
   , title            : String
   , description      : HtmlString
-  , chapters         : [Chapter]
+  , chapters         : List Chapter
   , titleWords       : Int
   , descriptionWords : Int
   , creationTime     : MsSinceEpoch

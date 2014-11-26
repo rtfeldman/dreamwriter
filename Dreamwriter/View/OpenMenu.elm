@@ -7,15 +7,15 @@ import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
 
-view : [Doc] -> Doc -> Html
+view : List Doc -> Doc -> Html
 view docs currentDoc =
-  let sortedDocs : [Doc]
+  let sortedDocs : List Doc
       sortedDocs = sortBy (negate << .lastModifiedTime) docs
 
-      docNodes : [Html]
+      docNodes : List Html
       docNodes = map (viewOpenDocEntryFor currentDoc) sortedDocs
 
-      openFileNodes : [Html]
+      openFileNodes : List Html
       openFileNodes = [
         div [class "open-entry from-file",
             onclick openFromFileInput.handle (always ())

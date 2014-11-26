@@ -82,7 +82,7 @@ viewFullscreenButton fullscreen =
       onclick fullscreenInput.handle (always targetMode)
     ] []
 
-lazyViewChapter : Identifier -> [Html]
+lazyViewChapter : Identifier -> List Html
 lazyViewChapter chapterId = [
     lazy viewChapterHeading chapterId,
     lazy viewChapterBody    chapterId

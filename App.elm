@@ -128,14 +128,14 @@ state = foldp step emptyState userInput
 -- PORTS --
 
 port loadAsCurrentDoc : Signal Doc
-port setChapters : Signal [Chapter]
+port setChapters : Signal (List Chapter)
 port updateChapter : Signal Chapter
 port setTitle : Signal (String, Int)
 port setDescription : Signal (String, Int)
 port setFullscreen : Signal Bool
 port setCurrentNote : Signal Note
-port listDocs : Signal [Doc]
-port listNotes : Signal [Note]
+port listDocs : Signal (List Doc)
+port listNotes : Signal (List Note)
 port putSnapshot : Signal Snapshot
 
 port setCurrentDocId : Signal (Maybe Identifier)

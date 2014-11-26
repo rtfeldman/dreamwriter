@@ -16,7 +16,7 @@ view currentDoc =
     viewOutline currentDoc.chapters
   ]
 
-viewOutline : [Chapter] -> Html
+viewOutline : List Chapter -> Html
 viewOutline chapters =
   ul [id "outline"] <| indexedMap viewChapter chapters
 

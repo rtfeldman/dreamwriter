@@ -10,11 +10,11 @@ type Action
   = NoOp
   | LoadAsCurrentDoc Doc
   | OpenDocId Identifier
-  | ListDocs [Doc]
-  | ListNotes [Note]
+  | ListDocs List Doc
+  | ListNotes List Note
   | SetCurrentNote (Maybe Note)
   | SetLeftSidebarView LeftSidebarView
-  | SetChapters [Chapter]
+  | SetChapters List Chapter
   | UpdateChapter Chapter
   | SetTitle (String, Int)
   | SetDescription (String, Int)
