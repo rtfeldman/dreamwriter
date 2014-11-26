@@ -9,7 +9,6 @@ import Html (..)
 import Html.Attributes (..)
 import Html.Optimize.RefEq as RefEq
 import Html.Events (..)
-import Html.Tags (..)
 import Maybe
 
 view : Doc -> AppState -> Html

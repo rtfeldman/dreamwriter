@@ -9,7 +9,6 @@ import String
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import Html.Tags (..)
 
 view : AppState -> Html
 view state =

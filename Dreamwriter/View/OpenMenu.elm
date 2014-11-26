@@ -6,7 +6,6 @@ import Dreamwriter.Action (..)
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import Html.Tags (..)
 
 view : [Doc] -> Doc -> Html
 view docs currentDoc =

@@ -8,7 +8,6 @@ import Dreamwriter.View.OpenMenu as OpenMenu
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import Html.Tags (..)
 import Html.Optimize.RefEq as RefEq
 import Maybe
 import Regex (..)

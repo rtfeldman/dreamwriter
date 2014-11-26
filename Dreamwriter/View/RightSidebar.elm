@@ -5,7 +5,6 @@ import Dreamwriter.Action (..)
 
 import Html (..)
 import Html.Attributes (..)
-import Html.Tags (..)
 import Html.Events (..)
 import Html.Optimize.RefEq as RefEq
 import Maybe
@@ -55,7 +54,7 @@ viewCurrentNoteBody note =
         title "Close Note",
         onclick actions.handle (\_ -> SetCurrentNote Nothing)] []
     ],
-    div [id "current-note-body"] [text "TODO: Write a note here!"]
+    div [id "current-note-body"] []
   ]
 
 viewCurrentNoteFooter : Note -> Html
