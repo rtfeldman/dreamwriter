@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+- '0.10'
+before_install:
+- npm install npm -g
+before_script:
+- npm install
+script: npm run travis-test
+env:
+  global:
+  - secure: exNyUx6YSst2D9dWm9n4PLyPan4o4Ukx9WCx1jcZl4R9kTQ5B/rW88Km/nHf7+QfUeXLSkqO62Y4YDXSgYYJ1g8mh7y3gOqi5Gu9EfMkU+RECwbHGrtcY/SW/YGPvyPM8N2SCXMb3zFi31a2LPSTw0ME/3cYIkl84mQlcWZFBv4=
+  - secure: VgpNY3sV24gREvjBDQbmver4iKcvqqBIfRghMYDLxSzpcIxkUvqdAGcHPUSp4rDOdMPe6dfULCxIKeimd6iZASGfURUfjKYijr6PmmjsyL4lIX+COi1XJWRQecysCsJ/W8ki+5FJn1GhctF7q/QCb6z9dvCb6f2YfXm4EogtD/I=

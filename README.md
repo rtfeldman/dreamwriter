@@ -1,6 +1,6 @@
 dreamwriter
 ===============
-Streamlined writing software. Written in [Elm](http://elm-lang.org).
+Streamlined writing software. Written in [Elm](http://elm-lang.org). [![build status][1]][2]
 
 Try it at [dreamwriter.io](https://dreamwriter.io)
 
@@ -44,3 +44,6 @@ The Strange Loop 2014 talk [Web Apps without Web Servers](http://www.youtube.com
 8. `elm-get install`
 9. `grunt`
 10. Visit [localhost:8000](http://localhost:8000) in your browser!
+
+[1]: https://secure.travis-ci.org/rtfeldman/dreamwriter.svg
+[2]: https://travis-ci.org/rtfeldman/dreamwriter
