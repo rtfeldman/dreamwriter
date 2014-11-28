@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "Streamlined writing software.",
   "scripts": {
-    "test": "grunt test"
+    "zuul": "zuul -- test/*.spec.js",
+    "zuul-local": "zuul --local -- test/*.spec.js",
+    "travis-test": "npm test && npm run zuul"
   },
   "repository": {
     "type": "git",
@@ -13,6 +15,7 @@
   "license": "MIT",
   "devDependencies": {
     "browserify-mustache": "0.0.4",
+    "chai": "1.10.0",
     "coffeeify": "0.7.0",
     "dropbox": "0.10.3",
     "grunt": "0.4.5",
@@ -32,8 +35,10 @@
     "grunt-contrib-watch": "0.6.1",
     "grunt-elm": "0.3.0",
     "hogan.js": "3.0.2",
+    "lodash": "2.4.1",
     "lunr": "0.5.6",
-    "sha1": "1.1.0"
+    "sha1": "1.1.0",
+    "zuul": "1.14.0"
   },
   "readmeFilename": "README.md"
 }
