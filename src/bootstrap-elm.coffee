@@ -243,7 +243,16 @@ app.ports.newNote.subscribe ->
 
   sync.saveNoteWithSnapshot(newNote, html).done (note) ->
     app.ports.setCurrentNote.send note
-    console.debug "TODO load up the note editor with the current html"
+
+    setUpEditor (-> document.getElementById("current-note-title")), note.title, false, (mutations, node) ->
+      title = node.textContent
+
+      console.debug "update note title:", title
+
+    setUpEditor (-> document.getElementById("current-note-body")), html, true, (mutations, node) ->
+      body = node.innerHTML
+
+      console.debug "update note body:", body
 
 app.ports.execCommand.subscribe (command) ->
   document.execCommand command, false, null
