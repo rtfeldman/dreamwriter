@@ -5,29 +5,30 @@ import Dreamwriter.Action (..)
 
 import Html (..)
 import Html.Attributes (..)
-import Html.Tags (..)
 import Html.Events (..)
-import Html.Optimize.RefEq as RefEq
+import Html.Lazy (..)
 import Maybe
+import Signal (send)
+import List (..)
 
 view : Doc -> AppState -> Html
 view currentDoc state =
   let {sidebarBody, sidebarFooter} = case state.currentNote of
     Nothing ->
-      { sidebarBody   = RefEq.lazy viewNoteListings state.notes
+      { sidebarBody   = lazy viewNoteListings state.notes
       , sidebarFooter = span [] []
       }
     Just currentNote ->
-      { sidebarBody   = RefEq.lazy viewCurrentNoteBody   currentNote
-      , sidebarFooter = RefEq.lazy viewCurrentNoteFooter currentNote
+      { sidebarBody   = lazy viewCurrentNoteBody   currentNote
+      , sidebarFooter = lazy viewCurrentNoteFooter currentNote
       }
   in
     div [id "right-sidebar-container", class "sidebar"] [
       div [id "right-sidebar-header", class "sidebar-header"] [
         input [id "notes-search-text", class "sidebar-header-control", placeholder "search notes",
-          onkeyup searchNotesInput.handle (always ())] [],
+          onKeyUp (\_ -> send searchNotesChannel ())] [],
         span [id "notes-search-button", class "sidebar-header-control flaticon-pencil90",
-          onclick newNoteInput.handle (always ())] []
+          onClick <| send newNoteChannel ()] []
       ],
       div [id "right-sidebar-body", class "sidebar-body"] [
         sidebarBody
@@ -41,7 +42,7 @@ viewNoteListings notes =
 viewNoteListing : Note -> Html
 viewNoteListing note =
   div [key ("note-" ++ note.id), class "note-listing",
-    onclick actions.handle (\_ -> SetCurrentNote (Just note))] [
+    onClick <| send actions (SetCurrentNote (Just note))] [
       div [class "flaticon-document127 note-listing-icon"] [],
       div [class "note-listing-title"] [text note.title]
     ]
@@ -53,9 +54,9 @@ viewCurrentNoteBody note =
       div [id "current-note-title"] [text note.title],
       div [id "close-current-note", class "flaticon-close15",
         title "Close Note",
-        onclick actions.handle (\_ -> SetCurrentNote Nothing)] []
+        onClick <| send actions (SetCurrentNote Nothing)] []
     ],
-    div [id "current-note-body"] [text "TODO: Write a note here!"]
+    div [id "current-note-body"] []
   ]
 
 viewCurrentNoteFooter : Note -> Html

@@ -7,14 +7,16 @@ import Dreamwriter (..)
 import String
 import Html (..)
 import Html.Attributes (..)
-import Html.Optimize.RefEq as RefEq
+import Html.Lazy (..)
 import Html.Events (..)
-import Html.Tags (..)
 import Maybe
+import List (..)
+import Signal (send)
+import Json.Encode (string)
 
 view : Doc -> AppState -> Html
 view currentDoc state =
-  RefEq.lazy2 viewEditor currentDoc state.fullscreen
+  lazy2 viewEditor currentDoc state.fullscreen
 
 viewEditor currentDoc fullscreen =
   div [id "editor-container"] [
@@ -26,7 +28,7 @@ viewEditor currentDoc fullscreen =
           viewFontControl "toggle-italics" "I" "italic",
           viewFontControl "toggle-strikethrough" "\xA0S\xA0" "strikethrough"
         ],
-        RefEq.lazy viewFullscreenButton fullscreen
+        lazy viewFullscreenButton fullscreen
       ],
 
       div [id "document-page"] <| [
@@ -40,7 +42,7 @@ viewEditor currentDoc fullscreen =
         in
           div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
         div [id "dropbox-sync"] [
-          input [id "toggle-dropbox-sync", attr "type" "checkbox"] [],
+          input [id "toggle-dropbox-sync", property "type" (string "checkbox")] [],
           label [for "toggle-dropbox-sync"] [
             text " sync to Dropbox"
           ]
@@ -55,9 +57,9 @@ withCommas num =
     then
       let prefix = withCommas <| floor (num / 1000)
       in
-        prefix ++ "," ++ (String.right 3 <| show num)
+        prefix ++ "," ++ (String.right 3 <| toString num)
     else
-      show num
+      toString num
 
 pluralize : String -> Int -> String
 pluralize noun quantity =
@@ -80,13 +82,13 @@ viewFullscreenButton fullscreen =
   in
     div [class ("toolbar-section toolbar-button " ++ fullscreenClass),
       title fullscreenTitle,
-      onclick fullscreenInput.handle (always targetMode)
+      onClick <| send fullscreenChannel targetMode
     ] []
 
-lazyViewChapter : Identifier -> [Html]
+lazyViewChapter : Identifier -> List Html
 lazyViewChapter chapterId = [
-    RefEq.lazy viewChapterHeading chapterId,
-    RefEq.lazy viewChapterBody    chapterId
+    lazy viewChapterHeading chapterId,
+    lazy viewChapterBody    chapterId
   ]
 
 viewChapterBody : Identifier -> Html
@@ -104,5 +106,5 @@ viewChapterHeading chapterId =
 viewFontControl : String -> String -> String -> Html
 viewFontControl idAttr label command =
   span [class "font-control toolbar-button toolbar-font-button", id idAttr,
-    (attr "unselectable" "on"),
-    onclick execCommandInput.handle (always command)] [text label]
+    (property "unselectable" (string "on")),
+    onClick <| send execCommandChannel command] [text label]

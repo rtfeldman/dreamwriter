@@ -3,18 +3,17 @@ module Dreamwriter.Action where
 import Dreamwriter (..)
 import Dreamwriter.Model (..)
 
-import Graphics.Input
-import Graphics.Input as Input
+import Signal
 
-data Action
+type Action
   = NoOp
   | LoadAsCurrentDoc Doc
   | OpenDocId Identifier
-  | ListDocs [Doc]
-  | ListNotes [Note]
+  | ListDocs (List Doc)
+  | ListNotes (List Note)
   | SetCurrentNote (Maybe Note)
   | SetLeftSidebarView LeftSidebarView
-  | SetChapters [Chapter]
+  | SetChapters (List Chapter)
   | UpdateChapter Chapter
   | SetTitle (String, Int)
   | SetDescription (String, Int)
@@ -22,44 +21,44 @@ data Action
   | PutSnapshot Snapshot
 
 -- actions from user input
-actions : Input.Input Action
-actions = Input.input NoOp
+actions : Signal.Channel Action
+actions = Signal.channel NoOp
 
-type DownloadOptions =
+type alias DownloadOptions =
   { filename    : String
   , contentType : String
   }
 
-downloadInput : Input.Input DownloadOptions
-downloadInput = Input.input { filename = "", contentType = "" }
+downloadChannel : Signal.Channel DownloadOptions
+downloadChannel = Signal.channel { filename = "", contentType = "" }
 
-newDocInput : Input.Input ()
-newDocInput = Input.input ()
+newDocChannel : Signal.Channel ()
+newDocChannel = Signal.channel ()
 
-openFromFileInput : Input.Input ()
-openFromFileInput = Input.input ()
+openFromFileChannel : Signal.Channel ()
+openFromFileChannel = Signal.channel ()
 
-navigateToChapterIdInput : Input.Input Identifier
-navigateToChapterIdInput = Input.input ""
+navigateToChapterIdChannel : Signal.Channel Identifier
+navigateToChapterIdChannel = Signal.channel ""
 
-navigateToTitleInput : Input.Input ()
-navigateToTitleInput = Input.input ()
+navigateToTitleChannel : Signal.Channel ()
+navigateToTitleChannel = Signal.channel ()
 
-printInput : Input.Input ()
-printInput = Input.input ()
+printChannel : Signal.Channel ()
+printChannel = Signal.channel ()
 
--- TODO make this Input.Input String, with the String being the search query
-searchNotesInput : Input.Input ()
-searchNotesInput = Input.input ()
+-- TODO make this Signal.Channel String, with the String being the search query
+searchNotesChannel : Signal.Channel ()
+searchNotesChannel = Signal.channel ()
 
-newNoteInput : Input.Input ()
-newNoteInput = Input.input ()
+newNoteChannel : Signal.Channel ()
+newNoteChannel = Signal.channel ()
 
-newChapterInput : Input.Input ()
-newChapterInput = Input.input ()
+newChapterChannel : Signal.Channel ()
+newChapterChannel = Signal.channel ()
 
-fullscreenInput : Input.Input Bool
-fullscreenInput = Input.input False
+fullscreenChannel : Signal.Channel Bool
+fullscreenChannel = Signal.channel False
 
-execCommandInput : Input.Input String
-execCommandInput = Input.input ""
+execCommandChannel : Signal.Channel String
+execCommandChannel = Signal.channel ""

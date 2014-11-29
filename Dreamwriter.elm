@@ -1,3 +1,3 @@
 module Dreamwriter where
 
-type Identifier = String
+type alias Identifier = String

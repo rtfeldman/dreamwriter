@@ -6,11 +6,15 @@ import Dreamwriter.Model (..)
 import Dreamwriter.View.Page (view)
 
 import String
+import Graphics.Element (Element, container, midTop)
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import Html.Tags (..)
-import Html.Optimize.RefEq as Ref
+import Html.Lazy (..)
+import Signal
+import Signal (Signal, sampleOn, dropRepeats, mergeMany, foldp)
+import Time (Time, since)
+import List (..)
 import Maybe
 import Window
 import Dict
@@ -100,22 +104,22 @@ preferById preferred given =
     else given
 
 main : Signal Element
-main = lift2 scene state Window.dimensions
+main = Signal.map2 scene state Window.dimensions
 
 userInput : Signal Action
 userInput =
-  merges
-  [ lift LoadAsCurrentDoc loadAsCurrentDoc
-  , lift ListDocs         listDocs
-  , lift ListNotes        listNotes
-  , lift SetChapters      setChapters
-  , lift UpdateChapter    updateChapter
-  , lift SetTitle         setTitle
-  , lift SetDescription   setDescription
-  , lift SetFullscreen    setFullscreen
-  , lift PutSnapshot      putSnapshot
-  , lift (SetCurrentNote << Just) setCurrentNote
-  , actions.signal
+  mergeMany
+  [ Signal.map LoadAsCurrentDoc loadAsCurrentDoc
+  , Signal.map ListDocs         listDocs
+  , Signal.map ListNotes        listNotes
+  , Signal.map SetChapters      setChapters
+  , Signal.map UpdateChapter    updateChapter
+  , Signal.map SetTitle         setTitle
+  , Signal.map SetDescription   setDescription
+  , Signal.map SetFullscreen    setFullscreen
+  , Signal.map PutSnapshot      putSnapshot
+  , Signal.map (SetCurrentNote << Just) setCurrentNote
+  , Signal.subscribe actions
   ]
 
 scene : AppState -> (Int, Int) -> Element
@@ -129,48 +133,48 @@ state = foldp step emptyState userInput
 -- PORTS --
 
 port loadAsCurrentDoc : Signal Doc
-port setChapters : Signal [Chapter]
+port setChapters : Signal (List Chapter)
 port updateChapter : Signal Chapter
 port setTitle : Signal (String, Int)
 port setDescription : Signal (String, Int)
 port setFullscreen : Signal Bool
 port setCurrentNote : Signal Note
-port listDocs : Signal [Doc]
-port listNotes : Signal [Note]
+port listDocs : Signal (List Doc)
+port listNotes : Signal (List Note)
 port putSnapshot : Signal Snapshot
 
 port setCurrentDocId : Signal (Maybe Identifier)
-port setCurrentDocId = lift .currentDocId state
+port setCurrentDocId = Signal.map .currentDocId state
 
 port newDoc : Signal ()
-port newDoc = newDocInput.signal
+port newDoc = Signal.subscribe newDocChannel
 
 port openFromFile : Signal ()
-port openFromFile = openFromFileInput.signal
+port openFromFile = Signal.subscribe openFromFileChannel
 
 port downloadDoc : Signal DownloadOptions
-port downloadDoc = downloadInput.signal
+port downloadDoc = Signal.subscribe downloadChannel
 
 port printDoc : Signal ()
-port printDoc = printInput.signal
+port printDoc = Signal.subscribe printChannel
 
 port navigateToChapterId : Signal Identifier
-port navigateToChapterId = navigateToChapterIdInput.signal
+port navigateToChapterId = Signal.subscribe navigateToChapterIdChannel
 
 port navigateToTitle : Signal ()
-port navigateToTitle = navigateToTitleInput.signal
+port navigateToTitle = Signal.subscribe navigateToTitleChannel
 
 port newNote : Signal ()
-port newNote = newNoteInput.signal
+port newNote = Signal.subscribe newNoteChannel
 
 port newChapter : Signal ()
-port newChapter = newChapterInput.signal
+port newChapter = Signal.subscribe newChapterChannel
 
 port searchNotes : Signal ()
-port searchNotes = debounce 500 searchNotesInput.signal
+port searchNotes = debounce 500 <| Signal.subscribe searchNotesChannel
 
 port fullscreen : Signal Bool
-port fullscreen = fullscreenInput.signal
+port fullscreen = Signal.subscribe fullscreenChannel
 
 port execCommand : Signal String
-port execCommand = execCommandInput.signal
+port execCommand = Signal.subscribe execCommandChannel

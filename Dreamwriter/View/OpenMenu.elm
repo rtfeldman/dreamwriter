@@ -6,20 +6,21 @@ import Dreamwriter.Action (..)
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import Html.Tags (..)
+import Signal (send)
+import List (..)
 
-view : [Doc] -> Doc -> Html
+view : List Doc -> Doc -> Html
 view docs currentDoc =
-  let sortedDocs : [Doc]
+  let sortedDocs : List Doc
       sortedDocs = sortBy (negate << .lastModifiedTime) docs
 
-      docNodes : [Html]
+      docNodes : List Html
       docNodes = map (viewOpenDocEntryFor currentDoc) sortedDocs
 
-      openFileNodes : [Html]
+      openFileNodes : List Html
       openFileNodes = [
         div [class "open-entry from-file",
-            onclick openFromFileInput.handle (always ())
+            onClick <| send openFromFileChannel ()
           ] [
             span [] [text "A "],
             b    [] [text ".html"],
@@ -36,4 +37,4 @@ viewOpenDocEntryFor currentDoc doc =
     else "open-entry"
   in
     div [key ("#open-doc-" ++ doc.id), class className,
-      onclick actions.handle (\_ -> OpenDocId doc.id)] [text doc.title]
+      onClick <| send actions (OpenDocId doc.id)] [text doc.title]
