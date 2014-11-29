@@ -33,7 +33,7 @@
     "grunt-contrib-stylus": "0.20.0",
     "grunt-contrib-uglify": "0.6.0",
     "grunt-contrib-watch": "0.6.1",
-    "grunt-elm": "0.3.0",
+    "grunt-elm": "0.4.0",
     "hogan.js": "3.0.2",
     "lodash": "2.4.1",
     "lunr": "0.5.6",
