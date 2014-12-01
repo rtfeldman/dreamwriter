@@ -1,7 +1,7 @@
 module Component.LeftSidebar where
 
 import Dreamwriter.Model (..)
-import Dreamwriter.Action (..) -- TODO refactor out this dependency by passing in the relevant channels as arguments to view
+import Dreamwriter.Action as Action
 
 import Component.LeftSidebar.OpenMenuView as OpenMenu
 import Component.LeftSidebar.CurrentDocView as CurrentDoc
@@ -74,7 +74,7 @@ viewCurrentDocFooter =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
       title "Add Chapter",
-      onClick <| Signal.send newChapterChannel (),
+      onClick <| Signal.send Action.newChapterChannel (),
       class "flaticon-plus81"] []]
 
 viewOpenMenuHeader updates =
@@ -94,7 +94,7 @@ viewCurrentDocHeader currentDoc updates =
       menuitem [
         title "New",
         class "sidebar-header-control flaticon-add26",
-        onClick <| Signal.send newDocChannel ()] [],
+        onClick <| Signal.send Action.newDocChannel ()] [],
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
@@ -102,11 +102,11 @@ viewCurrentDocHeader currentDoc updates =
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
-        onClick <| Signal.send downloadChannel downloadOptions] [],
+        onClick <| Signal.send Action.downloadChannel downloadOptions] [],
       menuitem [
         title "Print",
         class "sidebar-header-control flaticon-printer70",
-        onClick <| Signal.send printChannel ()] [],
+        onClick <| Signal.send Action.printChannel ()] [],
       menuitem [
         title "Settings",
         class "sidebar-header-control flaticon-gear33"] []
