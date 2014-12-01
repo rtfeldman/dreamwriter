@@ -1,4 +1,4 @@
-module Dreamwriter.View.CurrentDoc (view) where
+module Component.LeftSidebar.CurrentDocView (view) where
 
 import Dreamwriter.Model (..)
 import Dreamwriter.Action (..)

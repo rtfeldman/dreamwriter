@@ -1,4 +1,4 @@
-module Dreamwriter.View.OpenMenu (view) where
+module Component.LeftSidebar.OpenMenuView (view) where
 
 import Dreamwriter.Model (..)
 import Dreamwriter.Action (..)
