@@ -55,7 +55,7 @@ view updates model =
       --sidebarHeader = lazy <| viewCurrentDocHeader model.currentDoc updates,
       sidebarHeader = viewCurrentDocHeader model.currentDoc updates,
       sidebarBody   = lazy CurrentDoc.view model.currentDoc,
-      sidebarFooter = viewCurrentDocFooter newChapterChannel
+      sidebarFooter = viewCurrentDocFooter
     }
   in
     div [id "left-sidebar-container", class "sidebar"] [
@@ -70,8 +70,8 @@ sidebarHeaderClass = "sidebar-header"
 viewOpenMenuFooter : Html
 viewOpenMenuFooter = span [] []
 
-viewCurrentDocFooter : Signal.Channel () -> Html
-viewCurrentDocFooter newChapterChannel =
+viewCurrentDocFooter : Html
+viewCurrentDocFooter =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
       title "Add Chapter",
