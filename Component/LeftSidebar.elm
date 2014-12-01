@@ -52,8 +52,7 @@ view updates model =
     }
 
     CurrentDocMode -> {
-      --sidebarHeader = lazy <| viewCurrentDocHeader model.currentDoc updates,
-      sidebarHeader = viewCurrentDocHeader model.currentDoc updates,
+      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc updates,
       sidebarBody   = lazy CurrentDoc.view model.currentDoc,
       sidebarFooter = viewCurrentDocFooter
     }
