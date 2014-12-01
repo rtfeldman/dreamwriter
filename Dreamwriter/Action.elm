@@ -1,6 +1,5 @@
 module Dreamwriter.Action where
 
-import Dreamwriter (..)
 import Dreamwriter.Model (..)
 
 import Signal

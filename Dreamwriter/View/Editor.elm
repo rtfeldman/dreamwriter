@@ -2,7 +2,6 @@ module Dreamwriter.View.Editor where
 
 import Dreamwriter.Model (..)
 import Dreamwriter.Action (..)
-import Dreamwriter (..)
 
 import String
 import Html (..)
