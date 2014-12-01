@@ -1,6 +1,5 @@
 module App where
 
-import Dreamwriter (Identifier)
 import Dreamwriter.Action (..)
 import Dreamwriter.Model (..)
 import Dreamwriter.View.Page (view)
