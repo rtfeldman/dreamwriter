@@ -31,8 +31,14 @@ leftSidebarToAction update =
         LeftSidebar.CurrentDocMode -> CurrentDocView
         LeftSidebar.OpenMenuMode   -> OpenMenuView
 
-leftSidebarUpdates : LC.LocalChannel LeftSidebar.Update
-leftSidebarUpdates = LC.create leftSidebarToAction Action.actions
+leftSidebarChannels : LeftSidebar.Channels
+leftSidebarChannels = {
+    print      = LC.create identity            Action.printChannel,
+    newDoc     = LC.create identity            Action.newDocChannel,
+    newChapter = LC.create identity            Action.newChapterChannel,
+    download   = LC.create identity            Action.downloadChannel,
+    update     = LC.create leftSidebarToAction Action.actions
+  }
 
 view : AppState -> Html
 view state =
@@ -41,7 +47,7 @@ view state =
       Nothing -> []
       Just currentDoc ->
         [
-          LeftSidebar.view  leftSidebarUpdates (actionToLeftSidebarModel currentDoc state),
+          LeftSidebar.view  leftSidebarChannels (actionToLeftSidebarModel currentDoc state),
           Editor.view       currentDoc state,
           RightSidebar.view currentDoc state
         ]
