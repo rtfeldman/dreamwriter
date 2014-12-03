@@ -1,7 +1,7 @@
 module Component.LeftSidebar where
 
 import Dreamwriter.Model (..)
-import Dreamwriter.Action as Action
+import Dreamwriter.Action (DownloadOptions)
 
 import Component.LeftSidebar.OpenMenuView as OpenMenu
 import Component.LeftSidebar.CurrentDocView as CurrentDoc
@@ -13,9 +13,17 @@ import Html.Lazy (..)
 import Maybe
 import Regex (..)
 import Signal
-import LocalChannel as LC
+import LocalChannel (send, LocalChannel)
 
 type ViewMode = CurrentDocMode | OpenMenuMode
+
+type alias Channels = {
+  print      : LocalChannel (),
+  newDoc     : LocalChannel (),
+  newChapter : LocalChannel (),
+  download   : LocalChannel DownloadOptions,
+  update     : LocalChannel Update
+}
 
 type alias Model = {
   viewMode   : ViewMode,
@@ -42,19 +50,19 @@ legalizeFilename = replace All illegalFilenameCharMatcher (\_ -> "_")
 
 downloadContentType = "text/plain;charset=UTF-8"
 
-view : LC.LocalChannel Update -> Model -> Html
-view updates model =
+view : Channels -> Model -> Html
+view channels model =
   let {sidebarHeader, sidebarBody, sidebarFooter} = case model.viewMode of
     OpenMenuMode  -> {
-      sidebarHeader = viewOpenMenuHeader updates,
+      sidebarHeader = lazy viewOpenMenuHeader channels.update,
       sidebarBody   = lazy2 OpenMenu.view model.docs model.currentDoc,
       sidebarFooter = viewOpenMenuFooter
     }
 
     CurrentDocMode -> {
-      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc updates,
+      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc channels,
       sidebarBody   = lazy CurrentDoc.view model.currentDoc,
-      sidebarFooter = viewCurrentDocFooter
+      sidebarFooter = lazy viewCurrentDocFooter channels
     }
   in
     div [id "left-sidebar-container", class "sidebar"] [
@@ -69,22 +77,22 @@ sidebarHeaderClass = "sidebar-header"
 viewOpenMenuFooter : Html
 viewOpenMenuFooter = span [] []
 
-viewCurrentDocFooter : Html
-viewCurrentDocFooter =
+viewCurrentDocFooter : Channels -> Html
+viewCurrentDocFooter channels =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
       title "Add Chapter",
-      onClick <| Signal.send Action.newChapterChannel (),
+      onClick <| send channels.newChapter (),
       class "flaticon-plus81"] []]
 
-viewOpenMenuHeader updates =
+viewOpenMenuHeader updateChannel =
   div [key "open-menu-header", id sidebarHeaderId, class sidebarHeaderClass] [
     span [class "sidebar-header-control",
-      onClick <| LC.send updates (SetViewMode CurrentDocMode)] [text "cancel"]
+      onClick <| send updateChannel (SetViewMode CurrentDocMode)] [text "cancel"]
   ]
 
-viewCurrentDocHeader : Doc -> LC.LocalChannel Update -> Html
-viewCurrentDocHeader currentDoc updates =
+viewCurrentDocHeader : Doc -> Channels -> Html
+viewCurrentDocHeader currentDoc channels =
   let downloadOptions = {
     filename    = (legalizeFilename currentDoc.title) ++ ".html",
     contentType = downloadContentType
@@ -94,19 +102,19 @@ viewCurrentDocHeader currentDoc updates =
       menuitem [
         title "New",
         class "sidebar-header-control flaticon-add26",
-        onClick <| Signal.send Action.newDocChannel ()] [],
+        onClick <| send channels.newDoc ()] [],
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
-        onClick <| LC.send updates (SetViewMode OpenMenuMode)] [],
+        onClick <| send channels.update (SetViewMode OpenMenuMode)] [],
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
-        onClick <| Signal.send Action.downloadChannel downloadOptions] [],
+        onClick <| send channels.download downloadOptions] [],
       menuitem [
         title "Print",
         class "sidebar-header-control flaticon-printer70",
-        onClick <| Signal.send Action.printChannel ()] [],
+        onClick <| send channels.print ()] [],
       menuitem [
         title "Settings",
         class "sidebar-header-control flaticon-gear33"] []
