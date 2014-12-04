@@ -31,6 +31,18 @@ leftSidebarToAction update =
         LeftSidebar.CurrentDocMode -> CurrentDocView
         LeftSidebar.OpenMenuMode   -> OpenMenuView
 
+actionToRightSidebarModel : AppState -> RightSidebar.Model
+actionToRightSidebarModel model = {
+    currentNote = model.currentNote,
+    notes       = model.notes
+  }
+
+rightSidebarToAction : RightSidebar.Update -> Action.Action
+rightSidebarToAction update =
+  case update of
+    RightSidebar.NoOp                   -> Action.NoOp
+    RightSidebar.CurrentNoteChange note -> Action.SetCurrentNote note
+
 leftSidebarChannels : LeftSidebar.Channels
 leftSidebarChannels = {
     print      = LC.create identity            Action.printChannel,
@@ -38,6 +50,13 @@ leftSidebarChannels = {
     newChapter = LC.create identity            Action.newChapterChannel,
     download   = LC.create identity            Action.downloadChannel,
     update     = LC.create leftSidebarToAction Action.actions
+  }
+
+rightSidebarChannels : RightSidebar.Channels
+rightSidebarChannels = {
+    newNote     = LC.create identity             Action.newNoteChannel,
+    searchNotes = LC.create identity             Action.searchNotesChannel,
+    update      = LC.create rightSidebarToAction Action.actions
   }
 
 view : AppState -> Html
@@ -49,5 +68,5 @@ view state =
         [
           LeftSidebar.view  leftSidebarChannels (actionToLeftSidebarModel currentDoc state),
           Editor.view       currentDoc state,
-          RightSidebar.view currentDoc state
+          RightSidebar.view rightSidebarChannels (actionToRightSidebarModel state)
         ]
