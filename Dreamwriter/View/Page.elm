@@ -31,6 +31,12 @@ leftSidebarToAction update =
         LeftSidebar.CurrentDocMode -> CurrentDocView
         LeftSidebar.OpenMenuMode   -> OpenMenuView
 
+actionToEditorModel : Doc -> AppState -> Editor.Model
+actionToEditorModel currentDoc model = {
+    currentDoc = currentDoc,
+    fullscreen = model.fullscreen
+  }
+
 actionToRightSidebarModel : AppState -> RightSidebar.Model
 actionToRightSidebarModel model = {
     currentNote = model.currentNote,
@@ -59,6 +65,12 @@ rightSidebarChannels = {
     update      = LC.create rightSidebarToAction Action.actions
   }
 
+editorChannels : Editor.Channels
+editorChannels = {
+    fullscreen  = LC.create identity Action.fullscreenChannel,
+    execCommand = LC.create identity Action.execCommandChannel
+  }
+
 view : AppState -> Html
 view state =
   div [id "page"] <|
@@ -66,7 +78,7 @@ view state =
       Nothing -> []
       Just currentDoc ->
         [
-          LeftSidebar.view  leftSidebarChannels (actionToLeftSidebarModel currentDoc state),
-          Editor.view       currentDoc state,
+          LeftSidebar.view  leftSidebarChannels  (actionToLeftSidebarModel currentDoc state),
+          Editor.view       editorChannels       (actionToEditorModel currentDoc state),
           RightSidebar.view rightSidebarChannels (actionToRightSidebarModel state)
         ]
