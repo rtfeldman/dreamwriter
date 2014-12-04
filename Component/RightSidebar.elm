@@ -1,4 +1,4 @@
-module Dreamwriter.View.RightSidebar where
+module Component.RightSidebar where
 
 import Dreamwriter.Model (..)
 import Dreamwriter.Action (..)
