@@ -12,7 +12,6 @@ import Html.Events (..)
 import Html.Lazy (..)
 import Maybe
 import Regex (..)
-import Signal
 import LocalChannel (send, LocalChannel)
 
 type ViewMode = CurrentDocMode | OpenMenuMode
