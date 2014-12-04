@@ -32,14 +32,14 @@ type alias Model = {
 
 type Update
   = NoOp
-  | SetViewMode ViewMode
+  | ViewModeChange ViewMode
 
 step : Update -> Model -> Model
 step update model =
   case update of
     NoOp -> model
 
-    SetViewMode mode -> { model | viewMode <- mode }
+    ViewModeChange mode -> { model | viewMode <- mode }
 
 -- Replace illegal filename characters with underscores
 illegalFilenameCharMatcher = regex "[/\\<>?|\":*]"
@@ -87,7 +87,7 @@ viewCurrentDocFooter channels =
 viewOpenMenuHeader updateChannel =
   div [key "open-menu-header", id sidebarHeaderId, class sidebarHeaderClass] [
     span [class "sidebar-header-control",
-      onClick <| send updateChannel (SetViewMode CurrentDocMode)] [text "cancel"]
+      onClick <| send updateChannel (ViewModeChange CurrentDocMode)] [text "cancel"]
   ]
 
 viewCurrentDocHeader : Doc -> Channels -> Html
@@ -105,7 +105,7 @@ viewCurrentDocHeader currentDoc channels =
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
-        onClick <| send channels.update (SetViewMode OpenMenuMode)] [],
+        onClick <| send channels.update (ViewModeChange OpenMenuMode)] [],
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
