@@ -1,4 +1,4 @@
-module Dreamwriter.View.Editor where
+module Component.Editor where
 
 import Dreamwriter.Model (..)
 import Dreamwriter.Action (..)

@@ -2,9 +2,9 @@ module Dreamwriter.View.Page where
 
 import Dreamwriter.Model (..)
 import Dreamwriter.Action as Action
-import Component.LeftSidebar as LeftSidebar
+import Component.LeftSidebar  as LeftSidebar
 import Component.RightSidebar as RightSidebar
-import Dreamwriter.View.Editor as Editor
+import Component.Editor       as Editor
 
 import String
 import Html (..)
