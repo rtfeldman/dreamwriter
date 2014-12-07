@@ -54,7 +54,6 @@ step update model =
     -- TODO actually handle this properly :P
     OpenDocId id -> model
 
-
 -- Replace illegal filename characters with underscores
 illegalFilenameCharMatcher = regex "[/\\<>?|\":*]"
 

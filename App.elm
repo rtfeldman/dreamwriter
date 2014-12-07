@@ -198,7 +198,8 @@ modelPage state = {
 scene : AppState -> (Int, Int) -> Element
 scene state (w, h) =
   let pageUpdate = LC.create (generalizePageUpdate state) updates
-      html       = Page.view pageUpdate Channel.locals (modelPage state)
+      locals     = Channel.locals
+      html       = Page.view { locals | update = pageUpdate } (modelPage state)
   in
     container w h midTop (toElement w h html)
 

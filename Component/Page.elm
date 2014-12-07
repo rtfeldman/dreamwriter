@@ -10,7 +10,7 @@ import String
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import LocalChannel (localize)
+import LocalChannel (LocalChannel, localize)
 
 type Update
   = NoOp
@@ -56,10 +56,9 @@ step update model =
     SetRightSidebar childModel -> { model | rightSidebar <- childModel }
     SetEditor       childModel -> { model | editor       <- childModel }
 
---view : AppChannels -> AppState -> Html
-view updates channels model =
-  let updateLeftSidebar    = localize (generalizeLeftSidebarUpdate model)  updates
-      updateRightSidebar   = localize (generalizeRightSidebarUpdate model) updates
+view channels model =
+  let updateLeftSidebar    = localize (generalizeLeftSidebarUpdate model)  channels.update
+      updateRightSidebar   = localize (generalizeRightSidebarUpdate model) channels.update
       leftSidebarChannels  = { channels | update = updateLeftSidebar  }
       rightSidebarChannels = { channels | update = updateRightSidebar }
       editorChannels       = channels
