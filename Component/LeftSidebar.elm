@@ -27,16 +27,18 @@ type alias Channels a = { a |
 }
 
 type alias Model = {
-  viewMode   : ViewMode,
-  docs       : List Doc,
-  currentDoc : Doc
+  viewMode     : ViewMode,
+  docs         : List Doc,
+  currentDocId : Maybe Identifier,
+  currentDoc   : Doc
 }
 
 initialModel : Model
 initialModel = {
-    viewMode   = CurrentDocMode,
-    docs       = [],
-    currentDoc = emptyDoc
+    viewMode     = CurrentDocMode,
+    docs         = [],
+    currentDocId = Nothing,
+    currentDoc   = emptyDoc
   }
 
 type Update
@@ -51,8 +53,10 @@ step update model =
 
     SetViewMode mode -> { model | viewMode <- mode }
 
-    -- TODO actually handle this properly :P
-    OpenDocId id -> model
+    OpenDocId id -> { model |
+      currentDocId <- Just id,
+      viewMode     <- CurrentDocMode
+    }
 
 -- Replace illegal filename characters with underscores
 illegalFilenameCharMatcher = regex "[/\\<>?|\":*]"

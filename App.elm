@@ -84,10 +84,7 @@ step action state =
     NoOp -> state
 
     OpenDocId id ->
-      {state | currentDocId    <- Just id
-             -- TODO restore this behavior!
-             --, leftSidebarView <- CurrentDocView
-      }
+      { state | currentDocId <- Just id }
 
     LoadAsCurrentDoc doc ->
       let stateAfterOpenDocId = step (OpenDocId doc.id) state
@@ -125,8 +122,10 @@ step action state =
     PutSnapshot snapshot ->
       {state | snapshots <- Dict.insert snapshot.id snapshot state.snapshots}
 
-    SetPage model ->
-      { state | page <- model }
+    SetPage model -> { state |
+        page         <- model,
+        currentDocId <- model.currentDocId
+      }
 
 -- Throw out any snapshots that are no longer relevant, so they can be GC'd.
 pruneSnapshots : AppState -> AppState
@@ -188,6 +187,7 @@ modelPage state = {
 
     fullscreen   = state.fullscreen,
 
+    currentDocId = state.currentDocId,
     currentDoc   = state.currentDoc,
     currentNote  = state.currentNote,
 
