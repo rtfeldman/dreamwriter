@@ -1,35 +1,23 @@
-module Dreamwriter.Action where
+module Dreamwriter.Channel where
 
-import Dreamwriter.Model (..)
 import Dreamwriter (..)
 
-import Component.LeftSidebar as LeftSidebar
-import Component.RightSidebar as RightSidebar
-import Component.Editor as Editor
-
+import LocalChannel (LocalChannel)
 import Signal
 
-type Action
-  = NoOp
-  | LoadAsCurrentDoc Doc
-  | OpenDocId Identifier
-  | ListDocs (List Doc)
-  | ListNotes (List Note)
-  | SetCurrentNote (Maybe Note)
-  | SetLeftSidebarView LeftSidebar.ViewMode
-  | SetChapters (List Chapter)
-  | UpdateChapter Chapter
-  | SetTitle (String, Int)
-  | SetDescription (String, Int)
-  | SetFullscreen FullscreenState
-  | PutSnapshot Snapshot
-  | SetLeftSidebar  LeftSidebar.Model
-  | SetRightSidebar RightSidebar.Model
-  | SetEditor       Editor.Model
-
--- actions from user input
-actions : Signal.Channel Action
-actions = Signal.channel NoOp
+type alias Locals = {
+  newNote             : LocalChannel (),
+  searchNotes         : LocalChannel (),
+  fullscreen          : LocalChannel FullscreenState,
+  execCommand         : LocalChannel String,
+  print               : LocalChannel (),
+  newDoc              : LocalChannel (),
+  newChapter          : LocalChannel (),
+  openFromFile        : LocalChannel (),
+  navigateToTitle     : LocalChannel (),
+  navigateToChapterId : LocalChannel Identifier,
+  download            : LocalChannel DownloadOptions
+}
 
 downloadChannel : Signal.Channel DownloadOptions
 downloadChannel = Signal.channel { filename = "", contentType = "" }
