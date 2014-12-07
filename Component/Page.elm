@@ -1,4 +1,4 @@
-module Dreamwriter.View.Page where
+module Component.Page where
 
 import Dreamwriter.Model (..)
 import Dreamwriter.Action as Action

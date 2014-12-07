@@ -2,7 +2,7 @@ module App where
 
 import Dreamwriter.Action (..)
 import Dreamwriter.Model (..)
-import Dreamwriter.View.Page (view)
+import Component.Page (view)
 
 import String
 import Graphics.Element (Element, container, midTop)
