@@ -1,6 +1,6 @@
 module Component.Editor where
 
-import Dreamwriter.Model (..)
+import Dreamwriter (..)
 import Dreamwriter.Action (..)
 
 import String

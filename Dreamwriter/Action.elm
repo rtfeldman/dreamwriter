@@ -1,6 +1,7 @@
 module Dreamwriter.Action where
 
 import Dreamwriter.Model (..)
+import Dreamwriter (..)
 
 import Signal
 
@@ -22,11 +23,6 @@ type Action
 -- actions from user input
 actions : Signal.Channel Action
 actions = Signal.channel NoOp
-
-type alias DownloadOptions =
-  { filename    : String
-  , contentType : String
-  }
 
 downloadChannel : Signal.Channel DownloadOptions
 downloadChannel = Signal.channel { filename = "", contentType = "" }

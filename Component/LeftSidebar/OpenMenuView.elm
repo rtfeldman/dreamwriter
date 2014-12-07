@@ -1,6 +1,6 @@
 module Component.LeftSidebar.OpenMenuView (view) where
 
-import Dreamwriter.Model (..)
+import Dreamwriter (..)
 import Dreamwriter.Action (..)
 
 import Html (..)
