@@ -41,7 +41,7 @@ initialModel = {
 
 type Update
   = NoOp
-  | ViewModeChange ViewMode
+  | SetViewMode ViewMode
   | OpenDocId Identifier
 
 step : Update -> Model -> Model
@@ -49,7 +49,11 @@ step update model =
   case update of
     NoOp -> model
 
-    ViewModeChange mode -> { model | viewMode <- mode }
+    SetViewMode mode -> { model | viewMode <- mode }
+
+    -- TODO actually handle this properly :P
+    OpenDocId id -> model
+
 
 -- Replace illegal filename characters with underscores
 illegalFilenameCharMatcher = regex "[/\\<>?|\":*]"
@@ -97,7 +101,7 @@ viewCurrentDocFooter channels =
 viewOpenMenuHeader updateChannel =
   div [key "open-menu-header", id sidebarHeaderId, class sidebarHeaderClass] [
     span [class "sidebar-header-control",
-      onClick <| send updateChannel (ViewModeChange CurrentDocMode)] [text "cancel"]
+      onClick <| send updateChannel (SetViewMode CurrentDocMode)] [text "cancel"]
   ]
 
 viewCurrentDocHeader : Doc -> Channels a -> Html
@@ -115,7 +119,7 @@ viewCurrentDocHeader currentDoc channels =
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
-        onClick <| send channels.update (ViewModeChange OpenMenuMode)] [],
+        onClick <| send channels.update (SetViewMode OpenMenuMode)] [],
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
