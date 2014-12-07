@@ -20,6 +20,21 @@ type Update
   | SetRightSidebar RightSidebar.Model
   | SetEditor       Editor.Model
 
+type alias Model = {
+  leftSidebar  : LeftSidebar.Model,
+  rightSidebar : RightSidebar.Model,
+  editor       : Editor.Model,
+
+  fullscreen   : FullscreenState
+}
+
+initialModel : Model
+initialModel = {
+    leftSidebar  = LeftSidebar.initialModel,
+    rightSidebar = RightSidebar.initialModel,
+    editor       = Editor.initialModel,
+
+    fullscreen   = False
   }
 
 view : AppChannels -> AppState -> Html
