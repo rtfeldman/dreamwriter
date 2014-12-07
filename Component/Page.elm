@@ -25,6 +25,7 @@ type alias Model = {
 
   fullscreen   : FullscreenState,
 
+  currentDocId : Maybe Identifier,
   currentDoc   : Maybe Doc,
   currentNote  : Maybe Note,
 
@@ -40,6 +41,7 @@ initialModel = {
 
     fullscreen   = False,
 
+    currentDocId = Nothing,
     currentDoc   = Nothing,
     currentNote  = Nothing,
 
@@ -52,7 +54,11 @@ step update model =
   case update of
     NoOp -> model
 
-    SetLeftSidebar  childModel -> { model | leftSidebar  <- childModel }
+    SetLeftSidebar  childModel -> { model |
+      leftSidebar  <- childModel,
+      currentDocId <- childModel.currentDocId
+    }
+
     SetRightSidebar childModel -> { model | rightSidebar <- childModel }
     SetEditor       childModel -> { model | editor       <- childModel }
 
@@ -74,9 +80,10 @@ view channels model =
 
 modelLeftSidebar : Doc -> Model -> LeftSidebar.Model
 modelLeftSidebar currentDoc model = {
-    docs       = model.docs,
-    currentDoc = currentDoc,
-    viewMode   = model.leftSidebar.viewMode
+    docs         = model.docs,
+    currentDoc   = currentDoc,
+    currentDocId = model.currentDocId,
+    viewMode     = model.leftSidebar.viewMode
   }
 
 modelEditor : Doc -> Model -> Editor.Model
