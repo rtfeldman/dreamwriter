@@ -84,7 +84,18 @@ step action state =
     NoOp -> state
 
     OpenDocId id ->
-      { state | currentDocId <- Just id }
+      let initialPage = Page.initialModel
+          page'       = { initialPage |
+            currentDocId <- Just id,
+            currentDoc   <- state.currentDoc,
+            docs         <- state.docs,
+            notes        <- state.notes,
+            fullscreen   <- state.fullscreen
+          }
+      in { state |
+        currentDocId <- Just id,
+        page         <- page'
+      }
 
     LoadAsCurrentDoc doc ->
       let stateAfterOpenDocId = step (OpenDocId doc.id) state
