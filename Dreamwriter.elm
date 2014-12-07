@@ -1,5 +1,22 @@
 module Dreamwriter where
 
+import LocalChannel (LocalChannel)
+import LocalChannel as LC
+
+type alias AppChannels = {
+  newNote             : LocalChannel (),
+  searchNotes         : LocalChannel (),
+  fullscreen          : LocalChannel FullscreenState,
+  execCommand         : LocalChannel String,
+  print               : LocalChannel (),
+  newDoc              : LocalChannel (),
+  newChapter          : LocalChannel (),
+  openFromFile        : LocalChannel (),
+  navigateToTitle     : LocalChannel (),
+  navigateToChapterId : LocalChannel Identifier,
+  download            : LocalChannel DownloadOptions
+}
+
 -- TODO make this a proper ADT once outbound ports can accept them
 type alias FullscreenState = Bool
 
