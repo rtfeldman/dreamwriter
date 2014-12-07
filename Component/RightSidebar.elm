@@ -1,7 +1,6 @@
 module Component.RightSidebar where
 
 import Dreamwriter (..)
-import Dreamwriter.Action (..)
 
 import Html (..)
 import Html.Attributes (..)

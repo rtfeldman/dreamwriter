@@ -1,7 +1,6 @@
 module Component.Editor where
 
 import Dreamwriter (..)
-import Dreamwriter.Action (..)
 
 import String
 import Html (..)

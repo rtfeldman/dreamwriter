@@ -16,11 +16,14 @@ import LocalChannel (send, LocalChannel)
 type ViewMode = CurrentDocMode | OpenMenuMode
 
 type alias Channels = {
-  print      : LocalChannel (),
-  newDoc     : LocalChannel (),
-  newChapter : LocalChannel (),
-  download   : LocalChannel DownloadOptions,
-  update     : LocalChannel Update
+  print               : LocalChannel (),
+  newDoc              : LocalChannel (),
+  newChapter          : LocalChannel (),
+  openFromFile        : LocalChannel (),
+  navigateToTitle     : LocalChannel (),
+  navigateToChapterId : LocalChannel Identifier,
+  download            : LocalChannel DownloadOptions,
+  update              : LocalChannel Update
 }
 
 type alias Model = {
@@ -32,6 +35,7 @@ type alias Model = {
 type Update
   = NoOp
   | ViewModeChange ViewMode
+  | OpenDocId Identifier
 
 step : Update -> Model -> Model
 step update model =
@@ -53,14 +57,14 @@ view channels model =
   let {sidebarHeader, sidebarBody, sidebarFooter} = case model.viewMode of
     OpenMenuMode  -> {
       sidebarHeader = lazy viewOpenMenuHeader channels.update,
-      sidebarBody   = lazy2 OpenMenu.view model.docs model.currentDoc,
+      sidebarBody   = lazy2 (OpenMenu.view channels.openFromFile (\id -> send channels.update (OpenDocId id))) model.docs model.currentDoc,
       sidebarFooter = viewOpenMenuFooter
     }
 
     CurrentDocMode -> {
       sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc channels,
-      sidebarBody   = lazy CurrentDoc.view model.currentDoc,
-      sidebarFooter = lazy viewCurrentDocFooter channels
+      sidebarBody   = lazy3 CurrentDoc.view channels.navigateToTitle channels.navigateToChapterId model.currentDoc,
+      sidebarFooter = lazy  viewCurrentDocFooter channels
     }
   in
     div [id "left-sidebar-container", class "sidebar"] [

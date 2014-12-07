@@ -1,21 +1,21 @@
 module Component.LeftSidebar.OpenMenuView (view) where
 
 import Dreamwriter (..)
-import Dreamwriter.Action (..)
 
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import Signal (send)
+import LocalChannel (LocalChannel, send)
 import List (..)
+import Signal (Message)
 
-view : List Doc -> Doc -> Html
-view docs currentDoc =
+view : LocalChannel () -> (Identifier -> Message) -> List Doc -> Doc -> Html
+view openFromFileChannel openDoc docs currentDoc =
   let sortedDocs : List Doc
       sortedDocs = sortBy (negate << .lastModifiedTime) docs
 
       docNodes : List Html
-      docNodes = map (viewOpenDocEntryFor currentDoc) sortedDocs
+      docNodes = map (viewOpenDocEntryFor openDoc currentDoc) sortedDocs
 
       openFileNodes : List Html
       openFileNodes = [
@@ -30,11 +30,11 @@ view docs currentDoc =
   in
     div [key "open-menu-view", id "open"] (openFileNodes ++ docNodes)
 
-viewOpenDocEntryFor : Doc -> Doc -> Html
-viewOpenDocEntryFor currentDoc doc =
+viewOpenDocEntryFor : (Identifier -> Message) -> Doc -> Doc -> Html
+viewOpenDocEntryFor openDoc currentDoc doc =
   let className = if doc.id == currentDoc.id
     then "open-entry current"
     else "open-entry"
   in
     div [key ("#open-doc-" ++ doc.id), class className,
-      onClick <| send actions (OpenDocId doc.id)] [text doc.title]
+      onClick <| openDoc doc.id] [text doc.title]
