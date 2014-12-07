@@ -10,7 +10,7 @@ import Maybe
 import LocalChannel (send, LocalChannel)
 import List (..)
 
-type alias Channels = {
+type alias Channels a = { a |
   newNote     : LocalChannel (),
   searchNotes : LocalChannel (),
   update      : LocalChannel Update
@@ -31,7 +31,7 @@ type Update
   = NoOp
   | CurrentNoteChange (Maybe Note)
 
-view : Channels -> Model -> Html
+view : Channels a -> Model -> Html
 view channels model =
   let {sidebarBody, sidebarFooter} = case model.currentNote of
     Nothing ->
@@ -76,7 +76,7 @@ viewCurrentNoteBody note =
     div [id "current-note-body"] []
   ]
 
-viewCurrentNoteFooter : Channels -> Note -> Html
+viewCurrentNoteFooter : Channels a -> Note -> Html
 viewCurrentNoteFooter channels note =
   div [id "current-note-controls", class "sidebar-footer"] [
     span [id "download-current-note",
