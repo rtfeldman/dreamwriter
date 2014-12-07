@@ -80,6 +80,15 @@ step action state =
     PutSnapshot snapshot ->
       {state | snapshots <- Dict.insert snapshot.id snapshot state.snapshots}
 
+    SetLeftSidebar model ->
+      { state | leftSidebar <- model }
+
+    SetRightSidebar model ->
+      { state | rightSidebar <- model }
+
+    SetEditor model ->
+      { state | editor <- model }
+
 -- Throw out any snapshots that are no longer relevant, so they can be GC'd.
 pruneSnapshots : AppState -> AppState
 pruneSnapshots state =
