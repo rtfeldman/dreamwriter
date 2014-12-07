@@ -28,13 +28,13 @@ initialModel = {
   }
 
 type Update
-  = NoOp
+  = NoChange
   | SetCurrentNote (Maybe Note)
 
 step : Update -> Model -> Model
 step update model =
   case update of
-    NoOp -> model
+    NoChange -> model
     SetCurrentNote note -> { model | currentNote <- note }
 
 view : Channels a -> Model -> Html
