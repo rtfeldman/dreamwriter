@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 
     watch: {
       elm: {
-        files: ["Dreamwriter/**/*.elm", "*.elm"],
+        files: ["Component/**/*.elm", "Dreamwriter/**/*.elm", "*.elm"],
         tasks: ["elm"]
       },
       stylus: {
