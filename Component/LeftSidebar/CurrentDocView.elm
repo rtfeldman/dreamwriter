@@ -1,30 +1,29 @@
 module Component.LeftSidebar.CurrentDocView (view) where
 
 import Dreamwriter (..)
-import Dreamwriter.Action (..)
 
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
 
 import List (..)
-import Signal (send)
+import LocalChannel (LocalChannel, send)
 
-view : Doc -> Html
-view currentDoc =
+view : LocalChannel () -> LocalChannel Identifier -> Doc -> Html
+view navigateToTitleChannel navigateToChapterIdChannel currentDoc =
   div [key "current-doc-view", id "current-doc-view"] [
     div [id "title", onClick <| send navigateToTitleChannel ()]
       [text currentDoc.title],
 
-    viewOutline currentDoc.chapters
+    viewOutline navigateToChapterIdChannel currentDoc.chapters
   ]
 
-viewOutline : List Chapter -> Html
-viewOutline chapters =
-  ul [id "outline"] <| indexedMap viewChapter chapters
+viewOutline : LocalChannel Identifier -> List Chapter -> Html
+viewOutline navigateToChapterIdChannel chapters =
+  ul [id "outline"] <| indexedMap (viewChapter navigateToChapterIdChannel) chapters
 
-viewChapter : Int -> Chapter -> Html
-viewChapter index chapter = li [
+viewChapter : LocalChannel Identifier -> Int -> Chapter -> Html
+viewChapter navigateToChapterIdChannel index chapter = li [
     key ("chapter" ++ (toString index)),
     title chapter.heading,
     onClick <| send navigateToChapterIdChannel chapter.id
