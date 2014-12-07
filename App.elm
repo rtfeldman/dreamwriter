@@ -1,10 +1,8 @@
 module App where
 
 import Dreamwriter (..)
-import Dreamwriter.Action (..)
-import Dreamwriter.Action as Action
-import Dreamwriter.Model (..)
-import Component.Page (view)
+import Dreamwriter.Channel as Channel
+import Component.Page as Page
 
 import Component.LeftSidebar  as LeftSidebar
 import Component.RightSidebar as RightSidebar
@@ -30,9 +28,57 @@ import LocalChannel as LC
 debounce : Time -> Signal a -> Signal a
 debounce wait signal = sampleOn (since wait signal |> dropRepeats) signal
 
--- ACTIONS --
+-- UPDATES --
 
-step : Action -> AppState -> AppState
+type Update
+  = NoOp
+  | LoadAsCurrentDoc Doc
+  | OpenDocId Identifier
+  | ListDocs (List Doc)
+  | ListNotes (List Note)
+  | SetCurrentNote (Maybe Note)
+  | SetChapters (List Chapter)
+  | UpdateChapter Chapter
+  | SetTitle (String, Int)
+  | SetDescription (String, Int)
+  | SetFullscreen FullscreenState
+  | PutSnapshot Snapshot
+  | SetPage Page.Model
+
+-- updates from user input
+updates : Signal.Channel Update
+updates = Signal.channel NoOp
+
+type alias AppState = {
+  page         : Page.Model,
+
+  fullscreen   : FullscreenState,
+
+  currentDoc   : Maybe Doc,
+  currentDocId : Maybe Identifier,
+  currentNote  : Maybe Note,
+
+  docs         : List Doc,
+  notes        : List Note,
+  snapshots    : Dict.Dict Identifier Snapshot
+}
+
+initialState : AppState
+initialState = {
+    page         = Page.initialModel,
+
+    fullscreen   = False,
+
+    currentDoc   = Nothing,
+    currentDocId = Nothing,
+    currentNote  = Nothing,
+
+    docs         = [],
+    notes        = [],
+    snapshots    = Dict.empty
+  }
+
+step : Update -> AppState -> AppState
 step action state =
   case action of
     NoOp -> state
@@ -76,21 +122,11 @@ step action state =
     SetFullscreen enabled ->
       {state | fullscreen <- enabled}
 
-    SetLeftSidebarView mode ->
-      state -- TODO restore this behavior!
-      --{state | leftSidebarView <- mode}
-
     PutSnapshot snapshot ->
       {state | snapshots <- Dict.insert snapshot.id snapshot state.snapshots}
 
-    SetLeftSidebar model ->
-      { state | leftSidebar <- model }
-
-    SetRightSidebar model ->
-      { state | rightSidebar <- model }
-
-    SetEditor model ->
-      { state | editor <- model }
+    SetPage model ->
+      { state | page <- model }
 
 -- Throw out any snapshots that are no longer relevant, so they can be GC'd.
 pruneSnapshots : AppState -> AppState
@@ -124,7 +160,7 @@ preferById preferred given =
 main : Signal Element
 main = Signal.map2 scene state Window.dimensions
 
-userInput : Signal Action
+userInput : Signal Update
 userInput =
   mergeMany
   [ Signal.map LoadAsCurrentDoc loadAsCurrentDoc
@@ -137,31 +173,51 @@ userInput =
   , Signal.map SetFullscreen    setFullscreen
   , Signal.map PutSnapshot      putSnapshot
   , Signal.map (SetCurrentNote << Just) setCurrentNote
-  , Signal.subscribe actions
+  , Signal.subscribe updates
   ]
 
-
 channels = {
-    fullscreen          = LC.create identity Action.fullscreenChannel,
-    execCommand         = LC.create identity Action.execCommandChannel,
-    newNote             = LC.create identity Action.newNoteChannel,
-    searchNotes         = LC.create identity Action.searchNotesChannel,
-    print               = LC.create identity Action.printChannel,
-    newDoc              = LC.create identity Action.newDocChannel,
-    newChapter          = LC.create identity Action.newChapterChannel,
-    download            = LC.create identity Action.downloadChannel,
-    openFromFile        = LC.create identity Action.openFromFileChannel,
-    navigateToTitle     = LC.create identity Action.navigateToTitleChannel,
-    navigateToChapterId = LC.create identity Action.navigateToChapterIdChannel
+    fullscreen          = LC.create identity Channel.fullscreenChannel,
+    execCommand         = LC.create identity Channel.execCommandChannel,
+    newNote             = LC.create identity Channel.newNoteChannel,
+    searchNotes         = LC.create identity Channel.searchNotesChannel,
+    print               = LC.create identity Channel.printChannel,
+    newDoc              = LC.create identity Channel.newDocChannel,
+    newChapter          = LC.create identity Channel.newChapterChannel,
+    download            = LC.create identity Channel.downloadChannel,
+    openFromFile        = LC.create identity Channel.openFromFileChannel,
+    navigateToTitle     = LC.create identity Channel.navigateToTitleChannel,
+    navigateToChapterId = LC.create identity Channel.navigateToChapterIdChannel
+  }
+
+generalizePageUpdate : AppState -> Page.Update -> Update
+generalizePageUpdate state pageUpdate = SetPage (Page.step pageUpdate state.page)
+
+modelPage : AppState -> Page.Model
+modelPage state = {
+    leftSidebar  = state.page.leftSidebar,
+    rightSidebar = state.page.rightSidebar,
+    editor       = state.page.editor,
+
+    fullscreen   = state.fullscreen,
+
+    currentDoc   = state.currentDoc,
+    currentNote  = state.currentNote,
+
+    docs         = state.docs,
+    notes        = state.notes
   }
 
 scene : AppState -> (Int, Int) -> Element
 scene state (w, h) =
-  container w h midTop (toElement w h (view channels state))
+  let pageUpdate = LC.create (generalizePageUpdate state) updates
+      html       = Page.view pageUpdate channels (modelPage state)
+  in
+    container w h midTop (toElement w h html)
 
 -- manage the state of our application over time
 state : Signal AppState
-state = foldp step emptyState userInput
+state = foldp step initialState userInput
 
 -- PORTS --
 
@@ -180,34 +236,34 @@ port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = Signal.map .currentDocId state
 
 port newDoc : Signal ()
-port newDoc = Signal.subscribe newDocChannel
+port newDoc = Signal.subscribe Channel.newDocChannel
 
 port openFromFile : Signal ()
-port openFromFile = Signal.subscribe openFromFileChannel
+port openFromFile = Signal.subscribe Channel.openFromFileChannel
 
 port downloadDoc : Signal DownloadOptions
-port downloadDoc = Signal.subscribe downloadChannel
+port downloadDoc = Signal.subscribe Channel.downloadChannel
 
 port printDoc : Signal ()
-port printDoc = Signal.subscribe printChannel
+port printDoc = Signal.subscribe Channel.printChannel
 
 port navigateToChapterId : Signal Identifier
-port navigateToChapterId = Signal.subscribe navigateToChapterIdChannel
+port navigateToChapterId = Signal.subscribe Channel.navigateToChapterIdChannel
 
 port navigateToTitle : Signal ()
-port navigateToTitle = Signal.subscribe navigateToTitleChannel
+port navigateToTitle = Signal.subscribe Channel.navigateToTitleChannel
 
 port newNote : Signal ()
-port newNote = Signal.subscribe newNoteChannel
+port newNote = Signal.subscribe Channel.newNoteChannel
 
 port newChapter : Signal ()
-port newChapter = Signal.subscribe newChapterChannel
+port newChapter = Signal.subscribe Channel.newChapterChannel
 
 port searchNotes : Signal ()
-port searchNotes = debounce 500 <| Signal.subscribe searchNotesChannel
+port searchNotes = debounce 500 <| Signal.subscribe Channel.searchNotesChannel
 
 port fullscreen : Signal Bool
-port fullscreen = Signal.subscribe fullscreenChannel
+port fullscreen = Signal.subscribe Channel.fullscreenChannel
 
 port execCommand : Signal String
-port execCommand = Signal.subscribe execCommandChannel
+port execCommand = Signal.subscribe Channel.execCommandChannel

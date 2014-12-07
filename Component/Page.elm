@@ -1,8 +1,7 @@
 module Component.Page where
 
 import Dreamwriter (..)
-import Dreamwriter.Model (..)
-import Dreamwriter.Action as Action
+
 import Component.LeftSidebar  as LeftSidebar
 import Component.RightSidebar as RightSidebar
 import Component.Editor       as Editor
@@ -11,8 +10,7 @@ import String
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
-import LocalChannel (LocalChannel)
-import LocalChannel as LC
+import LocalChannel (localize)
 
 type Update
   = NoOp
@@ -25,7 +23,13 @@ type alias Model = {
   rightSidebar : RightSidebar.Model,
   editor       : Editor.Model,
 
-  fullscreen   : FullscreenState
+  fullscreen   : FullscreenState,
+
+  currentDoc   : Maybe Doc,
+  currentNote  : Maybe Note,
+
+  docs         : List Doc,
+  notes        : List Note
 }
 
 initialModel : Model
@@ -34,13 +38,28 @@ initialModel = {
     rightSidebar = RightSidebar.initialModel,
     editor       = Editor.initialModel,
 
-    fullscreen   = False
+    fullscreen   = False,
+
+    currentDoc   = Nothing,
+    currentNote  = Nothing,
+
+    docs         = [],
+    notes        = []
   }
 
-view : AppChannels -> AppState -> Html
-view channels model =
-  let updateLeftSidebar    = LC.create (leftSidebarToAction model)  Action.actions
-      updateRightSidebar   = LC.create (rightSidebarToAction model) Action.actions
+step : Update -> Model -> Model
+step update model =
+  case update of
+    NoOp -> model
+
+    SetLeftSidebar  childModel -> { model | leftSidebar  <- childModel }
+    SetRightSidebar childModel -> { model | rightSidebar <- childModel }
+    SetEditor       childModel -> { model | editor       <- childModel }
+
+--view : AppChannels -> AppState -> Html
+view updates channels model =
+  let updateLeftSidebar    = localize (generalizeLeftSidebarUpdate model)  updates
+      updateRightSidebar   = localize (generalizeRightSidebarUpdate model) updates
       leftSidebarChannels  = { channels | update = updateLeftSidebar  }
       rightSidebarChannels = { channels | update = updateRightSidebar }
       editorChannels       = channels
@@ -54,29 +73,29 @@ view channels model =
           RightSidebar.view rightSidebarChannels (modelRightSidebar model)
         ]
 
-modelLeftSidebar : Doc -> AppState -> LeftSidebar.Model
+modelLeftSidebar : Doc -> Model -> LeftSidebar.Model
 modelLeftSidebar currentDoc model = {
     docs       = model.docs,
     currentDoc = currentDoc,
     viewMode   = model.leftSidebar.viewMode
   }
 
-modelEditor : Doc -> AppState -> Editor.Model
+modelEditor : Doc -> Model -> Editor.Model
 modelEditor currentDoc model = {
     currentDoc = currentDoc,
     fullscreen = model.fullscreen
   }
 
-modelRightSidebar : AppState -> RightSidebar.Model
+modelRightSidebar : Model -> RightSidebar.Model
 modelRightSidebar model = {
     currentNote = model.currentNote,
     notes       = model.notes
   }
 
-leftSidebarToAction : AppState -> LeftSidebar.Update -> Action.Action
-leftSidebarToAction model update =
-  Action.SetLeftSidebar (LeftSidebar.step update model.leftSidebar)
+generalizeLeftSidebarUpdate : Model -> LeftSidebar.Update -> Update
+generalizeLeftSidebarUpdate model update =
+  SetLeftSidebar (LeftSidebar.step update model.leftSidebar)
 
-rightSidebarToAction : AppState -> RightSidebar.Update -> Action.Action
-rightSidebarToAction model update =
-  Action.SetRightSidebar (RightSidebar.step update model.rightSidebar)
+generalizeRightSidebarUpdate : Model -> RightSidebar.Update -> Update
+generalizeRightSidebarUpdate model update =
+  SetRightSidebar (RightSidebar.step update model.rightSidebar)
