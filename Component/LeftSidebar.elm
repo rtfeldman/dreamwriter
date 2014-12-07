@@ -15,7 +15,7 @@ import LocalChannel (send, LocalChannel)
 
 type ViewMode = CurrentDocMode | OpenMenuMode
 
-type alias Channels = {
+type alias Channels a = { a |
   print               : LocalChannel (),
   newDoc              : LocalChannel (),
   newChapter          : LocalChannel (),
@@ -59,7 +59,7 @@ legalizeFilename = replace All illegalFilenameCharMatcher (\_ -> "_")
 
 downloadContentType = "text/plain;charset=UTF-8"
 
-view : Channels -> Model -> Html
+view : Channels a -> Model -> Html
 view channels model =
   let {sidebarHeader, sidebarBody, sidebarFooter} = case model.viewMode of
     OpenMenuMode  -> {
@@ -86,7 +86,7 @@ sidebarHeaderClass = "sidebar-header"
 viewOpenMenuFooter : Html
 viewOpenMenuFooter = span [] []
 
-viewCurrentDocFooter : Channels -> Html
+viewCurrentDocFooter : Channels a -> Html
 viewCurrentDocFooter channels =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
@@ -100,7 +100,7 @@ viewOpenMenuHeader updateChannel =
       onClick <| send updateChannel (ViewModeChange CurrentDocMode)] [text "cancel"]
   ]
 
-viewCurrentDocHeader : Doc -> Channels -> Html
+viewCurrentDocHeader : Doc -> Channels a -> Html
 viewCurrentDocHeader currentDoc channels =
   let downloadOptions = {
     filename    = (legalizeFilename currentDoc.title) ++ ".html",

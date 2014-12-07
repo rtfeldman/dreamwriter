@@ -49,6 +49,10 @@ rightSidebarToAction update =
     RightSidebar.CurrentNoteChange note -> Action.SetCurrentNote note
 
 channels = {
+    fullscreen          = LC.create identity Action.fullscreenChannel,
+    execCommand         = LC.create identity Action.execCommandChannel,
+    newNote             = LC.create identity Action.newNoteChannel,
+    searchNotes         = LC.create identity Action.searchNotesChannel,
     print               = LC.create identity Action.printChannel,
     newDoc              = LC.create identity Action.newDocChannel,
     newChapter          = LC.create identity Action.newChapterChannel,
@@ -58,23 +62,15 @@ channels = {
     navigateToChapterId = LC.create identity Action.navigateToChapterIdChannel
   }
 
-leftSidebarChannels : LeftSidebar.Channels
 leftSidebarChannels = { channels |
     update = LC.create leftSidebarToAction Action.actions
   }
 
-rightSidebarChannels : RightSidebar.Channels
-rightSidebarChannels = {
-    newNote     = LC.create identity             Action.newNoteChannel,
-    searchNotes = LC.create identity             Action.searchNotesChannel,
+rightSidebarChannels = { channels |
     update      = LC.create rightSidebarToAction Action.actions
   }
 
-editorChannels : Editor.Channels
-editorChannels = {
-    fullscreen  = LC.create identity Action.fullscreenChannel,
-    execCommand = LC.create identity Action.execCommandChannel
-  }
+editorChannels = channels
 
 view : AppState -> Html
 view state =

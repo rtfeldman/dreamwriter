@@ -12,7 +12,7 @@ import List (..)
 import LocalChannel (send, LocalChannel)
 import Json.Encode (string)
 
-type alias Channels = {
+type alias Channels a = { a |
   fullscreen  : LocalChannel FullscreenState,
   execCommand : LocalChannel String
 }
@@ -28,11 +28,11 @@ initialModel = {
     fullscreen = False
   }
 
-view : Channels -> Model -> Html
+view : Channels a -> Model -> Html
 view channels model =
   lazy3 viewEditor channels model.currentDoc model.fullscreen
 
-viewEditor : Channels -> Doc -> FullscreenState -> Html
+viewEditor : Channels a -> Doc -> FullscreenState -> Html
 viewEditor channels currentDoc fullscreen =
   div [id "editor-container"] [
     div [id "editor-frame"] [
