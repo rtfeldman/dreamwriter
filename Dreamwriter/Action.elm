@@ -4,6 +4,8 @@ import Dreamwriter.Model (..)
 import Dreamwriter (..)
 
 import Component.LeftSidebar as LeftSidebar
+import Component.RightSidebar as RightSidebar
+import Component.Editor as Editor
 
 import Signal
 
@@ -21,6 +23,9 @@ type Action
   | SetDescription (String, Int)
   | SetFullscreen FullscreenState
   | PutSnapshot Snapshot
+  | SetLeftSidebar  LeftSidebar.Model
+  | SetRightSidebar RightSidebar.Model
+  | SetEditor       Editor.Model
 
 -- actions from user input
 actions : Signal.Channel Action

@@ -31,6 +31,12 @@ type Update
   = NoOp
   | CurrentNoteChange (Maybe Note)
 
+step : Update -> Model -> Model
+step update model =
+  case update of
+    NoOp -> model
+    CurrentNoteChange note -> { model | currentNote <- note }
+
 view : Channels a -> Model -> Html
 view channels model =
   let {sidebarBody, sidebarFooter} = case model.currentNote of

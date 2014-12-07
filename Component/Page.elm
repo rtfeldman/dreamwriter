@@ -13,38 +13,6 @@ import Html.Attributes (..)
 import Html.Events (..)
 import LocalChannel as LC
 
-actionToLeftSidebarModel : Doc -> AppState -> LeftSidebar.Model
-actionToLeftSidebarModel currentDoc model = {
-    docs       = model.docs,
-    currentDoc = currentDoc,
-    viewMode   = model.leftSidebar.viewMode
-  }
-
-leftSidebarToAction : LeftSidebar.Update -> Action.Action
-leftSidebarToAction update =
-  case update of
-    LeftSidebar.NoOp                -> Action.NoOp
-    LeftSidebar.ViewModeChange mode -> Action.SetLeftSidebarView mode
-    LeftSidebar.OpenDocId id        -> Action.OpenDocId id
-
-actionToEditorModel : Doc -> AppState -> Editor.Model
-actionToEditorModel currentDoc model = {
-    currentDoc = currentDoc,
-    fullscreen = model.fullscreen
-  }
-
-actionToRightSidebarModel : AppState -> RightSidebar.Model
-actionToRightSidebarModel model = {
-    currentNote = model.currentNote,
-    notes       = model.notes
-  }
-
-rightSidebarToAction : RightSidebar.Update -> Action.Action
-rightSidebarToAction update =
-  case update of
-    RightSidebar.NoOp                   -> Action.NoOp
-    RightSidebar.CurrentNoteChange note -> Action.SetCurrentNote note
-
 channels = {
     fullscreen          = LC.create identity Action.fullscreenChannel,
     execCommand         = LC.create identity Action.execCommandChannel,
@@ -61,8 +29,8 @@ channels = {
 
 view : AppState -> Html
 view model =
-  let updateLeftSidebar    = LC.create leftSidebarToAction  Action.actions
-      updateRightSidebar   = LC.create rightSidebarToAction Action.actions
+  let updateLeftSidebar    = LC.create (leftSidebarToAction model)  Action.actions
+      updateRightSidebar   = LC.create (rightSidebarToAction model) Action.actions
       leftSidebarChannels  = { channels | update = updateLeftSidebar  }
       rightSidebarChannels = { channels | update = updateRightSidebar }
       editorChannels       = channels
@@ -71,7 +39,34 @@ view model =
       Nothing -> []
       Just currentDoc ->
         [
-          LeftSidebar.view  leftSidebarChannels  (actionToLeftSidebarModel currentDoc model),
-          Editor.view       editorChannels       (actionToEditorModel currentDoc model),
-          RightSidebar.view rightSidebarChannels (actionToRightSidebarModel model)
+          LeftSidebar.view  leftSidebarChannels  (modelLeftSidebar currentDoc model),
+          Editor.view       editorChannels       (modelEditor currentDoc model),
+          RightSidebar.view rightSidebarChannels (modelRightSidebar model)
         ]
+
+modelLeftSidebar : Doc -> AppState -> LeftSidebar.Model
+modelLeftSidebar currentDoc model = {
+    docs       = model.docs,
+    currentDoc = currentDoc,
+    viewMode   = model.leftSidebar.viewMode
+  }
+
+modelEditor : Doc -> AppState -> Editor.Model
+modelEditor currentDoc model = {
+    currentDoc = currentDoc,
+    fullscreen = model.fullscreen
+  }
+
+modelRightSidebar : AppState -> RightSidebar.Model
+modelRightSidebar model = {
+    currentNote = model.currentNote,
+    notes       = model.notes
+  }
+
+leftSidebarToAction : AppState -> LeftSidebar.Update -> Action.Action
+leftSidebarToAction model update =
+  Action.SetLeftSidebar (LeftSidebar.step update model.leftSidebar)
+
+rightSidebarToAction : AppState -> RightSidebar.Update -> Action.Action
+rightSidebarToAction model update =
+  Action.SetRightSidebar (RightSidebar.step update model.rightSidebar)
