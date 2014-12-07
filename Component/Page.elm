@@ -1,5 +1,6 @@
 module Component.Page where
 
+import Dreamwriter (..)
 import Dreamwriter.Model (..)
 import Dreamwriter.Action as Action
 import Component.LeftSidebar  as LeftSidebar

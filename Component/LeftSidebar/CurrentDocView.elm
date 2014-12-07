@@ -1,6 +1,6 @@
 module Component.LeftSidebar.CurrentDocView (view) where
 
-import Dreamwriter.Model (..)
+import Dreamwriter (..)
 import Dreamwriter.Action (..)
 
 import Html (..)

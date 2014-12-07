@@ -1,7 +1,6 @@
 module Component.LeftSidebar where
 
-import Dreamwriter.Model (..)
-import Dreamwriter.Action (DownloadOptions)
+import Dreamwriter (..)
 
 import Component.LeftSidebar.OpenMenuView as OpenMenu
 import Component.LeftSidebar.CurrentDocView as CurrentDoc
