@@ -59,24 +59,19 @@ channels = {
     navigateToChapterId = LC.create identity Action.navigateToChapterIdChannel
   }
 
-leftSidebarChannels = { channels |
-    update = LC.create leftSidebarToAction Action.actions
-  }
-
-rightSidebarChannels = { channels |
-    update      = LC.create rightSidebarToAction Action.actions
-  }
-
-editorChannels = channels
-
 view : AppState -> Html
-view state =
-  div [id "page"] <|
-    case state.currentDoc of
+view model =
+  let updateLeftSidebar    = LC.create leftSidebarToAction  Action.actions
+      updateRightSidebar   = LC.create rightSidebarToAction Action.actions
+      leftSidebarChannels  = { channels | update = updateLeftSidebar  }
+      rightSidebarChannels = { channels | update = updateRightSidebar }
+      editorChannels       = channels
+  in div [id "page"] <|
+    case model.currentDoc of
       Nothing -> []
       Just currentDoc ->
         [
-          LeftSidebar.view  leftSidebarChannels  (actionToLeftSidebarModel currentDoc state),
-          Editor.view       editorChannels       (actionToEditorModel currentDoc state),
-          RightSidebar.view rightSidebarChannels (actionToRightSidebarModel state)
+          LeftSidebar.view  leftSidebarChannels  (actionToLeftSidebarModel currentDoc model),
+          Editor.view       editorChannels       (actionToEditorModel currentDoc model),
+          RightSidebar.view rightSidebarChannels (actionToRightSidebarModel model)
         ]
