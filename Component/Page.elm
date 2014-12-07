@@ -23,12 +23,9 @@ actionToLeftSidebarModel currentDoc model = {
 leftSidebarToAction : LeftSidebar.Update -> Action.Action
 leftSidebarToAction update =
   case update of
-    LeftSidebar.NoOp -> Action.NoOp
-
-    LeftSidebar.ViewModeChange mode ->
-      Action.SetLeftSidebarView mode
-
-    LeftSidebar.OpenDocId id -> Action.OpenDocId id
+    LeftSidebar.NoOp                -> Action.NoOp
+    LeftSidebar.ViewModeChange mode -> Action.SetLeftSidebarView mode
+    LeftSidebar.OpenDocId id        -> Action.OpenDocId id
 
 actionToEditorModel : Doc -> AppState -> Editor.Model
 actionToEditorModel currentDoc model = {
