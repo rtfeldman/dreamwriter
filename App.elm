@@ -152,6 +152,7 @@ updateCurrentDoc transformation state =
                , docs       <- newDocs
         }
 
+preferById : { a | id : b } -> { a | id : b } -> { a | id : b }
 preferById preferred given =
   if preferred.id == given.id
     then preferred
