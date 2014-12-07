@@ -29,13 +29,13 @@ initialModel = {
 
 type Update
   = NoOp
-  | CurrentNoteChange (Maybe Note)
+  | SetCurrentNote (Maybe Note)
 
 step : Update -> Model -> Model
 step update model =
   case update of
     NoOp -> model
-    CurrentNoteChange note -> { model | currentNote <- note }
+    SetCurrentNote note -> { model | currentNote <- note }
 
 view : Channels a -> Model -> Html
 view channels model =
@@ -68,7 +68,7 @@ viewNoteListings updateChannel notes =
 viewNoteListing : LocalChannel Update -> Note -> Html
 viewNoteListing updateChannel note =
   div [key ("note-" ++ note.id), class "note-listing",
-    onClick <| send updateChannel (CurrentNoteChange (Just note))] [
+    onClick <| send updateChannel (SetCurrentNote (Just note))] [
       div [class "flaticon-document127 note-listing-icon"] [],
       div [class "note-listing-title"] [text note.title]
     ]

@@ -262,7 +262,7 @@ port searchNotes : Signal ()
 port searchNotes = debounce 500 <| Signal.subscribe Channel.searchNotes
 
 port fullscreen : Signal Bool
-port fullscreen = Signal.subscribe Channel.fullscreen
+port fullscreen = Signal.subscribe (Signal.channel False)
 
 port execCommand : Signal String
 port execCommand = Signal.subscribe Channel.execCommand
