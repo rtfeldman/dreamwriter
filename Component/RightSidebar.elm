@@ -10,6 +10,8 @@ import Maybe
 import LocalChannel (send, LocalChannel)
 import List (..)
 
+import Debug
+
 type alias Channels a = { a |
   newNote     : LocalChannel (),
   searchNotes : LocalChannel (),
@@ -39,9 +41,9 @@ step update model =
 
 view : Channels a -> Model -> Html
 view channels model =
-  let {sidebarBody, sidebarFooter} = case model.currentNote of
+  let {sidebarBody, sidebarFooter} = case (Debug.log "currnote" model.currentNote) of
     Nothing ->
-      { sidebarBody   = lazy2 viewNoteListings channels.update model.notes
+      { sidebarBody   = lazy2 viewNoteListings channels.update (Debug.log "los notes" model.notes)
       , sidebarFooter = span [] []
       }
     Just currentNote ->

@@ -22,6 +22,7 @@ import Maybe
 import Window
 import Dict
 import Set
+import Debug
 
 import LocalChannel as LC
 
@@ -89,9 +90,9 @@ step action state =
             currentDocId <- Just id,
             currentDoc   <- state.currentDoc,
             docs         <- state.docs,
-            notes        <- state.notes,
             fullscreen   <- state.fullscreen
           }
+          notes'      = Debug.log "notes' is" page'.notes
       in { state |
         currentDocId <- Just id,
         page         <- page'
@@ -99,9 +100,9 @@ step action state =
 
     LoadAsCurrentDoc doc ->
       let stateAfterOpenDocId = step (OpenDocId doc.id) state
-          newState = {stateAfterOpenDocId | currentDoc <- Just doc}
+          state' = {stateAfterOpenDocId | currentDoc <- Just doc}
       in
-        updateCurrentDoc (\_ -> doc) newState
+        updateCurrentDoc (\_ -> doc) state'
           |> pruneSnapshots
 
     ListDocs docs ->
@@ -203,7 +204,7 @@ modelPage state = {
     currentNote  = state.currentNote,
 
     docs         = state.docs,
-    notes        = state.notes
+    notes        = (Debug.log "modelPage notes:" state.notes)
   }
 
 scene : AppState -> (Int, Int) -> Element

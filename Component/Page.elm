@@ -12,6 +12,8 @@ import Html.Attributes (..)
 import Html.Events (..)
 import LocalChannel (LocalChannel, localize)
 
+import Debug
+
 type Update
   = NoOp
   | SetLeftSidebar  LeftSidebar.Model
@@ -95,7 +97,7 @@ modelEditor currentDoc model = {
 modelRightSidebar : Model -> RightSidebar.Model
 modelRightSidebar model = {
     currentNote = model.currentNote,
-    notes       = model.notes
+    notes       = Debug.log "modelRightSidebar notes" model.notes
   }
 
 generalizeLeftSidebarUpdate : Model -> LeftSidebar.Update -> Update
