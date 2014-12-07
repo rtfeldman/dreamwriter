@@ -3,6 +3,8 @@ module Dreamwriter.Action where
 import Dreamwriter.Model (..)
 import Dreamwriter (..)
 
+import Component.LeftSidebar as LeftSidebar
+
 import Signal
 
 type Action
@@ -12,7 +14,7 @@ type Action
   | ListDocs (List Doc)
   | ListNotes (List Note)
   | SetCurrentNote (Maybe Note)
-  | SetLeftSidebarView LeftSidebarView
+  | SetLeftSidebarView LeftSidebar.ViewMode
   | SetChapters (List Chapter)
   | UpdateChapter Chapter
   | SetTitle (String, Int)
