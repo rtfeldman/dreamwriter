@@ -22,6 +22,12 @@ type alias Model = {
   fullscreen : FullscreenState
 }
 
+initialModel : Model
+initialModel = {
+    currentDoc = emptyDoc,
+    fullscreen = False
+  }
+
 view : Channels -> Model -> Html
 view channels model =
   lazy3 viewEditor channels model.currentDoc model.fullscreen

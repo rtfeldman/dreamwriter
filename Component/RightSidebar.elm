@@ -21,6 +21,12 @@ type alias Model = {
   notes       : List Note
 }
 
+initialModel : Model
+initialModel = {
+    currentNote = Nothing,
+    notes       = []
+  }
+
 type Update
   = NoOp
   | CurrentNoteChange (Maybe Note)

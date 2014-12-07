@@ -32,6 +32,13 @@ type alias Model = {
   currentDoc : Doc
 }
 
+initialModel : Model
+initialModel = {
+    viewMode   = CurrentDocMode,
+    docs       = [],
+    currentDoc = emptyDoc
+  }
+
 type Update
   = NoOp
   | ViewModeChange ViewMode
