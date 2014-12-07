@@ -13,7 +13,7 @@ import Maybe
 import Regex (..)
 import LocalChannel (send, LocalChannel)
 
-type ViewMode = CurrentDocMode | OpenMenuMode
+type ViewMode = CurrentDocMode | OpenMenuMode | SettingsMode
 
 type alias Channels a = { a |
   print               : LocalChannel (),
@@ -80,6 +80,13 @@ view channels model =
       sidebarBody   = lazy3 CurrentDoc.view channels.navigateToTitle channels.navigateToChapterId model.currentDoc,
       sidebarFooter = lazy  viewCurrentDocFooter channels
     }
+
+    SettingsMode  -> { -- TODO make this different than CurrentDocMode
+      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc channels,
+      sidebarBody   = lazy3 CurrentDoc.view channels.navigateToTitle channels.navigateToChapterId model.currentDoc,
+      sidebarFooter = lazy  viewCurrentDocFooter channels
+    }
+
   in
     div [id "left-sidebar-container", class "sidebar"] [
       sidebarHeader,
@@ -133,5 +140,6 @@ viewCurrentDocHeader currentDoc channels =
         onClick <| send channels.print ()] [],
       menuitem [
         title "Settings",
-        class "sidebar-header-control flaticon-gear33"] []
+        class "sidebar-header-control flaticon-gear33",
+        onClick <| send channels.update (SetViewMode SettingsMode)] []
     ]
