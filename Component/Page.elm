@@ -50,16 +50,19 @@ rightSidebarToAction update =
     RightSidebar.NoOp                   -> Action.NoOp
     RightSidebar.CurrentNoteChange note -> Action.SetCurrentNote note
 
+channels = {
+    print               = LC.create identity Action.printChannel,
+    newDoc              = LC.create identity Action.newDocChannel,
+    newChapter          = LC.create identity Action.newChapterChannel,
+    download            = LC.create identity Action.downloadChannel,
+    openFromFile        = LC.create identity Action.openFromFileChannel,
+    navigateToTitle     = LC.create identity Action.navigateToTitleChannel,
+    navigateToChapterId = LC.create identity Action.navigateToChapterIdChannel
+  }
+
 leftSidebarChannels : LeftSidebar.Channels
-leftSidebarChannels = {
-    print               = LC.create identity            Action.printChannel,
-    newDoc              = LC.create identity            Action.newDocChannel,
-    newChapter          = LC.create identity            Action.newChapterChannel,
-    download            = LC.create identity            Action.downloadChannel,
-    openFromFile        = LC.create identity            Action.openFromFileChannel,
-    navigateToTitle     = LC.create identity            Action.navigateToTitleChannel,
-    navigateToChapterId = LC.create identity            Action.navigateToChapterIdChannel,
-    update              = LC.create leftSidebarToAction Action.actions
+leftSidebarChannels = { channels |
+    update = LC.create leftSidebarToAction Action.actions
   }
 
 rightSidebarChannels : RightSidebar.Channels
