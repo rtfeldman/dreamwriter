@@ -26,9 +26,7 @@ leftSidebarToAction update =
     LeftSidebar.NoOp -> Action.NoOp
 
     LeftSidebar.ViewModeChange mode ->
-      Action.SetLeftSidebarView <| case mode of
-        LeftSidebar.CurrentDocMode -> CurrentDocView
-        LeftSidebar.OpenMenuMode   -> OpenMenuView
+      Action.SetLeftSidebarView mode
 
     LeftSidebar.OpenDocId id -> Action.OpenDocId id
 

@@ -7,8 +7,6 @@ import Component.LeftSidebar  as LeftSidebar
 import Component.RightSidebar as RightSidebar
 import Component.Editor       as Editor
 
-type LeftSidebarView = CurrentDocView | OpenMenuView
-
 type alias AppState = {
   leftSidebar  : LeftSidebar.Model,
   rightSidebar : RightSidebar.Model,
