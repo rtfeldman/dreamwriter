@@ -162,18 +162,18 @@ main = Signal.map2 scene state Window.dimensions
 
 userInput : Signal Update
 userInput =
-  mergeMany
-  [ Signal.map LoadAsCurrentDoc loadAsCurrentDoc
-  , Signal.map ListDocs         listDocs
-  , Signal.map ListNotes        listNotes
-  , Signal.map SetChapters      setChapters
-  , Signal.map UpdateChapter    updateChapter
-  , Signal.map SetTitle         setTitle
-  , Signal.map SetDescription   setDescription
-  , Signal.map SetFullscreen    setFullscreen
-  , Signal.map PutSnapshot      putSnapshot
-  , Signal.map SetCurrentNote   setCurrentNote
-  , Signal.subscribe updates
+  mergeMany [
+    Signal.map LoadAsCurrentDoc loadAsCurrentDoc,
+    Signal.map ListDocs         listDocs,
+    Signal.map ListNotes        listNotes,
+    Signal.map SetChapters      setChapters,
+    Signal.map UpdateChapter    updateChapter,
+    Signal.map SetTitle         setTitle,
+    Signal.map SetDescription   setDescription,
+    Signal.map SetFullscreen    setFullscreen,
+    Signal.map PutSnapshot      putSnapshot,
+    Signal.map SetCurrentNote   setCurrentNote,
+    Signal.subscribe updates
   ]
 
 channels = {
