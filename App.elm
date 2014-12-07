@@ -176,20 +176,6 @@ userInput =
     Signal.subscribe updates
   ]
 
-channels = {
-    fullscreen          = LC.create identity Channel.fullscreenChannel,
-    execCommand         = LC.create identity Channel.execCommandChannel,
-    newNote             = LC.create identity Channel.newNoteChannel,
-    searchNotes         = LC.create identity Channel.searchNotesChannel,
-    print               = LC.create identity Channel.printChannel,
-    newDoc              = LC.create identity Channel.newDocChannel,
-    newChapter          = LC.create identity Channel.newChapterChannel,
-    download            = LC.create identity Channel.downloadChannel,
-    openFromFile        = LC.create identity Channel.openFromFileChannel,
-    navigateToTitle     = LC.create identity Channel.navigateToTitleChannel,
-    navigateToChapterId = LC.create identity Channel.navigateToChapterIdChannel
-  }
-
 generalizePageUpdate : AppState -> Page.Update -> Update
 generalizePageUpdate state pageUpdate = SetPage (Page.step pageUpdate state.page)
 
@@ -211,7 +197,7 @@ modelPage state = {
 scene : AppState -> (Int, Int) -> Element
 scene state (w, h) =
   let pageUpdate = LC.create (generalizePageUpdate state) updates
-      html       = Page.view pageUpdate channels (modelPage state)
+      html       = Page.view pageUpdate Channel.locals (modelPage state)
   in
     container w h midTop (toElement w h html)
 
@@ -236,34 +222,34 @@ port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = Signal.map .currentDocId state
 
 port newDoc : Signal ()
-port newDoc = Signal.subscribe Channel.newDocChannel
+port newDoc = Signal.subscribe Channel.newDoc
 
 port openFromFile : Signal ()
-port openFromFile = Signal.subscribe Channel.openFromFileChannel
+port openFromFile = Signal.subscribe Channel.openFromFile
 
 port downloadDoc : Signal DownloadOptions
-port downloadDoc = Signal.subscribe Channel.downloadChannel
+port downloadDoc = Signal.subscribe Channel.download
 
 port printDoc : Signal ()
-port printDoc = Signal.subscribe Channel.printChannel
+port printDoc = Signal.subscribe Channel.print
 
 port navigateToChapterId : Signal Identifier
-port navigateToChapterId = Signal.subscribe Channel.navigateToChapterIdChannel
+port navigateToChapterId = Signal.subscribe Channel.navigateToChapterId
 
 port navigateToTitle : Signal ()
-port navigateToTitle = Signal.subscribe Channel.navigateToTitleChannel
+port navigateToTitle = Signal.subscribe Channel.navigateToTitle
 
 port newNote : Signal ()
-port newNote = Signal.subscribe Channel.newNoteChannel
+port newNote = Signal.subscribe Channel.newNote
 
 port newChapter : Signal ()
-port newChapter = Signal.subscribe Channel.newChapterChannel
+port newChapter = Signal.subscribe Channel.newChapter
 
 port searchNotes : Signal ()
-port searchNotes = debounce 500 <| Signal.subscribe Channel.searchNotesChannel
+port searchNotes = debounce 500 <| Signal.subscribe Channel.searchNotes
 
 port fullscreen : Signal Bool
-port fullscreen = Signal.subscribe Channel.fullscreenChannel
+port fullscreen = Signal.subscribe Channel.fullscreen
 
 port execCommand : Signal String
-port execCommand = Signal.subscribe Channel.execCommandChannel
+port execCommand = Signal.subscribe Channel.execCommand

@@ -3,6 +3,7 @@ module Dreamwriter.Channel where
 import Dreamwriter (..)
 
 import LocalChannel (LocalChannel)
+import LocalChannel as LC
 import Signal
 
 type alias Locals = {
@@ -19,36 +20,51 @@ type alias Locals = {
   download            : LocalChannel DownloadOptions
 }
 
-downloadChannel : Signal.Channel DownloadOptions
-downloadChannel = Signal.channel { filename = "", contentType = "" }
+locals = {
+    fullscreen          = LC.create identity fullscreen,
+    execCommand         = LC.create identity execCommand,
+    newNote             = LC.create identity newNote,
+    searchNotes         = LC.create identity searchNotes,
+    print               = LC.create identity print,
+    newDoc              = LC.create identity newDoc,
+    newChapter          = LC.create identity newChapter,
+    download            = LC.create identity download,
+    openFromFile        = LC.create identity openFromFile,
+    navigateToTitle     = LC.create identity navigateToTitle,
+    navigateToChapterId = LC.create identity navigateToChapterId
+  }
 
-newDocChannel : Signal.Channel ()
-newDocChannel = Signal.channel ()
 
-openFromFileChannel : Signal.Channel ()
-openFromFileChannel = Signal.channel ()
+download : Signal.Channel DownloadOptions
+download = Signal.channel { filename = "", contentType = "" }
 
-navigateToChapterIdChannel : Signal.Channel Identifier
-navigateToChapterIdChannel = Signal.channel ""
+newDoc : Signal.Channel ()
+newDoc = Signal.channel ()
 
-navigateToTitleChannel : Signal.Channel ()
-navigateToTitleChannel = Signal.channel ()
+openFromFile : Signal.Channel ()
+openFromFile = Signal.channel ()
 
-printChannel : Signal.Channel ()
-printChannel = Signal.channel ()
+navigateToChapterId : Signal.Channel Identifier
+navigateToChapterId = Signal.channel ""
 
--- TODO make this Signal.Channel String, with the String being the search query
-searchNotesChannel : Signal.Channel ()
-searchNotesChannel = Signal.channel ()
+navigateToTitle : Signal.Channel ()
+navigateToTitle = Signal.channel ()
 
-newNoteChannel : Signal.Channel ()
-newNoteChannel = Signal.channel ()
+print : Signal.Channel ()
+print = Signal.channel ()
 
-newChapterChannel : Signal.Channel ()
-newChapterChannel = Signal.channel ()
+-- TODO make this Signal. String, with the String being the search query
+searchNotes : Signal.Channel ()
+searchNotes = Signal.channel ()
 
-fullscreenChannel : Signal.Channel Bool
-fullscreenChannel = Signal.channel False
+newNote : Signal.Channel ()
+newNote = Signal.channel ()
 
-execCommandChannel : Signal.Channel String
-execCommandChannel = Signal.channel ""
+newChapter : Signal.Channel ()
+newChapter = Signal.channel ()
+
+fullscreen : Signal.Channel Bool
+fullscreen = Signal.channel False
+
+execCommand : Signal.Channel String
+execCommand = Signal.channel ""
