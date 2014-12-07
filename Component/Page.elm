@@ -11,24 +11,19 @@ import String
 import Html (..)
 import Html.Attributes (..)
 import Html.Events (..)
+import LocalChannel (LocalChannel)
 import LocalChannel as LC
 
-channels = {
-    fullscreen          = LC.create identity Action.fullscreenChannel,
-    execCommand         = LC.create identity Action.execCommandChannel,
-    newNote             = LC.create identity Action.newNoteChannel,
-    searchNotes         = LC.create identity Action.searchNotesChannel,
-    print               = LC.create identity Action.printChannel,
-    newDoc              = LC.create identity Action.newDocChannel,
-    newChapter          = LC.create identity Action.newChapterChannel,
-    download            = LC.create identity Action.downloadChannel,
-    openFromFile        = LC.create identity Action.openFromFileChannel,
-    navigateToTitle     = LC.create identity Action.navigateToTitleChannel,
-    navigateToChapterId = LC.create identity Action.navigateToChapterIdChannel
+type Update
+  = NoOp
+  | SetLeftSidebar  LeftSidebar.Model
+  | SetRightSidebar RightSidebar.Model
+  | SetEditor       Editor.Model
+
   }
 
-view : AppState -> Html
-view model =
+view : AppChannels -> AppState -> Html
+view channels model =
   let updateLeftSidebar    = LC.create (leftSidebarToAction model)  Action.actions
       updateRightSidebar   = LC.create (rightSidebarToAction model) Action.actions
       leftSidebarChannels  = { channels | update = updateLeftSidebar  }

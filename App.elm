@@ -2,6 +2,7 @@ module App where
 
 import Dreamwriter (..)
 import Dreamwriter.Action (..)
+import Dreamwriter.Action as Action
 import Dreamwriter.Model (..)
 import Component.Page (view)
 
@@ -23,6 +24,8 @@ import Maybe
 import Window
 import Dict
 import Set
+
+import LocalChannel as LC
 
 debounce : Time -> Signal a -> Signal a
 debounce wait signal = sampleOn (since wait signal |> dropRepeats) signal
@@ -137,9 +140,24 @@ userInput =
   , Signal.subscribe actions
   ]
 
+
+channels = {
+    fullscreen          = LC.create identity Action.fullscreenChannel,
+    execCommand         = LC.create identity Action.execCommandChannel,
+    newNote             = LC.create identity Action.newNoteChannel,
+    searchNotes         = LC.create identity Action.searchNotesChannel,
+    print               = LC.create identity Action.printChannel,
+    newDoc              = LC.create identity Action.newDocChannel,
+    newChapter          = LC.create identity Action.newChapterChannel,
+    download            = LC.create identity Action.downloadChannel,
+    openFromFile        = LC.create identity Action.openFromFileChannel,
+    navigateToTitle     = LC.create identity Action.navigateToTitleChannel,
+    navigateToChapterId = LC.create identity Action.navigateToChapterIdChannel
+  }
+
 scene : AppState -> (Int, Int) -> Element
 scene state (w, h) =
-  container w h midTop (toElement w h (view state))
+  container w h midTop (toElement w h (view channels state))
 
 -- manage the state of our application over time
 state : Signal AppState
