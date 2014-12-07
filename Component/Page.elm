@@ -17,9 +17,7 @@ actionToLeftSidebarModel : Doc -> AppState -> LeftSidebar.Model
 actionToLeftSidebarModel currentDoc model = {
     docs       = model.docs,
     currentDoc = currentDoc,
-    viewMode   = case model.leftSidebarView of
-      CurrentDocView -> LeftSidebar.CurrentDocMode
-      OpenMenuView   -> LeftSidebar.OpenMenuMode
+    viewMode   = model.leftSidebar.viewMode
   }
 
 leftSidebarToAction : LeftSidebar.Update -> Action.Action

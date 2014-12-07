@@ -5,6 +5,10 @@ import Dreamwriter.Action (..)
 import Dreamwriter.Model (..)
 import Component.Page (view)
 
+import Component.LeftSidebar  as LeftSidebar
+import Component.RightSidebar as RightSidebar
+import Component.Editor       as Editor
+
 import String
 import Graphics.Element (Element, container, midTop)
 import Html (..)
@@ -32,7 +36,8 @@ step action state =
 
     OpenDocId id ->
       {state | currentDocId    <- Just id
-             , leftSidebarView <- CurrentDocView
+             -- TODO restore this behavior!
+             --, leftSidebarView <- CurrentDocView
       }
 
     LoadAsCurrentDoc doc ->
@@ -69,7 +74,8 @@ step action state =
       {state | fullscreen <- enabled}
 
     SetLeftSidebarView mode ->
-      {state | leftSidebarView <- mode}
+      state -- TODO restore this behavior!
+      --{state | leftSidebarView <- mode}
 
     PutSnapshot snapshot ->
       {state | snapshots <- Dict.insert snapshot.id snapshot state.snapshots}
