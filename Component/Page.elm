@@ -93,9 +93,9 @@ modelRightSidebar model = {
   }
 
 generalizeLeftSidebarUpdate : Model -> LeftSidebar.Update -> Update
-generalizeLeftSidebarUpdate model update =
-  SetLeftSidebar (LeftSidebar.step update model.leftSidebar)
+generalizeLeftSidebarUpdate model leftSidebarUpdate =
+  SetLeftSidebar (LeftSidebar.step leftSidebarUpdate model.leftSidebar)
 
 generalizeRightSidebarUpdate : Model -> RightSidebar.Update -> Update
-generalizeRightSidebarUpdate model update =
-  SetRightSidebar (RightSidebar.step update model.rightSidebar)
+generalizeRightSidebarUpdate model rightSidebarUpdate =
+  SetRightSidebar (RightSidebar.step rightSidebarUpdate model.rightSidebar)
