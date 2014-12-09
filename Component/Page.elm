@@ -59,7 +59,11 @@ transition update model =
       currentDocId <- childModel.currentDocId
     }
 
-    SetRightSidebar childModel -> { model | rightSidebar <- childModel }
+    SetRightSidebar childModel -> { model |
+      rightSidebar <- childModel,
+      currentNote  <- model.currentNote
+    }
+
     SetEditor       childModel -> { model | editor       <- childModel }
 
 view channels model =

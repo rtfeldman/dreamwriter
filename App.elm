@@ -135,7 +135,8 @@ transition action state =
 
     SetPage model -> { state |
         page         <- model,
-        currentDocId <- model.currentDocId
+        currentDocId <- model.currentDocId,
+        currentNote  <- model.currentNote
       }
 
 -- Throw out any snapshots that are no longer relevant, so they can be GC'd.
