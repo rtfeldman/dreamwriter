@@ -31,8 +31,8 @@ type Update
   = NoChange
   | SetCurrentNote (Maybe Note)
 
-step : Update -> Model -> Model
-step update model =
+transition : Update -> Model -> Model
+transition update model =
   case update of
     NoChange -> model
     SetCurrentNote note -> { model | currentNote <- note }

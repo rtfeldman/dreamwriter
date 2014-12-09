@@ -78,8 +78,8 @@ initialState = {
     snapshots    = Dict.empty
   }
 
-step : Update -> AppState -> AppState
-step action state =
+transition : Update -> AppState -> AppState
+transition action state =
   case action of
     NoOp -> state
 
@@ -98,7 +98,7 @@ step action state =
       }
 
     LoadAsCurrentDoc doc ->
-      let stateAfterOpenDocId = step (OpenDocId doc.id) state
+      let stateAfterOpenDocId = transition (OpenDocId doc.id) state
           newState = {stateAfterOpenDocId | currentDoc <- Just doc}
       in
         updateCurrentDoc (\_ -> doc) newState
@@ -188,7 +188,7 @@ userInput =
   ]
 
 generalizePageUpdate : AppState -> Page.Update -> Update
-generalizePageUpdate state pageUpdate = SetPage (Page.step pageUpdate state.page)
+generalizePageUpdate state pageUpdate = SetPage (Page.transition pageUpdate state.page)
 
 modelPage : AppState -> Page.Model
 modelPage state = {
@@ -216,7 +216,7 @@ scene state (w, h) =
 
 -- manage the state of our application over time
 state : Signal AppState
-state = foldp step initialState userInput
+state = foldp transition initialState userInput
 
 -- PORTS --
 

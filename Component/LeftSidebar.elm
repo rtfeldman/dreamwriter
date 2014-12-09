@@ -46,8 +46,8 @@ type Update
   | SetViewMode ViewMode
   | OpenDocId Identifier
 
-step : Update -> Model -> Model
-step update model =
+transition : Update -> Model -> Model
+transition update model =
   case update of
     NoOp -> model
 

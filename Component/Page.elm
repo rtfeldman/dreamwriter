@@ -49,8 +49,8 @@ initialModel = {
     notes        = []
   }
 
-step : Update -> Model -> Model
-step update model =
+transition : Update -> Model -> Model
+transition update model =
   case update of
     NoOp -> model
 
@@ -100,8 +100,8 @@ modelRightSidebar model = {
 
 generalizeLeftSidebarUpdate : Model -> LeftSidebar.Update -> Update
 generalizeLeftSidebarUpdate model leftSidebarUpdate =
-  SetLeftSidebar (LeftSidebar.step leftSidebarUpdate model.leftSidebar)
+  SetLeftSidebar (LeftSidebar.transition leftSidebarUpdate model.leftSidebar)
 
 generalizeRightSidebarUpdate : Model -> RightSidebar.Update -> Update
 generalizeRightSidebarUpdate model rightSidebarUpdate =
-  SetRightSidebar (RightSidebar.step rightSidebarUpdate model.rightSidebar)
+  SetRightSidebar (RightSidebar.transition rightSidebarUpdate model.rightSidebar)
