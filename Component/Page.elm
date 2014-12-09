@@ -69,8 +69,8 @@ transition update model =
 view channels model =
   let updateLeftSidebar    = localize (generalizeLeftSidebarUpdate model)  channels.update
       updateRightSidebar   = localize (generalizeRightSidebarUpdate model) channels.update
-      leftSidebarChannels  = { channels | update = updateLeftSidebar  }
-      rightSidebarChannels = { channels | update = updateRightSidebar }
+      leftSidebarChannels  = { channels | update <- updateLeftSidebar  }
+      rightSidebarChannels = { channels | update <- updateRightSidebar }
       editorChannels       = channels
   in div [id "page"] <|
     case model.currentDoc of
