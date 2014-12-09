@@ -260,7 +260,12 @@ app.ports.execCommand.subscribe (command) ->
 app.ports.searchNotes.subscribe (query) ->
   query = document.getElementById("notes-search-text").value
 
-  notes.search(query).done app.ports.listNotes.send
+  notes.search(query).done (results) ->
+    app.ports.listNotes.send results
+
+    # TODO persist the current note here, since we're about to hide it.
+
+    app.ports.setCurrentNote.send null
 
 app.ports.openFromFile.subscribe ->
   fileChooserAttributes = {accept: "text/html", multiple: "true"}
