@@ -118,7 +118,7 @@ userInput =
   , Signal.map SetDescription   setDescription
   , Signal.map SetFullscreen    setFullscreen
   , Signal.map PutSnapshot      putSnapshot
-  , Signal.map (SetCurrentNote << Just) setCurrentNote
+  , Signal.map SetCurrentNote   setCurrentNote
   , Signal.subscribe actions
   ]
 
@@ -138,7 +138,7 @@ port updateChapter : Signal Chapter
 port setTitle : Signal (String, Int)
 port setDescription : Signal (String, Int)
 port setFullscreen : Signal Bool
-port setCurrentNote : Signal Note
+port setCurrentNote : Signal (Maybe Note)
 port listDocs : Signal (List Doc)
 port listNotes : Signal (List Note)
 port putSnapshot : Signal Snapshot
