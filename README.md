@@ -1,6 +1,6 @@
 dreamwriter
 ===============
-Streamlined writing software. Written in [Elm](http://elm-lang.org). [![build status][1]][2]
+Streamlined long-form writing software. Written in [Elm](http://elm-lang.org). [![build status][1]][2]
 
 Try it at [dreamwriter.io](https://dreamwriter.io)
 
