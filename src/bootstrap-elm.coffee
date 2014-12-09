@@ -305,14 +305,23 @@ DreamSync.connect().done (instance) ->
   notes = new DreamNotes sync
 
   [{
-    title: 'Twelfth Night',
+    title: 'One-liners from The Matrix',
     body: 'If music be the food of love, play on'
   }, {
-    title: 'Macbeth',
-    body: 'When shall we three meet again, In thunder, lightning, or in rain?'
+    title: 'Note to self',
+    body: 'useful note'
   }, {
-    title: 'Richard III',
-    body: 'Now is the winter of our discontent, Made glorious summer by this sun of York;'
+    title: 'Another note',
+    body: 'also useful'
+  }, {
+    title: 'A note again',
+    body: 'pretty cool'
+  }, {
+    title: 'How come Neo gets to be The One?',
+    body: 'pretty cool'
+  }, {
+    title: 'Thoughts on green code rain',
+    body: 'One two three!'
   }].forEach ({title, body}) ->
     notes.save {title}, body
 
