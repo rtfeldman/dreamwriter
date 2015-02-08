@@ -1,7 +1,5 @@
-module Dreamwriter.View.Editor where
+module Component.Editor where
 
-import Dreamwriter.Model (..)
-import Dreamwriter.Action (..)
 import Dreamwriter (..)
 
 import String
@@ -11,24 +9,41 @@ import Html.Lazy (..)
 import Html.Events (..)
 import Maybe
 import List (..)
-import Signal (send)
+import LocalChannel (send, LocalChannel)
 import Json.Encode (string)
 
-view : Doc -> AppState -> Html
-view currentDoc state =
-  lazy2 viewEditor currentDoc state.fullscreen
+type alias Channels a = { a |
+  fullscreen  : LocalChannel FullscreenState,
+  execCommand : LocalChannel String
+}
 
-viewEditor currentDoc fullscreen =
+type alias Model = {
+  currentDoc : Doc,
+  fullscreen : FullscreenState
+}
+
+initialModel : Model
+initialModel = {
+    currentDoc = emptyDoc,
+    fullscreen = False
+  }
+
+view : Channels a -> Model -> Html
+view channels model =
+  lazy3 viewEditor channels model.currentDoc model.fullscreen
+
+viewEditor : Channels a -> Doc -> FullscreenState -> Html
+viewEditor channels currentDoc fullscreen =
   div [id "editor-container"] [
     div [id "editor-frame"] [
       div [id "editor-header"] [
         div [class "toolbar-section toolbar-button flaticon-zoom19"] [],
         div [class "toolbar-section"] [
-          viewFontControl "toggle-bold" "B" "bold",
-          viewFontControl "toggle-italics" "I" "italic",
-          viewFontControl "toggle-strikethrough" "\xA0S\xA0" "strikethrough"
+          viewFontControl channels.execCommand "toggle-bold" "B" "bold",
+          viewFontControl channels.execCommand "toggle-italics" "I" "italic",
+          viewFontControl channels.execCommand "toggle-strikethrough" "\xA0S\xA0" "strikethrough"
         ],
-        lazy viewFullscreenButton fullscreen
+        lazy2 viewFullscreenButton channels.fullscreen fullscreen
       ],
 
       div [id "document-page"] <| [
@@ -67,7 +82,8 @@ pluralize noun quantity =
     then "1 " ++ noun
     else (withCommas quantity) ++ " " ++ noun ++ "s"
 
-viewFullscreenButton fullscreen =
+viewFullscreenButton : LocalChannel FullscreenState -> FullscreenState -> Html
+viewFullscreenButton fullscreenChannel fullscreen =
   let {fullscreenClass, targetMode, fullscreenTitle} = case fullscreen of
     True ->
       { fullscreenClass = "flaticon-collapsing"
@@ -103,8 +119,8 @@ viewChapterHeading chapterId =
     id ("edit-chapter-heading-" ++ chapterId),
     class "chapter-heading"] []
 
-viewFontControl : String -> String -> String -> Html
-viewFontControl idAttr label command =
+viewFontControl : LocalChannel String -> String -> String -> String -> Html
+viewFontControl execCommandChannel idAttr label command =
   span [class "font-control toolbar-button toolbar-font-button", id idAttr,
     (property "unselectable" (string "on")),
     onClick <| send execCommandChannel command] [text label]

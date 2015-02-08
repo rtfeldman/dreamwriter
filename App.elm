@@ -1,9 +1,12 @@
 module App where
 
-import Dreamwriter (Identifier)
-import Dreamwriter.Action (..)
-import Dreamwriter.Model (..)
-import Dreamwriter.View.Page (view)
+import Dreamwriter (..)
+import Dreamwriter.Channel as Channel
+import Component.Page as Page
+
+import Component.LeftSidebar  as LeftSidebar
+import Component.RightSidebar as RightSidebar
+import Component.Editor       as Editor
 
 import String
 import Graphics.Element (Element, container, midTop)
@@ -20,23 +23,82 @@ import Window
 import Dict
 import Set
 
+import LocalChannel as LC
+
 debounce : Time -> Signal a -> Signal a
 debounce wait signal = sampleOn (since wait signal |> dropRepeats) signal
 
--- ACTIONS --
+-- UPDATES --
 
-step : Action -> AppState -> AppState
-step action state =
+type Update
+  = NoOp
+  | LoadAsCurrentDoc Doc
+  | OpenDocId Identifier
+  | ListDocs (List Doc)
+  | ListNotes (List Note)
+  | SetCurrentNote (Maybe Note)
+  | SetChapters (List Chapter)
+  | UpdateChapter Chapter
+  | SetTitle (String, Int)
+  | SetDescription (String, Int)
+  | SetFullscreen FullscreenState
+  | PutSnapshot Snapshot
+  | SetPage Page.Model
+
+-- updates from user input
+updates : Signal.Channel Update
+updates = Signal.channel NoOp
+
+type alias AppState = {
+  page         : Page.Model,
+
+  fullscreen   : FullscreenState,
+
+  currentDoc   : Maybe Doc,
+  currentDocId : Maybe Identifier,
+  currentNote  : Maybe Note,
+
+  docs         : List Doc,
+  notes        : List Note,
+  snapshots    : Dict.Dict Identifier Snapshot
+}
+
+initialState : AppState
+initialState = {
+    page         = Page.initialModel,
+
+    fullscreen   = False,
+
+    currentDoc   = Nothing,
+    currentDocId = Nothing,
+    currentNote  = Nothing,
+
+    docs         = [],
+    notes        = [],
+    snapshots    = Dict.empty
+  }
+
+transition : Update -> AppState -> AppState
+transition action state =
   case action of
     NoOp -> state
 
     OpenDocId id ->
-      {state | currentDocId    <- Just id
-             , leftSidebarView <- CurrentDocView
+      let initialPage = Page.initialModel
+          page'       = { initialPage |
+            currentDocId <- Just id,
+            currentDoc   <- state.currentDoc,
+            docs         <- state.docs,
+            notes        <- state.notes,
+            fullscreen   <- state.fullscreen
+          }
+      in { state |
+        currentDocId <- Just id,
+        page         <- page'
       }
 
     LoadAsCurrentDoc doc ->
-      let stateAfterOpenDocId = step (OpenDocId doc.id) state
+      let stateAfterOpenDocId = transition (OpenDocId doc.id) state
           newState = {stateAfterOpenDocId | currentDoc <- Just doc}
       in
         updateCurrentDoc (\_ -> doc) newState
@@ -68,11 +130,14 @@ step action state =
     SetFullscreen enabled ->
       {state | fullscreen <- enabled}
 
-    SetLeftSidebarView mode ->
-      {state | leftSidebarView <- mode}
-
     PutSnapshot snapshot ->
       {state | snapshots <- Dict.insert snapshot.id snapshot state.snapshots}
+
+    SetPage model -> { state |
+        page         <- model,
+        currentDocId <- model.currentDocId,
+        currentNote  <- model.currentNote
+      }
 
 -- Throw out any snapshots that are no longer relevant, so they can be GC'd.
 pruneSnapshots : AppState -> AppState
@@ -98,6 +163,7 @@ updateCurrentDoc transformation state =
                , docs       <- newDocs
         }
 
+preferById : { a | id : b } -> { a | id : b } -> { a | id : b }
 preferById preferred given =
   if preferred.id == given.id
     then preferred
@@ -106,29 +172,52 @@ preferById preferred given =
 main : Signal Element
 main = Signal.map2 scene state Window.dimensions
 
-userInput : Signal Action
+userInput : Signal Update
 userInput =
-  mergeMany
-  [ Signal.map LoadAsCurrentDoc loadAsCurrentDoc
-  , Signal.map ListDocs         listDocs
-  , Signal.map ListNotes        listNotes
-  , Signal.map SetChapters      setChapters
-  , Signal.map UpdateChapter    updateChapter
-  , Signal.map SetTitle         setTitle
-  , Signal.map SetDescription   setDescription
-  , Signal.map SetFullscreen    setFullscreen
-  , Signal.map PutSnapshot      putSnapshot
-  , Signal.map SetCurrentNote   setCurrentNote
-  , Signal.subscribe actions
+  mergeMany [
+    Signal.map LoadAsCurrentDoc loadAsCurrentDoc,
+    Signal.map ListDocs         listDocs,
+    Signal.map ListNotes        listNotes,
+    Signal.map SetChapters      setChapters,
+    Signal.map UpdateChapter    updateChapter,
+    Signal.map SetTitle         setTitle,
+    Signal.map SetDescription   setDescription,
+    Signal.map SetFullscreen    setFullscreen,
+    Signal.map PutSnapshot      putSnapshot,
+    Signal.map SetCurrentNote   setCurrentNote,
+    Signal.subscribe updates
   ]
+
+generalizePageUpdate : AppState -> Page.Update -> Update
+generalizePageUpdate state pageUpdate = SetPage (Page.transition pageUpdate state.page)
+
+modelPage : AppState -> Page.Model
+modelPage state = {
+    leftSidebar  = state.page.leftSidebar,
+    rightSidebar = state.page.rightSidebar,
+    editor       = state.page.editor,
+
+    fullscreen   = state.fullscreen,
+
+    currentDocId = state.currentDocId,
+    currentDoc   = state.currentDoc,
+    currentNote  = state.currentNote,
+
+    docs         = state.docs,
+    notes        = state.notes
+  }
 
 scene : AppState -> (Int, Int) -> Element
 scene state (w, h) =
-  container w h midTop (toElement w h (view state))
+  let pageUpdate = LC.create (generalizePageUpdate state) updates
+      locals     = Channel.locals
+      html       = Page.view { locals | update = pageUpdate } (modelPage state)
+  in
+    container w h midTop (toElement w h html)
 
 -- manage the state of our application over time
 state : Signal AppState
-state = foldp step emptyState userInput
+state = foldp transition initialState userInput
 
 -- PORTS --
 
@@ -147,34 +236,34 @@ port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = Signal.map .currentDocId state
 
 port newDoc : Signal ()
-port newDoc = Signal.subscribe newDocChannel
+port newDoc = Signal.subscribe Channel.newDoc
 
 port openFromFile : Signal ()
-port openFromFile = Signal.subscribe openFromFileChannel
+port openFromFile = Signal.subscribe Channel.openFromFile
 
 port downloadDoc : Signal DownloadOptions
-port downloadDoc = Signal.subscribe downloadChannel
+port downloadDoc = Signal.subscribe Channel.download
 
 port printDoc : Signal ()
-port printDoc = Signal.subscribe printChannel
+port printDoc = Signal.subscribe Channel.print
 
 port navigateToChapterId : Signal Identifier
-port navigateToChapterId = Signal.subscribe navigateToChapterIdChannel
+port navigateToChapterId = Signal.subscribe Channel.navigateToChapterId
 
 port navigateToTitle : Signal ()
-port navigateToTitle = Signal.subscribe navigateToTitleChannel
+port navigateToTitle = Signal.subscribe Channel.navigateToTitle
 
 port newNote : Signal ()
-port newNote = Signal.subscribe newNoteChannel
+port newNote = Signal.subscribe Channel.newNote
 
 port newChapter : Signal ()
-port newChapter = Signal.subscribe newChapterChannel
+port newChapter = Signal.subscribe Channel.newChapter
 
 port searchNotes : Signal ()
-port searchNotes = debounce 500 <| Signal.subscribe searchNotesChannel
+port searchNotes = debounce 500 <| Signal.subscribe Channel.searchNotes
 
 port fullscreen : Signal Bool
-port fullscreen = Signal.subscribe fullscreenChannel
+port fullscreen = Signal.subscribe (Signal.channel False)
 
 port execCommand : Signal String
-port execCommand = Signal.subscribe execCommandChannel
+port execCommand = Signal.subscribe Channel.execCommand
