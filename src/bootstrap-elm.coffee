@@ -111,7 +111,14 @@ setUpChapter = (chapter) ->
   Promise.all [editorHeadingPromise, editorBodyPromise]
 
 app.ports.remoteSync.subscribe ->
-  alert "Coming soon!"
+  sync.connectToDropbox().then ->
+    # TODO sync with dropbox, reconcile file changes, etc!
+
+    # TODO move this logic into appropriate saveFooAndBar functions,
+    # and reorganize it to not just write an entire file every single time...
+    console.log "Auth'd with Dropbox:", sync.dreamBox
+    sync.dreamBox.writeFile "Alice-test-2.html", document.getElementById("document-page").innerHTML, (error, stat) ->
+      console.log "writeFile:", error, stat
 
 app.ports.newChapter.subscribe ->
   sync.getCurrentDoc().done (doc) ->

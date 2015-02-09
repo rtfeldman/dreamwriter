@@ -1,4 +1,5 @@
 # DreamBox: Dreamwriter Dropbox integration
+Dropbox    = require "./dropbox.js"
 
 dropboxApiKey = 'x1aqcubgani7y5s'
 
