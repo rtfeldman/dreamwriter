@@ -196,6 +196,19 @@ scrollToChapterId = (chapterId) ->
 
   editorFrame.scrollTop = chapterHeading.offsetTop - editorHeader.offsetHeight
 
+  placeCursorAtEndOf chapterHeading
+
+placeCursorAtEndOf = (elem) ->
+  elem.focus()
+
+  range = document.createRange()
+  range.selectNodeContents elem
+  range.collapse false
+
+  sel = window.getSelection()
+  sel.removeAllRanges()
+  sel.addRange range
+
 getTitleElem = ->
   document.getElementById "edit-title"
 
