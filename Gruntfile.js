@@ -211,8 +211,8 @@ module.exports = function(grunt) {
           '/fonts/ubuntu.woff              /cache/fonts/ubuntu.woff',
           '/fonts/flaticon.woff            /cache/fonts/flaticon.woff',
           '/images/dlogo.png               /cache/images/dlogo.png',
-          '/images/favicon.ico             /cache/images/favicon.ico',
-          '/images/quarter-backdrop.jpg    /cache/images/quarter-backdrop.jpg']
+          '/images/favicon.ico             /cache/images/favicon.ico'
+        ]
       }
     },
 
