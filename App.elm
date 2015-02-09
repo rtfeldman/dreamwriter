@@ -267,3 +267,6 @@ port fullscreen = Signal.subscribe (Signal.channel False)
 
 port execCommand : Signal String
 port execCommand = Signal.subscribe Channel.execCommand
+
+port remoteSync : Signal ()
+port remoteSync = Signal.subscribe Channel.remoteSync

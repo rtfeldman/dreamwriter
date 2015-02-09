@@ -110,6 +110,9 @@ setUpChapter = (chapter) ->
 
   Promise.all [editorHeadingPromise, editorBodyPromise]
 
+app.ports.remoteSync.subscribe ->
+  alert "Coming soon!"
+
 app.ports.newChapter.subscribe ->
   sync.getCurrentDoc().done (doc) ->
     sync.addChapter(doc,

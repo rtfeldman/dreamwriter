@@ -14,6 +14,7 @@ import Json.Encode (string)
 
 type alias Channels a = { a |
   fullscreen  : LocalChannel FullscreenState,
+  remoteSync  : LocalChannel (),
   execCommand : LocalChannel String
 }
 
@@ -57,7 +58,11 @@ viewEditor channels currentDoc fullscreen =
         in
           div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
         div [id "dropbox-sync"] [
-          input [id "toggle-dropbox-sync", property "type" (string "checkbox")] [],
+          input [
+            id "toggle-dropbox-sync",
+            property "type" (string "checkbox"),
+            onClick <| send channels.remoteSync ()
+          ] [],
           label [for "toggle-dropbox-sync"] [
             text " sync to Dropbox"
           ]
