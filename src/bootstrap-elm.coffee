@@ -334,38 +334,43 @@ app.ports.fullscreen.subscribe (desiredMode) ->
 DreamSync.connect().done (instance) ->
   sync = instance
 
+  finish = ->
+    notes = new DreamNotes sync
+
+    [{
+      title: 'One-liners from The Matrix',
+      body: 'If music be the food of love, play on'
+    }, {
+      title: 'Note to self',
+      body: 'useful note'
+    }, {
+      title: 'Another note',
+      body: 'also useful'
+    }, {
+      title: 'A note again',
+      body: 'pretty cool'
+    }, {
+      title: 'How come Neo gets to be The One?',
+      body: 'pretty cool'
+    }, {
+      title: 'Thoughts on green code rain',
+      body: 'One two three!'
+    }].forEach ({title, body}) ->
+      notes.save {title}, body
+
+    # Initialize the app based on the stored currentDocId
+    sync.getCurrentDocId().done (id) ->
+      if id?
+        loadDocId id
+      else
+        saveHtmlAndLoadDoc DocImport.introDocHtml
+
+    refreshDocList()
+
   if sync.dreamBox
     sync.dreamBox.getAccountInfo().then (info) ->
       app.ports.setSyncAccount.send info.name
 
-  notes = new DreamNotes sync
-
-  [{
-    title: 'One-liners from The Matrix',
-    body: 'If music be the food of love, play on'
-  }, {
-    title: 'Note to self',
-    body: 'useful note'
-  }, {
-    title: 'Another note',
-    body: 'also useful'
-  }, {
-    title: 'A note again',
-    body: 'pretty cool'
-  }, {
-    title: 'How come Neo gets to be The One?',
-    body: 'pretty cool'
-  }, {
-    title: 'Thoughts on green code rain',
-    body: 'One two three!'
-  }].forEach ({title, body}) ->
-    notes.save {title}, body
-
-  # Initialize the app based on the stored currentDocId
-  sync.getCurrentDocId().done (id) ->
-    if id?
-      loadDocId id
-    else
-      saveHtmlAndLoadDoc DocImport.introDocHtml
-
-  refreshDocList()
+      finish()
+  else
+    finish()
