@@ -14,27 +14,30 @@ import Json.Encode (string)
 
 type alias Channels a = { a |
   fullscreen  : LocalChannel FullscreenState,
+  syncAccount : LocalChannel (Maybe String),
   remoteSync  : LocalChannel (),
   execCommand : LocalChannel String
 }
 
 type alias Model = {
-  currentDoc : Doc,
-  fullscreen : FullscreenState
+  currentDoc  : Doc,
+  syncAccount : Maybe String,
+  fullscreen  : FullscreenState
 }
 
 initialModel : Model
 initialModel = {
-    currentDoc = emptyDoc,
-    fullscreen = False
+    currentDoc  = emptyDoc,
+    syncAccount = Nothing,
+    fullscreen  = False
   }
 
 view : Channels a -> Model -> Html
 view channels model =
-  lazy3 viewEditor channels model.currentDoc model.fullscreen
+  lazy2 viewEditor channels model
 
-viewEditor : Channels a -> Doc -> FullscreenState -> Html
-viewEditor channels currentDoc fullscreen =
+viewEditor : Channels a -> Model -> Html
+viewEditor channels model =
   div [id "editor-container"] [
     div [id "editor-frame"] [
       div [id "editor-header"] [
@@ -44,32 +47,41 @@ viewEditor channels currentDoc fullscreen =
           viewFontControl channels.execCommand "toggle-italics" "I" "italic",
           viewFontControl channels.execCommand "toggle-strikethrough" "\xA0S\xA0" "strikethrough"
         ],
-        lazy2 viewFullscreenButton channels.fullscreen fullscreen
+        lazy2 viewFullscreenButton channels.fullscreen model.fullscreen
       ],
 
       div [id "document-page"] <| [
         h1  [id "edit-title"      ] [],
         div [id "edit-description"] []
-      ] ++ concatMap (lazyViewChapter << .id) currentDoc.chapters,
+      ] ++ concatMap (lazyViewChapter << .id) model.currentDoc.chapters,
 
       div [id "editor-footer"] [
-        let wordCount = currentDoc.titleWords + currentDoc.descriptionWords +
-          (sum <| map (\chap -> chap.headingWords + chap.bodyWords) currentDoc.chapters)
+        let wordCount = model.currentDoc.titleWords + model.currentDoc.descriptionWords +
+          (sum <| map (\chap -> chap.headingWords + chap.bodyWords) model.currentDoc.chapters)
         in
           div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
-        div [id "dropbox-sync"] [
-          input [
-            id "toggle-dropbox-sync",
-            property "type" (string "checkbox"),
-            onClick <| send channels.remoteSync ()
-          ] [],
-          label [for "toggle-dropbox-sync"] [
-            text " sync to Dropbox"
-          ]
-        ]
+        syncInput channels.remoteSync model.syncAccount
       ]
     ]
   ]
+
+syncInput : LocalChannel () -> Maybe String -> Html
+syncInput remoteSyncChannel syncAccount =
+  let {syncing, syncText} = case syncAccount of
+    Nothing   ->
+      { syncing = False, syncText = " sync to Dropbox" }
+    Just name ->
+      { syncing = True,  syncText = " syncing to " ++ name ++ "’s Dropbox" }
+  in
+    div [id "dropbox-sync"] [
+      input [
+        id "toggle-dropbox-sync",
+        property "type" (string "checkbox"),
+        checked syncing,
+        onClick <| send remoteSyncChannel ()
+      ] [],
+      label [for "toggle-dropbox-sync"] [text syncText]
+    ]
 
 withCommas : Int -> String
 withCommas num =

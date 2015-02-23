@@ -25,6 +25,7 @@ app = Elm.fullscreen Elm.App, {
   listDocs: []
   listNotes: []
   setFullscreen: false
+  setSyncAccount: null
   setCurrentNote: {id: "", title: "", snapshotId: "", creationTime: 0, lastModifiedTime: 0}
   putSnapshot: {id: "", html: "", text: ""}
 }
@@ -111,14 +112,22 @@ setUpChapter = (chapter) ->
   Promise.all [editorHeadingPromise, editorBodyPromise]
 
 app.ports.remoteSync.subscribe ->
-  sync.connectToDropbox().then ->
-    # TODO sync with dropbox, reconcile file changes, etc!
+  # TODO have the port send this over so this handler can be decoupled from the DOM.
+  enable = document.getElementById("toggle-dropbox-sync").checked
 
-    # TODO move this logic into appropriate saveFooAndBar functions,
-    # and reorganize it to not just write an entire file every single time...
-    console.log "Auth'd with Dropbox:", sync.dreamBox
-    sync.dreamBox.writeFile "Alice-test-2.html", document.getElementById("document-page").innerHTML, (error, stat) ->
-      console.log "writeFile:", error, stat
+  if enable
+    sync.connectToDropbox(true).then ->
+      # TODO sync with dropbox, reconcile file changes, etc!
+
+      # TODO move this logic into appropriate saveFooAndBar functions,
+      # and reorganize it to not just write an entire file every single time...
+      console.log "Auth'd with Dropbox:", sync.dreamBox
+      sync.dreamBox.writeFile "Alice-test-2.html", document.getElementById("document-page").innerHTML, (error, stat) ->
+        console.log "writeFile:", error, stat
+  else
+    # TODO prompt the user so a single misclick doesn't sign you out of Dropbox.
+    sync.disconnectFromDropbox().then ->
+      app.ports.setSyncAccount.send null
 
 app.ports.newChapter.subscribe ->
   sync.getCurrentDoc().done (doc) ->
@@ -324,6 +333,10 @@ app.ports.fullscreen.subscribe (desiredMode) ->
 
 DreamSync.connect().done (instance) ->
   sync = instance
+
+  if sync.dreamBox
+    sync.dreamBox.getAccountInfo().then (info) ->
+      app.ports.setSyncAccount.send info.name
 
   notes = new DreamNotes sync
 

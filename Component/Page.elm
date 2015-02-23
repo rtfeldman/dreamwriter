@@ -25,6 +25,7 @@ type alias Model = {
 
   fullscreen   : FullscreenState,
 
+  syncAccount  : Maybe String,
   currentDocId : Maybe Identifier,
   currentDoc   : Maybe Doc,
   currentNote  : Maybe Note,
@@ -41,6 +42,7 @@ initialModel = {
 
     fullscreen   = False,
 
+    syncAccount  = Nothing,
     currentDocId = Nothing,
     currentDoc   = Nothing,
     currentNote  = Nothing,
@@ -92,8 +94,9 @@ modelLeftSidebar currentDoc model = {
 
 modelEditor : Doc -> Model -> Editor.Model
 modelEditor currentDoc model = {
-    currentDoc = currentDoc,
-    fullscreen = model.fullscreen
+    currentDoc  = currentDoc,
+    syncAccount = model.syncAccount,
+    fullscreen  = model.fullscreen
   }
 
 modelRightSidebar : Model -> RightSidebar.Model

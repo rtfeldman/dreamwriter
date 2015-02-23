@@ -9,26 +9,31 @@ countWords = require "./WordCount.coffee"
 DreamBox   = require "./DreamBox.coffee"
 
 module.exports = class DreamSync
-  constructor: (@db) ->
-    @dreamBox = null
+  constructor: (@db, @dreamBox = null) ->
 
   @connect: ->
     new Promise (resolve, reject) ->
-      dbjs.open(dbOptions).then ((conn) -> resolve new DreamSync conn), reject
+      dbjs.open(dbOptions).then ((conn) ->
+        DreamBox.auth(false).then ((dreamBox) ->
+          resolve new DreamSync conn, dreamBox
+        ), reject
+      ), reject
 
   @getRandomSha: -> sha1 "#{Math.random()}"[0..16]
 
   # This can be called either on page load (if there's a token in localStorage)
   # or mid-session if the user decides to enable Dropbox syncing.
-  connectToDropbox: =>
+  # Resolves with a boolean representing whether we're connected to Dropbox.
+  connectToDropbox: (interactive) =>
     new Promise (resolve, reject) =>
-      DreamBox.auth().then (dreamBox) =>
+      DreamBox.auth(interactive).then (dreamBox) =>
         @dreamBox = dreamBox
 
-        resolve()
+        resolve dreamBox?
 
   disconnectFromDropbox: =>
-    @dreamBox = null
+    @dreamBox.disconnect().then =>
+      @dreamBox = null
 
   getCurrentDocId:       => @getSetting  "currentDocId"
   saveCurrentDocId: (id) => @saveSetting "currentDocId", id

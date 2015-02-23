@@ -42,6 +42,7 @@ type Update
   | SetTitle (String, Int)
   | SetDescription (String, Int)
   | SetFullscreen FullscreenState
+  | SetSyncAccount (Maybe String)
   | PutSnapshot Snapshot
   | SetPage Page.Model
 
@@ -54,6 +55,7 @@ type alias AppState = {
 
   fullscreen   : FullscreenState,
 
+  syncAccount  : Maybe String,
   currentDoc   : Maybe Doc,
   currentDocId : Maybe Identifier,
   currentNote  : Maybe Note,
@@ -69,6 +71,7 @@ initialState = {
 
     fullscreen   = False,
 
+    syncAccount  = Nothing,
     currentDoc   = Nothing,
     currentDocId = Nothing,
     currentNote  = Nothing,
@@ -130,6 +133,9 @@ transition action state =
     SetFullscreen enabled ->
       {state | fullscreen <- enabled}
 
+    SetSyncAccount maybeAccount ->
+      {state | syncAccount <- maybeAccount}
+
     PutSnapshot snapshot ->
       {state | snapshots <- Dict.insert snapshot.id snapshot state.snapshots}
 
@@ -183,6 +189,7 @@ userInput =
     Signal.map SetTitle         setTitle,
     Signal.map SetDescription   setDescription,
     Signal.map SetFullscreen    setFullscreen,
+    Signal.map SetSyncAccount   setSyncAccount,
     Signal.map PutSnapshot      putSnapshot,
     Signal.map SetCurrentNote   setCurrentNote,
     Signal.subscribe updates
@@ -199,6 +206,7 @@ modelPage state = {
 
     fullscreen   = state.fullscreen,
 
+    syncAccount  = state.syncAccount,
     currentDocId = state.currentDocId,
     currentDoc   = state.currentDoc,
     currentNote  = state.currentNote,
@@ -209,9 +217,11 @@ modelPage state = {
 
 scene : AppState -> (Int, Int) -> Element
 scene state (w, h) =
-  let pageUpdate = LC.create (generalizePageUpdate state) updates
-      locals     = Channel.locals
-      html       = Page.view { locals | update = pageUpdate } (modelPage state)
+  let pageUpdate   = LC.create (generalizePageUpdate state) updates
+      locals       = Channel.locals
+      viewChannels = { locals | update = pageUpdate }
+      viewModel    = modelPage state
+      html         = Page.view viewChannels viewModel
   in
     container w h midTop (toElement w h html)
 
@@ -228,6 +238,7 @@ port setTitle : Signal (String, Int)
 port setDescription : Signal (String, Int)
 port setFullscreen : Signal Bool
 port setCurrentNote : Signal (Maybe Note)
+port setSyncAccount : Signal (Maybe String)
 port listDocs : Signal (List Doc)
 port listNotes : Signal (List Note)
 port putSnapshot : Signal Snapshot

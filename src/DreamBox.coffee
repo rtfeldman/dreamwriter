@@ -6,19 +6,30 @@ dropboxApiKey = 'x1aqcubgani7y5s'
 # Wraps Dropbox.Client with Dreamwriter-specific
 # error handling and the like.
 module.exports = class DreamBox
-  @auth: ->
+  @auth: (interactive = false) ->
     new Promise (resolve, reject) ->
       client = new Dropbox.Client key: dropboxApiKey
 
-      client.authenticate (error, client) ->
+      client.authenticate {interactive}, (error, client) ->
         if error
           reject (translateError error)
-        else
+        else if client.isAuthenticated()
           resolve (new DreamBox client)
+        else
+          resolve null
+
 
   # This should only be instantiated with an
   # authenticated Dropbox.Client instance
   constructor: (@client) ->
+
+  disconnect: =>
+    new Promise (resolve, reject) =>
+      @client?.signOut (error) =>
+        if error
+          reject error
+        else
+          resolve()
 
   writeFile: (filename, content, callback) =>
     @client.writeFile filename, content, (error, stat) ->
@@ -28,6 +39,14 @@ module.exports = class DreamBox
         null
 
       callback errorMessage, stat
+
+  getAccountInfo: =>
+    new Promise (resolve, reject) =>
+      @client.getAccountInfo (error, info) ->
+        if error
+          reject error
+        else
+          resolve info
 
 translateError = (error) ->
   switch error.status
