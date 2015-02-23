@@ -60,28 +60,35 @@ viewEditor channels model =
           (sum <| map (\chap -> chap.headingWords + chap.bodyWords) model.currentDoc.chapters)
         in
           div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
-        syncInput channels.remoteSync model.syncAccount
+
+        div [id "dropbox-sync"] (viewRemoteSync channels.remoteSync model.syncAccount)
       ]
     ]
   ]
 
-syncInput : LocalChannel () -> Maybe String -> Html
-syncInput remoteSyncChannel syncAccount =
-  let {syncing, syncText} = case syncAccount of
-    Nothing   ->
-      { syncing = False, syncText = " sync to Dropbox" }
-    Just name ->
-      { syncing = True,  syncText = " syncing to " ++ name ++ "’s Dropbox" }
+viewRemoteSync : LocalChannel () -> Maybe String -> List Html
+viewRemoteSync remoteSyncChannel syncAccount =
+  let display = renderSyncInput remoteSyncChannel
   in
-    div [id "dropbox-sync"] [
-      input [
-        id "toggle-dropbox-sync",
-        property "type" (string "checkbox"),
-        checked syncing,
-        onClick <| send remoteSyncChannel ()
-      ] [],
-      label [for "toggle-dropbox-sync"] [text syncText]
-    ]
+    case syncAccount of
+      Nothing   -> -- We're reconnecting to Dropbox; don't display anything yet.
+        []
+      Just ""   -> -- We aren't authenticated, so we can't sync to Dropbox.
+        display False " sync to Dropbox"
+      Just name -> -- We're properly authenticated and can sync to Dropbox.
+        display True  (" syncing to " ++ name ++ "’s Dropbox")
+
+renderSyncInput : LocalChannel () -> Bool -> String -> List Html
+renderSyncInput remoteSyncChannel syncing syncText =
+  [
+    input [
+      id "toggle-dropbox-sync",
+      property "type" (string "checkbox"),
+      checked syncing,
+      onClick <| send remoteSyncChannel ()
+    ] [],
+    label [for "toggle-dropbox-sync"] [text syncText]
+  ]
 
 withCommas : Int -> String
 withCommas num =

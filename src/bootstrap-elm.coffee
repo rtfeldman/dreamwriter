@@ -127,7 +127,7 @@ app.ports.remoteSync.subscribe ->
   else
     # TODO prompt the user so a single misclick doesn't sign you out of Dropbox.
     sync.disconnectFromDropbox().then ->
-      app.ports.setSyncAccount.send null
+      app.ports.setSyncAccount.send ""
 
 app.ports.newChapter.subscribe ->
   sync.getCurrentDoc().done (doc) ->
@@ -334,43 +334,41 @@ app.ports.fullscreen.subscribe (desiredMode) ->
 DreamSync.connect().done (instance) ->
   sync = instance
 
-  finish = ->
-    notes = new DreamNotes sync
-
-    [{
-      title: 'One-liners from The Matrix',
-      body: 'If music be the food of love, play on'
-    }, {
-      title: 'Note to self',
-      body: 'useful note'
-    }, {
-      title: 'Another note',
-      body: 'also useful'
-    }, {
-      title: 'A note again',
-      body: 'pretty cool'
-    }, {
-      title: 'How come Neo gets to be The One?',
-      body: 'pretty cool'
-    }, {
-      title: 'Thoughts on green code rain',
-      body: 'One two three!'
-    }].forEach ({title, body}) ->
-      notes.save {title}, body
-
-    # Initialize the app based on the stored currentDocId
-    sync.getCurrentDocId().done (id) ->
-      if id?
-        loadDocId id
-      else
-        saveHtmlAndLoadDoc DocImport.introDocHtml
-
-    refreshDocList()
-
   if sync.dreamBox
     sync.dreamBox.getAccountInfo().then (info) ->
       app.ports.setSyncAccount.send info.name
-
-      finish()
   else
-    finish()
+    # Empty string for a name means "We are disconnected."
+    app.ports.setSyncAccount.send ""
+
+  notes = new DreamNotes sync
+
+  [{
+    title: 'One-liners from The Matrix',
+    body: 'If music be the food of love, play on'
+  }, {
+    title: 'Note to self',
+    body: 'useful note'
+  }, {
+    title: 'Another note',
+    body: 'also useful'
+  }, {
+    title: 'A note again',
+    body: 'pretty cool'
+  }, {
+    title: 'How come Neo gets to be The One?',
+    body: 'pretty cool'
+  }, {
+    title: 'Thoughts on green code rain',
+    body: 'One two three!'
+  }].forEach ({title, body}) ->
+    notes.save {title}, body
+
+  # Initialize the app based on the stored currentDocId
+  sync.getCurrentDocId().done (id) ->
+    if id?
+      loadDocId id
+    else
+      saveHtmlAndLoadDoc DocImport.introDocHtml
+
+  refreshDocList()
