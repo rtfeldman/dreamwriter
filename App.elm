@@ -42,7 +42,7 @@ type Update
   | SetTitle (String, Int)
   | SetDescription (String, Int)
   | SetFullscreen FullscreenState
-  | SetSyncAccount (Maybe String)
+  | SetSyncState SyncState
   | PutSnapshot Snapshot
   | SetPage Page.Model
 
@@ -54,8 +54,8 @@ type alias AppState = {
   page         : Page.Model,
 
   fullscreen   : FullscreenState,
+  syncState    : SyncState,
 
-  syncAccount  : Maybe String,
   currentDoc   : Maybe Doc,
   currentDocId : Maybe Identifier,
   currentNote  : Maybe Note,
@@ -71,7 +71,7 @@ initialState = {
 
     fullscreen   = False,
 
-    syncAccount  = Nothing,
+    syncState    = Initializing,
     currentDoc   = Nothing,
     currentDocId = Nothing,
     currentNote  = Nothing,
@@ -133,8 +133,8 @@ transition action state =
     SetFullscreen enabled ->
       {state | fullscreen <- enabled}
 
-    SetSyncAccount maybeAccount ->
-      {state | syncAccount <- maybeAccount}
+    SetSyncState syncState ->
+      {state | syncState <- syncState}
 
     PutSnapshot snapshot ->
       {state | snapshots <- Dict.insert snapshot.id snapshot state.snapshots}
@@ -189,14 +189,23 @@ userInput =
     Signal.map SetTitle         setTitle,
     Signal.map SetDescription   setDescription,
     Signal.map SetFullscreen    setFullscreen,
-    Signal.map SetSyncAccount   setSyncAccount,
     Signal.map PutSnapshot      putSnapshot,
     Signal.map SetCurrentNote   setCurrentNote,
+    Signal.map syncAccountToUpdate setSyncAccount,
     Signal.subscribe updates
   ]
 
 generalizePageUpdate : AppState -> Page.Update -> Update
 generalizePageUpdate state pageUpdate = SetPage (Page.transition pageUpdate state.page)
+
+syncAccountToUpdate : Maybe String -> Update
+syncAccountToUpdate account =
+  let syncState =
+    case account of
+      Nothing          -> Initializing
+      Just ""          -> Disconnected -- TODO when union types can come through ports, use a union type instead of special-casing empty string to mean "disconnected"
+      Just accountName -> Connected accountName
+  in SetSyncState syncState
 
 modelPage : AppState -> Page.Model
 modelPage state = {
@@ -205,8 +214,8 @@ modelPage state = {
     editor       = state.page.editor,
 
     fullscreen   = state.fullscreen,
+    syncState    = state.syncState,
 
-    syncAccount  = state.syncAccount,
     currentDocId = state.currentDocId,
     currentDoc   = state.currentDoc,
     currentNote  = state.currentNote,

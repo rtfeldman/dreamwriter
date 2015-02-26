@@ -6,6 +6,12 @@ import LocalChannel as LC
 -- TODO make this a proper ADT once outbound ports can accept them
 type alias FullscreenState = Bool
 
+type SyncState = Initializing
+  | Connected String
+  | Disconnected
+  | PromptingConnect
+  | PromptingDisconnect
+
 type alias Identifier   = String
 type alias MsSinceEpoch = Int
 type alias HtmlString   = String

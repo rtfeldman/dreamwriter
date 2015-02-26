@@ -10,7 +10,7 @@ type alias Locals = {
   newNote             : LocalChannel (),
   searchNotes         : LocalChannel (),
   fullscreen          : LocalChannel FullscreenState,
-  syncAccount         : LocalChannel (Maybe String),
+  syncState           : LocalChannel SyncState,
   execCommand         : LocalChannel String,
   remoteSync          : LocalChannel (),
   print               : LocalChannel (),
@@ -24,7 +24,7 @@ type alias Locals = {
 
 locals = {
     fullscreen          = LC.create identity fullscreen,
-    syncAccount         = LC.create identity syncAccount,
+    syncState           = LC.create identity syncState,
     execCommand         = LC.create identity execCommand,
     remoteSync          = LC.create identity remoteSync,
     newNote             = LC.create identity newNote,
@@ -70,8 +70,8 @@ newChapter = Signal.channel ()
 fullscreen : Signal.Channel Bool
 fullscreen = Signal.channel False
 
-syncAccount : Signal.Channel (Maybe String)
-syncAccount = Signal.channel Nothing
+syncState : Signal.Channel SyncState
+syncState = Signal.channel Initializing
 
 execCommand : Signal.Channel String
 execCommand = Signal.channel ""

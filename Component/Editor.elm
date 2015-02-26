@@ -14,21 +14,21 @@ import Json.Encode (string)
 
 type alias Channels a = { a |
   fullscreen  : LocalChannel FullscreenState,
-  syncAccount : LocalChannel (Maybe String),
+  syncState   : LocalChannel SyncState,
   remoteSync  : LocalChannel (),
   execCommand : LocalChannel String
 }
 
 type alias Model = {
   currentDoc  : Doc,
-  syncAccount : Maybe String,
+  syncState   : SyncState,
   fullscreen  : FullscreenState
 }
 
 initialModel : Model
 initialModel = {
     currentDoc  = emptyDoc,
-    syncAccount = Nothing,
+    syncState   = Initializing,
     fullscreen  = False
   }
 
@@ -61,22 +61,26 @@ viewEditor channels model =
         in
           div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
 
-        div [id "dropbox-sync"] (viewRemoteSync channels.remoteSync model.syncAccount)
+        div [id "dropbox-sync"] (viewRemoteSync channels.remoteSync model.syncState)
       ]
     ]
   ]
 
-viewRemoteSync : LocalChannel () -> Maybe String -> List Html
-viewRemoteSync remoteSyncChannel syncAccount =
+viewRemoteSync : LocalChannel () -> SyncState -> List Html
+viewRemoteSync remoteSyncChannel syncState =
   let display = renderSyncInput remoteSyncChannel
   in
-    case syncAccount of
-      Nothing   -> -- We're reconnecting to Dropbox; don't display anything yet.
+    case syncState of
+      Initializing        -> -- We're reconnecting; don't display anything yet.
         []
-      Just ""   -> -- We aren't authenticated, so we can't sync to Dropbox.
+      Disconnected        -> -- We aren't authenticated, so we can't sync.
         display False " sync to Dropbox"
-      Just name -> -- We're properly authenticated and can sync to Dropbox.
+      Connected name      -> -- We're authenticated and can sync to Dropbox.
         display True  (" syncing to " ++ name ++ "’s Dropbox")
+      PromptingConnect    -> -- Prompt the user to authenticate via OAuth.
+        [] -- TODO
+      PromptingDisconnect -> -- Confirm that the user wants to disconnect.
+        [] -- TODO
 
 renderSyncInput : LocalChannel () -> Bool -> String -> List Html
 renderSyncInput remoteSyncChannel syncing syncText =
