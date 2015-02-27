@@ -55,16 +55,21 @@ viewEditor channels model =
         div [id "edit-description"] []
       ] ++ concatMap (lazyViewChapter << .id) model.currentDoc.chapters,
 
-      div [id "editor-footer"] [
-        let wordCount = model.currentDoc.titleWords + model.currentDoc.descriptionWords +
-          (sum <| map (\chap -> chap.headingWords + chap.bodyWords) model.currentDoc.chapters)
-        in
-          div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
-
-        div [id "dropbox-sync"] (viewRemoteSync channels.remoteSync model.syncState)
-      ]
+      viewFooter channels.remoteSync model.currentDoc model.syncState
     ]
   ]
+
+viewFooter : LocalChannel () -> Doc -> SyncState -> Html
+viewFooter remoteSyncChannel currentDoc syncState =
+  div [id "editor-footer"] [
+    let wordCount = currentDoc.titleWords + currentDoc.descriptionWords +
+      (sum <| map (\chap -> chap.headingWords + chap.bodyWords) currentDoc.chapters)
+    in
+      div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
+
+    div [id "dropbox-sync"] (viewRemoteSync remoteSyncChannel syncState)
+  ]
+
 
 viewRemoteSync : LocalChannel () -> SyncState -> List Html
 viewRemoteSync remoteSyncChannel syncState =
