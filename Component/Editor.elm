@@ -60,32 +60,37 @@ viewEditor channels model =
   ]
 
 viewFooter : LocalChannel () -> Doc -> SyncState -> Html
-viewFooter remoteSyncChannel currentDoc syncState =
-  div [id "editor-footer"] [
-    let wordCount = currentDoc.titleWords + currentDoc.descriptionWords +
-      (sum <| map (\chap -> chap.headingWords + chap.bodyWords) currentDoc.chapters)
-    in
-      div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"],
-
-    div [id "dropbox-sync"] (viewRemoteSync remoteSyncChannel syncState)
-  ]
-
-
-viewRemoteSync : LocalChannel () -> SyncState -> List Html
-viewRemoteSync remoteSyncChannel syncState =
+viewFooter remoteSyncChannel doc syncState =
   let display = renderSyncInput remoteSyncChannel
+      children = case syncState of
+        Initializing        -> -- We're reconnecting; don't display anything yet.
+          [viewWordCount doc]
+        Disconnected        -> -- We aren't authenticated, so we can't sync.
+          [viewWordCount doc] ++
+            display False " sync to Dropbox"
+        Connected name      -> -- We're authenticated and can sync to Dropbox.
+          [viewWordCount doc] ++
+            display True  (" syncing to " ++ name ++ "’s Dropbox")
+        PromptingConnect    -> -- Prompt the user to authenticate via OAuth.
+          [
+            a    [href "javascript:;"] [text "Sign in to Dropbox"],
+            a    [href "https://db.tt/dHLm7rHU", target "_blank"] [text "Create a free Dropbox Account"],
+            span [] [text "Cancel"]
+          ]
+        PromptingDisconnect -> -- Confirm that the user wants to disconnect.
+          [
+            a    [href "javascript:;"] [text "Sign Out of Dropbox"],
+            span [] [text "Cancel"]
+          ]
   in
-    case syncState of
-      Initializing        -> -- We're reconnecting; don't display anything yet.
-        []
-      Disconnected        -> -- We aren't authenticated, so we can't sync.
-        display False " sync to Dropbox"
-      Connected name      -> -- We're authenticated and can sync to Dropbox.
-        display True  (" syncing to " ++ name ++ "’s Dropbox")
-      PromptingConnect    -> -- Prompt the user to authenticate via OAuth.
-        [] -- TODO
-      PromptingDisconnect -> -- Confirm that the user wants to disconnect.
-        [] -- TODO
+    div [id "editor-footer"] children
+
+viewWordCount : Doc -> Html
+viewWordCount doc =
+  let wordCount = doc.titleWords + doc.descriptionWords +
+    (sum <| map (\chap -> chap.headingWords + chap.bodyWords) doc.chapters)
+  in
+    div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"]
 
 renderSyncInput : LocalChannel () -> Bool -> String -> List Html
 renderSyncInput remoteSyncChannel syncing syncText =
