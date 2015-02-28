@@ -61,16 +61,22 @@ viewEditor channels model =
 
 viewFooter : LocalChannel () -> Doc -> SyncState -> Html
 viewFooter remoteSyncChannel doc syncState =
-  let display = renderSyncInput remoteSyncChannel
+  let display  = renderSyncInput remoteSyncChannel
       children = case syncState of
         Initializing        -> -- We're reconnecting; don't display anything yet.
-          [viewWordCount doc]
+          [
+            viewWordCount doc
+          ]
         Disconnected        -> -- We aren't authenticated, so we can't sync.
-          [viewWordCount doc] ++
+          [
+            viewWordCount doc,
             display False " sync to Dropbox"
+          ]
         Connected name      -> -- We're authenticated and can sync to Dropbox.
-          [viewWordCount doc] ++
+          [
+            viewWordCount doc,
             display True  (" syncing to " ++ name ++ "’s Dropbox")
+          ]
         PromptingConnect    -> -- Prompt the user to authenticate via OAuth.
           [
             a    [href "javascript:;"] [text "Sign in to Dropbox"],
@@ -92,9 +98,9 @@ viewWordCount doc =
   in
     div [id "doc-word-count"] [text <| (pluralize "word" wordCount) ++ " saved"]
 
-renderSyncInput : LocalChannel () -> Bool -> String -> List Html
+renderSyncInput : LocalChannel () -> Bool -> String -> Html
 renderSyncInput remoteSyncChannel syncing syncText =
-  [
+  div [id "dropbox-sync"] [
     input [
       id "toggle-dropbox-sync",
       property "type" (string "checkbox"),
