@@ -10,6 +10,7 @@ import Html.Events (..)
 import Maybe
 import List (..)
 import LocalChannel (send, LocalChannel)
+import Signal
 import Json.Encode (string)
 
 type alias Channels a = { a |
@@ -144,6 +145,10 @@ viewFullscreenButton fullscreenChannel fullscreen =
       title fullscreenTitle,
       onClick <| send fullscreenChannel targetMode
     ] []
+
+onCheck : (Bool -> Signal.Message) -> Attribute
+onCheck =
+    on "change" targetChecked
 
 lazyViewChapter : Identifier -> List Html
 lazyViewChapter chapterId = [
