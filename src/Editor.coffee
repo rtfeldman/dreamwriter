@@ -56,6 +56,7 @@ module.exports = class Editor
       when 189 then useSmartHandler @applySmartEmDash
       when 38  then useSmartHandler @handleUpPress unless event.shiftKey
       when 40  then useSmartHandler @handleDownPress unless event.shiftKey
+      when 13  then useSmartHandler @handleEnter
       when 8   then useSmartHandler @handleBackspace
 
   handleBackspace: (event, caretOffset, textNode) =>
@@ -93,6 +94,10 @@ module.exports = class Editor
       event.target.nextSibling == textNode.nextSibling
 
     if isAtEnd && (!hasNextSibling || isEmptyEditor)
+      event.target.nextSibling?.focus()
+
+  handleEnter: (event, caretOffset, textNode) =>
+    if isInlineEditor event.target
       event.target.nextSibling?.focus()
 
   # Recurses through the given node's lastChild, and that node's lastChild, etc
@@ -173,3 +178,6 @@ onWriteError = (err) ->
 
 getCaretOffset = ->
   window.getSelection().getRangeAt(0)?.startOffset
+
+isInlineEditor = (node) ->
+  node.className.match /Medium-inline/
