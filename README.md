@@ -34,14 +34,12 @@ The Strange Loop 2014 talk [Web Apps without Web Servers](http://www.youtube.com
 
 ## Building
 
-1. Install [Elm](http://elm-lang.org)
 2. Install [node.js](http://nodejs.org)
 3. `git clone git@github.com:rtfeldman/dreamwriter.git`
 4. `cd dreamwriter`
 5. `npm install`
 6. `npm install -g grunt-cli bower`
 7. `bower install`
-8. `elm-package install --yes`
 9. `grunt`
 10. Visit [localhost:8000](http://localhost:8000) in your browser!
 [1]: https://secure.travis-ci.org/rtfeldman/dreamwriter.svg
