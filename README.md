@@ -30,7 +30,7 @@ It can only run in modern browsers, as it uses the following browser features:
 
 You can compare the two code bases back when they were at feature parity: [dreamwriter-coffee](https://github.com/rtfeldman/dreamwriter-coffee/tree/strangeloop) and [dreamwriter](https://github.com/rtfeldman/dreamwriter/tree/strangeloop). Naturally, development on the CoffeeScript version has ceased in favor of the more featureful Elm version.
 
-The Strange Loop 2014 talk [Web Apps without Web Servers](http://www.youtube.com/watch?v=WqV5kqaFRDU) incorporated Dreamwriter as a case study.
+The Strange Loop 2014 talk [Web Apps without Web Servers](http://www.youtube.com/watch?v=WqV5kqaFRDU) used Dreamwriter as a case study.
 
 ## Building
 
