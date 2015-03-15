@@ -18,7 +18,7 @@ Dreamwriter is a browser-based writing app with a few goals in mind. (Not all of
 
 ## Technology
 
-Dreamwriter was originally written in [CoffeeScript](http://coffee-script.org) and has been rewritten in [Elm](http://elm-lang.org). It compiles to static files only (and requires no server-side code), and [dreamwriter.io](http://dreamwriter.io) is hosted entirely on Amazon S3.
+Dreamwriter was originally written in [CoffeeScript](http://coffee-script.org) and has been rewritten in [Elm](http://elm-lang.org). It compiles to static files only (and requires no server-side code), and [dreamwriter.io](http://dreamwriter.io) is hosted entirely on [Amazon S3](http://aws.amazon.com/s3).
 
 It can only run in modern browsers, as it uses the following browser features:
 
