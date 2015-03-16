@@ -2,11 +2,14 @@ var path    = require("path");
 var webpack = require("webpack");
 var BowerWebpackPlugin = require("bower-webpack-plugin");
 
+var nodeModulesPath = path.join(__dirname, '/node_modules');
+
 module.exports = {
   cache: true,
 
   entry: {
     app: "./src/bootstrap-elm.coffee",
+    polyfills: "./node_modules/promises-done-polyfill/promises-done-polyfill.js"
   },
 
   output: {

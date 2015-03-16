@@ -1,8 +1,3 @@
-# TODO: there's some proper way to use polyfills in webpack, but I haven't
-# researched it yet. Instead, I'm just assigning this to a variable because
-# otherwise it blows up at runtime.
-throwaway  = require "promises-done-polyfill"
-
 Elm        = require "../App.elm"
 Editor     = require "./Editor.coffee"
 DreamSync  = require "./DreamSync.coffee"
