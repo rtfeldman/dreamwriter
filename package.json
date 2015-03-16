@@ -56,7 +56,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "db.js": "0.10.1",
-    "dropbox": "0.10.3",
+    "dropbox": "git://github.com/rtfeldman/dropbox-js-npm-workaround.git#42b16b6afc057cc8b82caa80801c7b2e5521cdd1",
     "medium.js": "1.0.1",
     "promises-done-polyfill": "1.0.0"
   }
