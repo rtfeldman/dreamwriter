@@ -14,10 +14,14 @@
   "author": "Richard Feldman",
   "license": "MIT",
   "devDependencies": {
+    "bower-webpack-plugin": "0.1.6",
     "browserify-mustache": "0.0.4",
     "chai": "1.10.0",
+    "coffee-loader": "0.7.2",
+    "coffee-script": "1.9.1",
     "coffeeify": "0.7.0",
-    "dropbox": "0.10.3",
+    "elm-webpack-loader": "0.0.1",
+    "file-loader": "0.8.1",
     "grunt": "0.4.5",
     "grunt-appcache": "0.1.8",
     "grunt-autoprefixer": "1.0.1",
@@ -34,11 +38,25 @@
     "grunt-contrib-uglify": "0.6.0",
     "grunt-contrib-watch": "0.6.1",
     "grunt-elm": "1.0.0",
+    "grunt-webpack": "1.0.8",
     "hogan.js": "3.0.2",
+    "json-loader": "0.5.1",
+    "loader-utils": "0.2.6",
     "lodash": "2.4.1",
     "lunr": "0.5.6",
+    "matchdep": "0.3.0",
+    "mustache-loader": "0.3.0",
     "sha1": "1.1.0",
+    "stylus-loader": "1.0.0",
+    "url-loader": "0.5.5",
+    "webpack": "1.7.3",
+    "webpack-dev-server": "1.7.0",
     "zuul": "1.14.0"
   },
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "db.js": "0.10.1",
+    "dropbox": "0.10.3",
+    "medium.js": "1.0.1"
+  }
 }
