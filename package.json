@@ -57,6 +57,7 @@
   "dependencies": {
     "db.js": "0.10.1",
     "dropbox": "0.10.3",
-    "medium.js": "1.0.1"
+    "medium.js": "1.0.1",
+    "promises-done-polyfill": "1.0.0"
   }
 }

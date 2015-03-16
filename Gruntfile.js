@@ -1,4 +1,6 @@
 var fs = require("fs"),
+    webpack = require("webpack"),
+    webpackConfig = require("./webpack.config.js"),
     awsCredentialsFilename = "aws-credentials.json",
     awsCredentials = fs.existsSync(awsCredentialsFilename) ?
       JSON.parse(fs.readFileSync(awsCredentialsFilename))  : {};
@@ -22,8 +24,8 @@ module.exports = function(grunt) {
 
     watch: {
       elm: {
-        files: ["Component/**/*.elm", "Dreamwriter/**/*.elm", "*.elm"],
-        tasks: ["elm"]
+        files: ["Component/**/*.elm", "Dreamwriter/**/*.elm", "*.elm", "**/*.coffee", "**/*.mustache"],
+        tasks: ["webpack:build-dev"]
       },
       stylus: {
         files: ["src/stylesheets/**/*.styl"],
@@ -123,44 +125,41 @@ module.exports = function(grunt) {
       }
     },
 
-    elm: {
-      dreamwriter: {
-        srcDir: "Dreamwriter",
-        files: {
-          "dist/App.js": "App.elm"
-        }
+    webpack: {
+      options: webpackConfig,
+
+      "build-prod": {
+        debug: false,
+        plugins: webpackConfig.plugins.concat(
+          new webpack.DefinePlugin({
+            "process.env": {
+              "NODE_ENV": JSON.stringify("production")
+            }
+          }),
+          new webpack.optimize.DedupePlugin(),
+          new webpack.optimize.UglifyJsPlugin()
+        )
+      },
+
+      "build-dev": {
+        devtool: "sourcemap",
+        debug: true
       }
     },
 
-    browserify: {
+    "webpack-dev-server": {
       options: {
-        transform: ['browserify-mustache', 'coffeeify'],
-        watch: true,
-        browserifyOptions: {
+        webpack: webpackConfig,
+        publicPath: "/" + webpackConfig.output.publicPath
+      },
+
+      start: {
+        keepAlive: true,
+        webpack: {
+          devtool: "eval",
           debug: true
         }
-      },
-      dev: {
-        extensions: ['.coffee', '.mustache', '.json'],
-        src: ["./src/**/*.coffee", "./src/**/*.mustache", "./src/**/*.json"],
-        dest: "dist/bootstrap-elm.js"
-      },
-      prod: {
-        extensions: "<%= browserify.dev.extensions %>",
-        src: "<%= browserify.dev.src %>",
-        dest: "<%= browserify.dev.dest %>"
       }
-    },
-
-    browserifyBower: {
-      options: {
-        file: "dist/vendor.js",
-        forceResolve: {
-          "FileSaver.js": "FileSaver.min.js",
-          "db.js": "src/db.js"
-        }
-      },
-      vendor: {}
     },
 
     htmlmin: {
@@ -241,16 +240,14 @@ module.exports = function(grunt) {
     }
   });
 
-  ["grunt-contrib-watch", "grunt-contrib-htmlmin", "grunt-contrib-cssmin", "grunt-contrib-htmlmin", "grunt-contrib-uglify", "grunt-contrib-clean", "grunt-elm", "grunt-browserify", "grunt-browserify-bower", "grunt-contrib-copy", "grunt-contrib-connect", "grunt-contrib-stylus", "grunt-autoprefixer", "grunt-appcache", "grunt-aws", "grunt-browser-sync"].forEach(function(plugin) {
-    grunt.loadNpmTasks(plugin);
-  });
+  require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 
-  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "browserifyBower", "browserify:prod", "elm", "htmlmin:prod", "copy", "uglify:prod", "cssmin:prod", "appcache:prod"]);
-  grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "browserifyBower", "browserify:dev",  "elm", "htmlmin:dev",  "copy",                               "appcache:dev"]);
+  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "webpack:build-prod", "htmlmin:prod", "copy", "uglify:prod", "cssmin:prod", "appcache:prod"]);
+  grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "webpack:build-dev",  "htmlmin:dev",  "copy",                               "appcache:dev"]);
 
   grunt.registerTask("build",  ["build:dev"]);
   grunt.registerTask("prod",   ["build:prod", "connect:prod"]);
   grunt.registerTask("deploy", ["clean", "build:prod", "s3"]);
 
-  grunt.registerTask("default", ["clean", "build", "browserSync:dev", "watch"]);
+  grunt.registerTask("default", ["clean", "build", "webpack-dev-server:start", "watch"]);
 };

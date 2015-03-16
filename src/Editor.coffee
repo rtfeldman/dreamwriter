@@ -6,7 +6,7 @@
 #    new document (title, chapters, etc.) and passes them to a callback.
 # 2. Writes to the element when requested, optionally while disabling the 
 #    mutation observer to avoid spurious updates.
-Medium = require "./medium.js"
+Medium = require "medium.js"
 
 emDash = '—'
 
