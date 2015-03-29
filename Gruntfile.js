@@ -1,9 +1,15 @@
 var fs = require("fs"),
+    _  = require("lodash"),
     webpack = require("webpack"),
     webpackConfig = require("./webpack.config.js"),
     awsCredentialsFilename = "aws-credentials.json",
     awsCredentials = fs.existsSync(awsCredentialsFilename) ?
       JSON.parse(fs.readFileSync(awsCredentialsFilename))  : {};
+
+var devWebpackConfig = _.defaults({
+    debug: true,
+    devtool: "#eval-source-map"
+  }, webpackConfig);
 
 /*
   aws-credentials.json should look like this:
