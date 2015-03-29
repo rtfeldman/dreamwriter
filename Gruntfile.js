@@ -38,19 +38,6 @@ module.exports = function(grunt) {
       }
     },
 
-    uglify: {
-      prod: {
-        options: {
-          sourceMap: false
-        },
-        files: {
-          "dist/App.js": "dist/App.js",
-          "dist/vendor.js": "dist/vendor.js",
-          "dist/bootstrap-elm.js": "dist/bootstrap-elm.js"
-        },
-      }
-    },
-
     copy: {
       images: {
         expand: true,
@@ -207,7 +194,7 @@ module.exports = function(grunt) {
 
   require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 
-  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "webpack:build-prod", "htmlmin:prod", "copy", "uglify:prod", "cssmin:prod", "appcache:prod"]);
+  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "webpack:build-prod", "htmlmin:prod", "copy"]);
   grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "webpack:build-dev",  "htmlmin:dev",  "copy",                               "appcache:dev"]);
 
   grunt.registerTask("build",  ["build:dev"]);
