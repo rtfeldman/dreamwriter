@@ -28,33 +28,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     clean: ["dist"],
 
-    watch: {
-      elm: {
-        files: ["Component/**/*.elm", "Dreamwriter/**/*.elm", "*.elm", "**/*.coffee", "**/*.mustache"],
-        tasks: ["webpack:build-dev"]
-      },
-      stylus: {
-        files: ["src/stylesheets/**/*.styl"],
-        tasks: ["stylus:dev", "autoprefixer:dev"]
-      },
-      html: {
-        files: ["src/index.html"],
-        tasks: ["htmlmin"]
-      },
-      images: {
-        files: ["src/images/*.*"],
-        tasks: ["copy:images"]
-      },
-      fonts: {
-        files: ["src/fonts/*.*"],
-        tasks: ["copy:fonts"]
-      },
-      bower: {
-        files: ["bower.json"],
-        tasks: ["browserifyBower"]
-      }
-    },
-
     connect: {
       prod: {
         options: {
@@ -241,5 +214,5 @@ module.exports = function(grunt) {
   grunt.registerTask("prod",   ["build:prod", "connect:prod"]);
   grunt.registerTask("deploy", ["clean", "build:prod", "s3"]);
 
-  grunt.registerTask("default", ["clean", "build", "webpack-dev-server:start", "watch"]);
+  grunt.registerTask("default", ["clean", "build", "webpack-dev-server:start"]);
 };
