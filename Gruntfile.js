@@ -222,21 +222,6 @@ module.exports = function(grunt) {
       }
     },
 
-    browserSync: {
-      dev: {
-        bsFiles: {
-          src : 'dist/**/*'
-        },
-        options: {
-          watchTask: true,
-          port: 8000,
-          server: {
-            baseDir: "dist"
-          }
-        }
-      }
-    },
-
     s3: {
       options: awsCredentials,
 
