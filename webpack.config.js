@@ -34,7 +34,15 @@ module.exports = {
       { test: /\.woff$/,   loader: "url-loader?prefix=fonts/&limit=5000&mimetype=application/font-woff" },
 
       { test: /\.ico$/,    loader: "url-loader?prefix=images/&limit=5000&mimetype=application/font-woff" },
-      { test: /\.png$/,    loader: "url-loader?prefix=images/" },
+
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loaders: [
+            'file?hash=sha512&digest=hex&name=[hash].[ext]',
+            'image?bypassOnDebug&optimizationLevel=7&interlaced=false'
+        ]
+      },
+
       { test: /\.html$/,   loader: "url-loader" }
     ]
   },

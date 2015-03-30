@@ -39,18 +39,6 @@ module.exports = function(grunt) {
     },
 
     copy: {
-      images: {
-        expand: true,
-        cwd: "src",
-        src: "images/**",
-        dest: "dist/"
-      },
-      fonts: {
-        expand: true,
-        cwd: "src",
-        src: "fonts/**",
-        dest: "dist/"
-      },
       cache: {
         expand: true,
         cwd: "dist",
@@ -194,8 +182,8 @@ module.exports = function(grunt) {
 
   require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
 
-  grunt.registerTask("build:prod", ["stylus:prod", "autoprefixer:prod", "webpack:build-prod", "htmlmin:prod", "copy"]);
-  grunt.registerTask("build:dev",  ["stylus:dev",  "autoprefixer:dev",  "webpack:build-dev",  "htmlmin:dev",  "copy",                               "appcache:dev"]);
+  grunt.registerTask("build:prod", ["webpack:build-prod"]);
+  grunt.registerTask("build:dev",  ["webpack:build-dev"]);
 
   grunt.registerTask("build",  ["build:dev"]);
   grunt.registerTask("prod",   ["build:prod", "connect:prod"]);
