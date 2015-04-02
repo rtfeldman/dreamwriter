@@ -61,7 +61,7 @@ transition update model =
 
     SetRightSidebar childModel -> { model |
       rightSidebar <- childModel,
-      currentNote  <- model.currentNote
+      currentNote  <- childModel.currentNote
     }
 
     SetEditor       childModel -> { model | editor       <- childModel }
