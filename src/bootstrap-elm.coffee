@@ -224,6 +224,12 @@ getChapterHeadingElem = (id) ->
 getChapterBodyElem = (id) ->
   document.getElementById "edit-chapter-body-#{id}"
 
+getNoteTitleElem = ->
+  document.getElementById "current-note-title"
+
+getNoteBodyElem = ->
+  document.getElementById "current-note-body"
+
 deleteChapter = (chapter) ->
   # TODO focus on the END of the previous sibling, once I've figured out
   # how to do that reliably (e.g. when the user presses the up arrow...)
@@ -231,6 +237,10 @@ deleteChapter = (chapter) ->
 
   sync.deleteChapter(chapter).done (newChapters) ->
     app.ports.setChapters.send newChapters
+
+getDestructiveMutations = (mutationList) ->
+  mutationList.filter ({type}) ->
+    type not in ["childList", "attributes"]
 
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
@@ -260,15 +270,30 @@ app.ports.newNote.subscribe ->
   sync.saveNoteWithSnapshot(newNote, html).done (note) ->
     app.ports.setCurrentNote.send note
 
-    setUpEditor (-> document.getElementById("current-note-title")), note.title, false, (mutations, node) ->
-      title = node.textContent
+    setUpEditor getNoteTitleElem, note.title, false, (mutations, node) ->
+      if (getDestructiveMutations(mutations).length > 0)
+        note = {
+          id:               note.id
+          title:            node.textContent
+          snapshotId:       note.snapshotId
+          creationTime:     note.creationTime
+          lastModifiedTime: new Date().getTime()
+        }
 
-      console.debug "update note title:", title
+        notes.save(note, getNoteBodyElem().innerHTML).done (savedNote) ->
+          app.ports.setCurrentNote.send note
 
-    setUpEditor (-> document.getElementById("current-note-body")), html, true, (mutations, node) ->
-      body = node.innerHTML
+    setUpEditor getNoteBodyElem, html, true, (mutations, node) ->
+      if (getDestructiveMutations(mutations).length > 0)
+        note = {
+          id:               note.id
+          title:            note.title
+          creationTime:     note.creationTime
+          lastModifiedTime: new Date().getTime()
+        }
 
-      console.debug "update note body:", body
+        notes.save(note, node.innerHTML).done (savedNote) ->
+          app.ports.setCurrentNote.send note
 
 app.ports.execCommand.subscribe (command) ->
   document.execCommand command, false, null
