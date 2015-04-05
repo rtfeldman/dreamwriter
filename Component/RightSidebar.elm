@@ -77,7 +77,7 @@ viewCurrentNoteBody : Note -> Html
 viewCurrentNoteBody note =
   div [key ("current-note-" ++ note.id), id "current-note"] [
     div [id "current-note-title-container"] [
-      div [id "current-note-title"] [text note.title]
+      div [id "current-note-title"] []
     ],
     div [id "current-note-body"] []
   ]
