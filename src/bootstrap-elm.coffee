@@ -362,7 +362,8 @@ app.ports.fullscreen.subscribe (desiredMode) ->
 DreamSync.connect().done (instance) ->
   sync = instance
 
-  notes = new DreamNotes sync
+  sync.getNotesIndex().done (serializedIndex) ->
+    notes = new DreamNotes sync, serializedIndex
 
   # Initialize the app based on the stored currentDocId
   sync.getCurrentDocId().done (id) ->
