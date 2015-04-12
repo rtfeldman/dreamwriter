@@ -264,7 +264,10 @@ app.ports.navigateToTitle.subscribe ->
   document.getElementById("editor-frame").scrollTop = 0
 
 app.ports.openNoteId.subscribe (noteId) ->
-  sync.getNote(noteId).done setUpNoteEditors
+  sync.getNote(noteId).done (note) ->
+    sync.getSnapshot(note.snapshotId).done (snapshot) ->
+      app.ports.setCurrentNote.send note
+      setUpNoteEditors note, snapshot.html
 
 app.ports.newNote.subscribe ->
   newNote = {title: "Brilliant Note"}
@@ -272,9 +275,9 @@ app.ports.newNote.subscribe ->
 
   sync.saveNoteWithSnapshot(newNote, html).done (note) ->
     app.ports.setCurrentNote.send note
-    setUpNoteEditors note
+    setUpNoteEditors note, html
 
-setUpNoteEditors = (note) ->
+setUpNoteEditors = (note, html) ->
   setUpEditor getNoteTitleElem, note.title, false, (mutations, node) ->
     if (getDestructiveMutations(mutations).length > 0)
       note = {
