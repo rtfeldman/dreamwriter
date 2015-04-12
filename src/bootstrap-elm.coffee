@@ -263,37 +263,42 @@ app.ports.navigateToChapterId.subscribe scrollToChapterId
 app.ports.navigateToTitle.subscribe ->
   document.getElementById("editor-frame").scrollTop = 0
 
+app.ports.openNoteId.subscribe (noteId) ->
+  sync.getNote(noteId).done setUpNoteEditors
+
 app.ports.newNote.subscribe ->
   newNote = {title: "Brilliant Note"}
   html = "<p><br/></p>"
 
   sync.saveNoteWithSnapshot(newNote, html).done (note) ->
     app.ports.setCurrentNote.send note
+    setUpNoteEditors note
 
-    setUpEditor getNoteTitleElem, note.title, false, (mutations, node) ->
-      if (getDestructiveMutations(mutations).length > 0)
-        note = {
-          id:               note.id
-          title:            node.textContent
-          snapshotId:       note.snapshotId
-          creationTime:     note.creationTime
-          lastModifiedTime: new Date().getTime()
-        }
+setUpNoteEditors = (note) ->
+  setUpEditor getNoteTitleElem, note.title, false, (mutations, node) ->
+    if (getDestructiveMutations(mutations).length > 0)
+      note = {
+        id:               note.id
+        title:            node.textContent
+        snapshotId:       note.snapshotId
+        creationTime:     note.creationTime
+        lastModifiedTime: new Date().getTime()
+      }
 
-        notes.save(note, getNoteBodyElem().innerHTML).done (savedNote) ->
-          app.ports.setCurrentNote.send note
+      notes.save(note, getNoteBodyElem().innerHTML).done (savedNote) ->
+        app.ports.setCurrentNote.send note
 
-    setUpEditor getNoteBodyElem, html, true, (mutations, node) ->
-      if (getDestructiveMutations(mutations).length > 0)
-        note = {
-          id:               note.id
-          title:            note.title
-          creationTime:     note.creationTime
-          lastModifiedTime: new Date().getTime()
-        }
+  setUpEditor getNoteBodyElem, html, true, (mutations, node) ->
+    if (getDestructiveMutations(mutations).length > 0)
+      note = {
+        id:               note.id
+        title:            note.title
+        creationTime:     note.creationTime
+        lastModifiedTime: new Date().getTime()
+      }
 
-        notes.save(note, node.innerHTML).done (savedNote) ->
-          app.ports.setCurrentNote.send note
+      notes.save(note, node.innerHTML).done (savedNote) ->
+        app.ports.setCurrentNote.send note
 
 app.ports.execCommand.subscribe (command) ->
   document.execCommand command, false, null

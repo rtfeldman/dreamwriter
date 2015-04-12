@@ -13,7 +13,7 @@ import List (..)
 type alias Channels a = { a |
   newNote     : LocalChannel (),
   searchNotes : LocalChannel (),
-  update      : LocalChannel Update
+  openNoteId  : LocalChannel Identifier
 }
 
 type alias Model = {
@@ -27,21 +27,11 @@ initialModel = {
     notes       = []
   }
 
-type Update
-  = NoChange
-  | SetCurrentNote (Maybe Note)
-
-transition : Update -> Model -> Model
-transition update model =
-  case update of
-    NoChange -> model
-    SetCurrentNote note -> { model | currentNote <- note }
-
 view : Channels a -> Model -> Html
 view channels model =
   let {sidebarBody, sidebarFooter} = case model.currentNote of
     Nothing ->
-      { sidebarBody   = lazy2 viewNoteListings channels.update model.notes
+      { sidebarBody   = lazy2 viewNoteListings channels.openNoteId model.notes
       , sidebarFooter = span [] []
       }
     Just currentNote ->
@@ -62,13 +52,13 @@ view channels model =
       sidebarFooter
     ]
 
-viewNoteListings updateChannel notes =
-  div [id "note-listings"] <| map (viewNoteListing updateChannel) notes
+viewNoteListings openNoteIdChannel notes =
+  div [id "note-listings"] <| map (viewNoteListing openNoteIdChannel) notes
 
-viewNoteListing : LocalChannel Update -> Note -> Html
-viewNoteListing updateChannel note =
+viewNoteListing : LocalChannel Identifier -> Note -> Html
+viewNoteListing openNoteIdChannel note =
   div [key ("note-" ++ note.id), class "note-listing",
-    onClick <| send updateChannel (SetCurrentNote (Just note))] [
+    onClick <| send openNoteIdChannel note.id] [
       div [class "flaticon-document127 note-listing-icon"] [],
       div [class "note-listing-title"] [text note.title]
     ]

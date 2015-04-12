@@ -35,6 +35,7 @@ type Update
   | LoadAsCurrentDoc Doc
   | OpenDocId Identifier
   | ListDocs (List Doc)
+  | OpenNoteId Identifier
   | ListNotes (List Note)
   | SetCurrentNote (Maybe Note)
   | SetChapters (List Chapter)
@@ -255,6 +256,9 @@ port navigateToTitle = Signal.subscribe Channel.navigateToTitle
 
 port newNote : Signal ()
 port newNote = Signal.subscribe Channel.newNote
+
+port openNoteId : Signal ()
+port openNoteId = Signal.subscribe Channel.newNote
 
 port newChapter : Signal ()
 port newChapter = Signal.subscribe Channel.newChapter
