@@ -74,17 +74,18 @@ viewCurrentNoteBody note =
 
 viewCurrentNoteFooter : Channels a -> Note -> Html
 viewCurrentNoteFooter channels note =
-  div [id "current-note-controls", class "sidebar-footer"] [
-    span [id "download-current-note",
-      title "Download Note",
-      class "flaticon-cloud134 current-note-control"] [],
-    span [id "print-current-note",
-      title "Print Note",
-      class "flaticon-printer70 current-note-control"] [],
-    span [id "current-note-settings",
-      title "Note Settings",
-      class "flaticon-gear33 current-note-control"] [],
-    span [id "delete-current-note",
-      title "Delete Note",
-      class "flaticon-closed18 current-note-control"] []
-  ]
+  div [id "current-note-controls", class "sidebar-footer"] []
+  --div [id "current-note-controls", class "sidebar-footer"] [
+  --  span [id "download-current-note",
+  --    title "Download Note",
+  --    class "flaticon-cloud134 current-note-control"] [],
+  --  span [id "print-current-note",
+  --    title "Print Note",
+  --    class "flaticon-printer70 current-note-control"] [],
+  --  span [id "current-note-settings",
+  --    title "Note Settings",
+  --    class "flaticon-gear33 current-note-control"] [],
+  --  span [id "delete-current-note",
+  --    title "Delete Note",
+  --    class "flaticon-closed18 current-note-control"] []
+  --]
