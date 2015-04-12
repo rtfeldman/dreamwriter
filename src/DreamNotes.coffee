@@ -9,7 +9,7 @@ module.exports = class DreamNotes
   # index. Otherwise, creates a new one from scratch.
   constructor: (@sync, serializedIndex) ->
     @index = if serializedIndex?
-      lunr.Index.load serializedIndex
+      lunr.Index.load JSON.parse serializedIndex
     else
       lunr ->
         @ref   "id"
@@ -42,4 +42,5 @@ module.exports = class DreamNotes
 
   # Persist the serialized index to facilitate fast loading later.
   saveIndex: =>
-    @sync.saveNotesIndex @index.toJSON()
+    # NOTE: must use JSON.stringify over @index.toJSON because of https://github.com/olivernn/lunr.js/issues/52#issuecomment-26676503
+    @sync.saveNotesIndex JSON.stringify @index

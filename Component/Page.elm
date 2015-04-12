@@ -61,16 +61,15 @@ transition update model =
 
     SetRightSidebar childModel -> { model |
       rightSidebar <- childModel,
-      currentNote  <- model.currentNote
+      currentNote  <- childModel.currentNote
     }
 
     SetEditor       childModel -> { model | editor       <- childModel }
 
 view channels model =
   let updateLeftSidebar    = localize (generalizeLeftSidebarUpdate model)  channels.update
-      updateRightSidebar   = localize (generalizeRightSidebarUpdate model) channels.update
       leftSidebarChannels  = { channels | update <- updateLeftSidebar  }
-      rightSidebarChannels = { channels | update <- updateRightSidebar }
+      rightSidebarChannels = channels
       editorChannels       = channels
   in div [id "page"] <|
     case model.currentDoc of
@@ -105,7 +104,3 @@ modelRightSidebar model = {
 generalizeLeftSidebarUpdate : Model -> LeftSidebar.Update -> Update
 generalizeLeftSidebarUpdate model leftSidebarUpdate =
   SetLeftSidebar (LeftSidebar.transition leftSidebarUpdate model.leftSidebar)
-
-generalizeRightSidebarUpdate : Model -> RightSidebar.Update -> Update
-generalizeRightSidebarUpdate model rightSidebarUpdate =
-  SetRightSidebar (RightSidebar.transition rightSidebarUpdate model.rightSidebar)

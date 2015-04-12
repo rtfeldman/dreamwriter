@@ -224,6 +224,12 @@ getChapterHeadingElem = (id) ->
 getChapterBodyElem = (id) ->
   document.getElementById "edit-chapter-body-#{id}"
 
+getNoteTitleElem = ->
+  document.getElementById "current-note-title"
+
+getNoteBodyElem = ->
+  document.getElementById "current-note-body"
+
 deleteChapter = (chapter) ->
   # TODO focus on the END of the previous sibling, once I've figured out
   # how to do that reliably (e.g. when the user presses the up arrow...)
@@ -231,6 +237,10 @@ deleteChapter = (chapter) ->
 
   sync.deleteChapter(chapter).done (newChapters) ->
     app.ports.setChapters.send newChapters
+
+getDestructiveMutations = (mutationList) ->
+  mutationList.filter ({type}) ->
+    type not in ["childList", "attributes"]
 
 app.ports.setCurrentDocId.subscribe (newDocId) ->
   if newDocId?
@@ -253,22 +263,56 @@ app.ports.navigateToChapterId.subscribe scrollToChapterId
 app.ports.navigateToTitle.subscribe ->
   document.getElementById("editor-frame").scrollTop = 0
 
+app.ports.openNoteId.subscribe (noteId) ->
+  sync.getNote(noteId).done (note) ->
+    sync.getSnapshot(note.snapshotId).done (snapshot) ->
+      app.ports.setCurrentNote.send note
+      setUpNoteEditors note, snapshot.html
+
 app.ports.newNote.subscribe ->
   newNote = {title: "Brilliant Note"}
   html = "<p><br/></p>"
 
   sync.saveNoteWithSnapshot(newNote, html).done (note) ->
     app.ports.setCurrentNote.send note
+    setUpNoteEditors(note, html).done ->
+      document.getElementById("current-note-title").focus()
+      document.execCommand "selectall"
 
-    setUpEditor (-> document.getElementById("current-note-title")), note.title, false, (mutations, node) ->
-      title = node.textContent
+setUpNoteEditors = (note, html) ->
+  titlePromise = new Promise (resolve, reject) ->
+    setUpEditor getNoteTitleElem, note.title, false, (mutations, node) ->
+      if (getDestructiveMutations(mutations).length > 0)
+        note = {
+          id:               note.id
+          title:            node.textContent
+          snapshotId:       note.snapshotId
+          creationTime:     note.creationTime
+          lastModifiedTime: new Date().getTime()
+        }
 
-      console.debug "update note title:", title
+        notes.save(note, getNoteBodyElem().innerHTML).done (savedNote) ->
+          app.ports.setCurrentNote.send note
 
-    setUpEditor (-> document.getElementById("current-note-body")), html, true, (mutations, node) ->
-      body = node.innerHTML
+      resolve()
 
-      console.debug "update note body:", body
+  bodyPromise = new Promise (resolve, reject) ->
+    setUpEditor getNoteBodyElem, html, true, (mutations, node) ->
+      if (getDestructiveMutations(mutations).length > 0)
+        note = {
+          id:               note.id
+          title:            note.title
+          creationTime:     note.creationTime
+          lastModifiedTime: new Date().getTime()
+        }
+
+        notes.save(note, node.innerHTML).done (savedNote) ->
+          app.ports.setCurrentNote.send note
+
+      resolve()
+
+  Promise.all [titlePromise, bodyPromise]
+
 
 app.ports.execCommand.subscribe (command) ->
   document.execCommand command, false, null
@@ -318,28 +362,8 @@ app.ports.fullscreen.subscribe (desiredMode) ->
 DreamSync.connect().done (instance) ->
   sync = instance
 
-  notes = new DreamNotes sync
-
-  [{
-    title: 'One-liners from The Matrix',
-    body: 'If music be the food of love, play on'
-  }, {
-    title: 'Note to self',
-    body: 'useful note'
-  }, {
-    title: 'Another note',
-    body: 'also useful'
-  }, {
-    title: 'A note again',
-    body: 'pretty cool'
-  }, {
-    title: 'How come Neo gets to be The One?',
-    body: 'pretty cool'
-  }, {
-    title: 'Thoughts on green code rain',
-    body: 'One two three!'
-  }].forEach ({title, body}) ->
-    notes.save {title}, body
+  sync.getNotesIndex().done (serializedIndex) ->
+    notes = new DreamNotes sync, serializedIndex
 
   # Initialize the app based on the stored currentDocId
   sync.getCurrentDocId().done (id) ->

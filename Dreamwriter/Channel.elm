@@ -8,6 +8,7 @@ import Signal
 
 type alias Locals = {
   newNote             : LocalChannel (),
+  openNoteId          : LocalChannel Identifier,
   searchNotes         : LocalChannel (),
   fullscreen          : LocalChannel FullscreenState,
   execCommand         : LocalChannel String,
@@ -26,6 +27,7 @@ locals = {
     execCommand         = LC.create identity execCommand,
     remoteSync          = LC.create identity remoteSync,
     newNote             = LC.create identity newNote,
+    openNoteId          = LC.create identity openNoteId,
     searchNotes         = LC.create identity searchNotes,
     print               = LC.create identity print,
     newDoc              = LC.create identity newDoc,
@@ -61,6 +63,9 @@ searchNotes = Signal.channel ()
 
 newNote : Signal.Channel ()
 newNote = Signal.channel ()
+
+openNoteId : Signal.Channel Identifier
+openNoteId = Signal.channel ""
 
 newChapter : Signal.Channel ()
 newChapter = Signal.channel ()
