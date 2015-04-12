@@ -42,4 +42,5 @@ module.exports = class DreamNotes
 
   # Persist the serialized index to facilitate fast loading later.
   saveIndex: =>
+    # NOTE: must use JSON.stringify over @index.toJSON because of https://github.com/olivernn/lunr.js/issues/52#issuecomment-26676503
     @sync.saveNotesIndex JSON.stringify @index
