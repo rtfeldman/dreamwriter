@@ -8,7 +8,7 @@ import Signal
 
 type alias Locals = {
   newNote             : LocalChannel (),
-  openNoteId          : LocalChannel (),
+  openNoteId          : LocalChannel Identifier,
   searchNotes         : LocalChannel (),
   fullscreen          : LocalChannel FullscreenState,
   execCommand         : LocalChannel String,
@@ -64,8 +64,8 @@ searchNotes = Signal.channel ()
 newNote : Signal.Channel ()
 newNote = Signal.channel ()
 
-openNoteId : Signal.Channel ()
-openNoteId = Signal.channel ()
+openNoteId : Signal.Channel Identifier
+openNoteId = Signal.channel ""
 
 newChapter : Signal.Channel ()
 newChapter = Signal.channel ()
