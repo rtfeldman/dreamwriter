@@ -364,27 +364,6 @@ DreamSync.connect().done (instance) ->
 
   notes = new DreamNotes sync
 
-  [{
-    title: 'One-liners from The Matrix',
-    body: 'If music be the food of love, play on'
-  }, {
-    title: 'Note to self',
-    body: 'useful note'
-  }, {
-    title: 'Another note',
-    body: 'also useful'
-  }, {
-    title: 'A note again',
-    body: 'pretty cool'
-  }, {
-    title: 'How come Neo gets to be The One?',
-    body: 'pretty cool'
-  }, {
-    title: 'Thoughts on green code rain',
-    body: 'One two three!'
-  }].forEach ({title, body}) ->
-    notes.save {title}, body
-
   # Initialize the app based on the stored currentDocId
   sync.getCurrentDocId().done (id) ->
     if id?
