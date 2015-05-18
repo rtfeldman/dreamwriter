@@ -207,11 +207,14 @@ modelPage state = {
     notes        = state.notes
   }
 
+actionMailbox = Signal.mailbox Page.NoAction
+
 scene : AppState -> (Int, Int) -> Element
 scene state (w, h) =
-  let pageUpdate = forwardTo updates.address (generalizePageUpdate state)
+  let actions    = actionMailbox.address
+      pageUpdate = forwardTo updates.address (generalizePageUpdate state)
       addresses  = Mailboxes.addresses
-      html       = Page.view { addresses | update = pageUpdate } (modelPage state)
+      html       = Page.view actions { addresses | update = pageUpdate } (modelPage state)
   in
     container w h midTop (toElement w h html)
 
@@ -232,35 +235,60 @@ port listDocs : Signal (List Doc)
 port listNotes : Signal (List Note)
 port putSnapshot : Signal Snapshot
 
-port setCurrentDocId : Signal (Maybe Identifier)
-port setCurrentDocId = Signal.map .currentDocId state
+portAction : a -> (Page.Action -> Maybe a) -> Signal a
+portAction defaultValue filterFunction =
+  Signal.filterMap filterFunction defaultValue actionMailbox.signal
 
 port newDoc : Signal ()
-port newDoc = signals.newDoc
+port newDoc = portAction () <| \action ->
+  case action of
+    Page.NewDoc -> Just ()
+    _           -> Nothing
 
 port openFromFile : Signal ()
-port openFromFile = signals.openFromFile
+port openFromFile = portAction () <| \action ->
+  case action of
+    Page.OpenFromFile -> Just ()
+    _                 -> Nothing
 
 port downloadDoc : Signal DownloadOptions
-port downloadDoc = signals.download
+port downloadDoc = portAction { filename = "", contentType = "" } <| \action ->
+  case action of
+    Page.Download options -> Just options
+    _                     -> Nothing
 
 port printDoc : Signal ()
-port printDoc = signals.print
+port printDoc = portAction () <| \action ->
+  case action of
+    Page.Print -> Just ()
+    _          -> Nothing
 
 port navigateToChapterId : Signal Identifier
-port navigateToChapterId = signals.navigateToChapterId
+port navigateToChapterId = portAction "" <| \action ->
+  case action of
+    Page.NavigateToChapterId id -> Just id
+    _                           -> Nothing
 
 port navigateToTitle : Signal ()
-port navigateToTitle = signals.navigateToTitle
+port navigateToTitle = portAction () <| \action ->
+  case action of
+    Page.NavigateToTitle -> Just ()
+    _                    -> Nothing
+
+port newChapter : Signal ()
+port newChapter = portAction () <| \action ->
+  case action of
+    Page.NewChapter -> Just ()
+    _               -> Nothing
+
+port setCurrentDocId : Signal (Maybe Identifier)
+port setCurrentDocId = Signal.map .currentDocId state
 
 port newNote : Signal ()
 port newNote = signals.newNote
 
 port openNoteId : Signal Identifier
 port openNoteId = signals.openNoteId
-
-port newChapter : Signal ()
-port newChapter = signals.newChapter
 
 port searchNotes : Signal ()
 port searchNotes = debounce 500 <| signals.searchNotes
