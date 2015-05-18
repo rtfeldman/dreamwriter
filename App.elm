@@ -1,7 +1,8 @@
 module App where
 
-import Dreamwriter (..)
-import Dreamwriter.Channel as Channel
+import Dreamwriter exposing (..)
+import Dreamwriter.Mailboxes exposing (signals, addresses)
+import Dreamwriter.Mailboxes as Mailboxes
 import Component.Page as Page
 
 import Component.LeftSidebar  as LeftSidebar
@@ -9,21 +10,19 @@ import Component.RightSidebar as RightSidebar
 import Component.Editor       as Editor
 
 import String
-import Graphics.Element (Element, container, midTop)
-import Html (..)
-import Html.Attributes (..)
-import Html.Events (..)
-import Html.Lazy (..)
+import Graphics.Element exposing (Element, container, midTop)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import Html.Lazy exposing (..)
 import Signal
-import Signal (Signal, sampleOn, dropRepeats, mergeMany, foldp)
-import Time (Time, since)
-import List (..)
+import Signal exposing (Signal, sampleOn, dropRepeats, mergeMany, foldp, forwardTo)
+import Time exposing (Time, since)
+import List exposing (..)
 import Maybe
 import Window
 import Dict
 import Set
-
-import LocalChannel as LC
 
 debounce : Time -> Signal a -> Signal a
 debounce wait signal = sampleOn (since wait signal |> dropRepeats) signal
@@ -47,8 +46,8 @@ type Update
   | SetPage Page.Model
 
 -- updates from user input
-updates : Signal.Channel Update
-updates = Signal.channel NoOp
+updates : Signal.Mailbox Update
+updates = Signal.mailbox NoOp
 
 type alias AppState = {
   page         : Page.Model,
@@ -186,7 +185,7 @@ userInput =
     Signal.map SetFullscreen    setFullscreen,
     Signal.map PutSnapshot      putSnapshot,
     Signal.map SetCurrentNote   setCurrentNote,
-    Signal.subscribe updates
+    updates.signal
   ]
 
 generalizePageUpdate : AppState -> Page.Update -> Update
@@ -210,9 +209,9 @@ modelPage state = {
 
 scene : AppState -> (Int, Int) -> Element
 scene state (w, h) =
-  let pageUpdate = LC.create (generalizePageUpdate state) updates
-      locals     = Channel.locals
-      html       = Page.view { locals | update = pageUpdate } (modelPage state)
+  let pageUpdate = forwardTo updates.address (generalizePageUpdate state)
+      addresses  = Mailboxes.addresses
+      html       = Page.view { addresses | update = pageUpdate } (modelPage state)
   in
     container w h midTop (toElement w h html)
 
@@ -237,40 +236,40 @@ port setCurrentDocId : Signal (Maybe Identifier)
 port setCurrentDocId = Signal.map .currentDocId state
 
 port newDoc : Signal ()
-port newDoc = Signal.subscribe Channel.newDoc
+port newDoc = signals.newDoc
 
 port openFromFile : Signal ()
-port openFromFile = Signal.subscribe Channel.openFromFile
+port openFromFile = signals.openFromFile
 
 port downloadDoc : Signal DownloadOptions
-port downloadDoc = Signal.subscribe Channel.download
+port downloadDoc = signals.download
 
 port printDoc : Signal ()
-port printDoc = Signal.subscribe Channel.print
+port printDoc = signals.print
 
 port navigateToChapterId : Signal Identifier
-port navigateToChapterId = Signal.subscribe Channel.navigateToChapterId
+port navigateToChapterId = signals.navigateToChapterId
 
 port navigateToTitle : Signal ()
-port navigateToTitle = Signal.subscribe Channel.navigateToTitle
+port navigateToTitle = signals.navigateToTitle
 
 port newNote : Signal ()
-port newNote = Signal.subscribe Channel.newNote
+port newNote = signals.newNote
 
 port openNoteId : Signal Identifier
-port openNoteId = Signal.subscribe Channel.openNoteId
+port openNoteId = signals.openNoteId
 
 port newChapter : Signal ()
-port newChapter = Signal.subscribe Channel.newChapter
+port newChapter = signals.newChapter
 
 port searchNotes : Signal ()
-port searchNotes = debounce 500 <| Signal.subscribe Channel.searchNotes
+port searchNotes = debounce 500 <| signals.searchNotes
 
 port fullscreen : Signal Bool
-port fullscreen = Signal.subscribe Channel.fullscreen
+port fullscreen = signals.fullscreen
 
 port execCommand : Signal String
-port execCommand = Signal.subscribe Channel.execCommand
+port execCommand = signals.execCommand
 
 port remoteSync : Signal ()
-port remoteSync = Signal.subscribe Channel.remoteSync
+port remoteSync = signals.remoteSync

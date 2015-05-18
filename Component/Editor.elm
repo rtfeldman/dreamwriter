@@ -1,21 +1,21 @@
 module Component.Editor where
 
-import Dreamwriter (..)
+import Dreamwriter exposing (..)
 
 import String
-import Html (..)
-import Html.Attributes (..)
-import Html.Lazy (..)
-import Html.Events (..)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Lazy exposing (..)
+import Html.Events exposing (..)
 import Maybe
-import List (..)
-import LocalChannel (send, LocalChannel)
-import Json.Encode (string)
+import List exposing (..)
+import Signal exposing (Address, mailbox)
+import Json.Encode exposing (string)
 
-type alias Channels a = { a |
-  fullscreen  : LocalChannel FullscreenState,
-  remoteSync  : LocalChannel (),
-  execCommand : LocalChannel String
+type alias Addresses a = { a |
+  fullscreen  : Address FullscreenState,
+  remoteSync  : Address (),
+  execCommand : Address String
 }
 
 type alias Model = {
@@ -29,11 +29,11 @@ initialModel = {
     fullscreen = False
   }
 
-view : Channels a -> Model -> Html
+view : Addresses a -> Model -> Html
 view channels model =
   lazy3 viewEditor channels model.currentDoc model.fullscreen
 
-viewEditor : Channels a -> Doc -> FullscreenState -> Html
+viewEditor : Addresses a -> Doc -> FullscreenState -> Html
 viewEditor channels currentDoc fullscreen =
   div [id "editor-container"] [
     div [id "editor-frame"] [
@@ -61,7 +61,7 @@ viewEditor channels currentDoc fullscreen =
           input [
             id "toggle-dropbox-sync",
             property "type" (string "checkbox"),
-            onClick <| send channels.remoteSync ()
+            onClick channels.remoteSync ()
           ] [],
           label [for "toggle-dropbox-sync"] [
             text " sync to Dropbox"
@@ -87,7 +87,7 @@ pluralize noun quantity =
     then "1 " ++ noun
     else (withCommas quantity) ++ " " ++ noun ++ "s"
 
-viewFullscreenButton : LocalChannel FullscreenState -> FullscreenState -> Html
+viewFullscreenButton : Address FullscreenState -> FullscreenState -> Html
 viewFullscreenButton fullscreenChannel fullscreen =
   let {fullscreenClass, targetMode, fullscreenTitle} = case fullscreen of
     True ->
@@ -103,7 +103,7 @@ viewFullscreenButton fullscreenChannel fullscreen =
   in
     div [class ("toolbar-section toolbar-button " ++ fullscreenClass),
       title fullscreenTitle,
-      onClick <| send fullscreenChannel targetMode
+      onClick fullscreenChannel targetMode
     ] []
 
 lazyViewChapter : Identifier -> List Html
@@ -124,8 +124,8 @@ viewChapterHeading chapterId =
     id ("edit-chapter-heading-" ++ chapterId),
     class "chapter-heading"] []
 
-viewFontControl : LocalChannel String -> String -> String -> String -> Html
+viewFontControl : Address String -> String -> String -> String -> Html
 viewFontControl execCommandChannel idAttr label command =
   span [class "font-control toolbar-button toolbar-font-button", id idAttr,
     (property "unselectable" (string "on")),
-    onClick <| send execCommandChannel command] [text label]
+    onClick execCommandChannel command] [text label]
