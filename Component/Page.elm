@@ -1,16 +1,16 @@
 module Component.Page where
 
-import Dreamwriter (..)
+import Dreamwriter exposing (..)
 
 import Component.LeftSidebar  as LeftSidebar
 import Component.RightSidebar as RightSidebar
 import Component.Editor       as Editor
 
 import String
-import Html (..)
-import Html.Attributes (..)
-import Html.Events (..)
-import LocalChannel (LocalChannel, localize)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import LocalChannel exposing (LocalChannel, localize)
 
 type Update
   = NoOp

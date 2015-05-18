@@ -1,14 +1,14 @@
 module Component.RightSidebar where
 
-import Dreamwriter (..)
+import Dreamwriter exposing (..)
 
-import Html (..)
-import Html.Attributes (..)
-import Html.Events (..)
-import Html.Lazy (..)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import Html.Lazy exposing (..)
 import Maybe
-import LocalChannel (send, LocalChannel)
-import List (..)
+import LocalChannel exposing (send, LocalChannel)
+import List exposing (..)
 
 type alias Channels a = { a |
   newNote     : LocalChannel (),

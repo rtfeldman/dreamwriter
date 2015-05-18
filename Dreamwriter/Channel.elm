@@ -1,8 +1,8 @@
 module Dreamwriter.Channel where
 
-import Dreamwriter (..)
+import Dreamwriter exposing (..)
 
-import LocalChannel (LocalChannel)
+import LocalChannel exposing (LocalChannel)
 import LocalChannel as LC
 import Signal
 

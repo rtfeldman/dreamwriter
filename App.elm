@@ -1,6 +1,6 @@
 module App where
 
-import Dreamwriter (..)
+import Dreamwriter exposing (..)
 import Dreamwriter.Channel as Channel
 import Component.Page as Page
 
@@ -9,15 +9,15 @@ import Component.RightSidebar as RightSidebar
 import Component.Editor       as Editor
 
 import String
-import Graphics.Element (Element, container, midTop)
-import Html (..)
-import Html.Attributes (..)
-import Html.Events (..)
-import Html.Lazy (..)
+import Graphics.Element exposing (Element, container, midTop)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import Html.Lazy exposing (..)
 import Signal
-import Signal (Signal, sampleOn, dropRepeats, mergeMany, foldp)
-import Time (Time, since)
-import List (..)
+import Signal exposing (Signal, sampleOn, dropRepeats, mergeMany, foldp)
+import Time exposing (Time, since)
+import List exposing (..)
 import Maybe
 import Window
 import Dict

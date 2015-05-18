@@ -1,17 +1,17 @@
 module Component.LeftSidebar where
 
-import Dreamwriter (..)
+import Dreamwriter exposing exposing (..)
 
 import Component.LeftSidebar.OpenMenuView as OpenMenu
 import Component.LeftSidebar.CurrentDocView as CurrentDoc
 
-import Html (..)
-import Html.Attributes (..)
-import Html.Events (..)
-import Html.Lazy (..)
+import Html exposing exposing (..)
+import Html.Attributes exposing exposing (..)
+import Html.Events exposing exposing (..)
+import Html.Lazy exposing exposing (..)
 import Maybe
-import Regex (..)
-import LocalChannel (send, LocalChannel)
+import Regex exposing exposing (..)
+import LocalChannel exposing (send, LocalChannel)
 
 type ViewMode = CurrentDocMode | OpenMenuMode | SettingsMode
 

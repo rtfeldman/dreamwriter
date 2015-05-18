@@ -1,13 +1,13 @@
 module Component.LeftSidebar.CurrentDocView (view) where
 
-import Dreamwriter (..)
+import Dreamwriter exposing (..)
 
-import Html (..)
-import Html.Attributes (..)
-import Html.Events (..)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
-import List (..)
-import LocalChannel (LocalChannel, send)
+import List exposing (..)
+import LocalChannel exposing (LocalChannel, send)
 
 view : LocalChannel () -> LocalChannel Identifier -> Doc -> Html
 view navigateToTitleChannel navigateToChapterIdChannel currentDoc =

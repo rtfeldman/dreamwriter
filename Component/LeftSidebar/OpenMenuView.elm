@@ -1,13 +1,13 @@
 module Component.LeftSidebar.OpenMenuView (view) where
 
-import Dreamwriter (..)
+import Dreamwriter exposing (..)
 
-import Html (..)
-import Html.Attributes (..)
-import Html.Events (..)
-import LocalChannel (LocalChannel, send)
-import List (..)
-import Signal (Message)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import LocalChannel exposing (LocalChannel, send)
+import List exposing (..)
+import Signal exposing (Message)
 
 view : LocalChannel () -> (Identifier -> Message) -> List Doc -> Doc -> Html
 view openFromFileChannel openDoc docs currentDoc =

@@ -1,6 +1,6 @@
 module Dreamwriter where
 
-import LocalChannel (LocalChannel)
+import LocalChannel exposing (LocalChannel)
 import LocalChannel as LC
 
 -- TODO make this a proper ADT once outbound ports can accept them

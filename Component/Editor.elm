@@ -1,16 +1,16 @@
 module Component.Editor where
 
-import Dreamwriter (..)
+import Dreamwriter exposing (..)
 
 import String
-import Html (..)
-import Html.Attributes (..)
-import Html.Lazy (..)
-import Html.Events (..)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Lazy exposing (..)
+import Html.Events exposing (..)
 import Maybe
-import List (..)
-import LocalChannel (send, LocalChannel)
-import Json.Encode (string)
+import List exposing (..)
+import LocalChannel exposing (send, LocalChannel)
+import Json.Encode exposing (string)
 
 type alias Channels a = { a |
   fullscreen  : LocalChannel FullscreenState,
