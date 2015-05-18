@@ -6,7 +6,6 @@ dbjs       = require "db.js"
 sha1       = require "sha1"
 dbOptions  = require "./idb-options.json"
 countWords = require "./WordCount.coffee"
-Dropbox    = require "./dropbox.js"
 
 module.exports = class DreamSync
   constructor: (@db) ->

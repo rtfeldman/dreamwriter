@@ -111,7 +111,7 @@ setUpChapter = (chapter) ->
   Promise.all [editorHeadingPromise, editorBodyPromise]
 
 app.ports.remoteSync.subscribe ->
-  alert "Coming soon!"
+  alert "Unfortunately Dropbox has decided to deprecate their Sync API. Work on an alternative syncing method for Dreamwriter is underway!"
 
 app.ports.newChapter.subscribe ->
   sync.getCurrentDoc().done (doc) ->

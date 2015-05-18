@@ -7,7 +7,10 @@ dropboxApiKey = 'x1aqcubgani7y5s'
 module.exports = class DreamBox
   @auth: ->
     new Promise (resolve, reject) ->
-      client = new Dropbox.Client key: dropboxApiKey
+      # TODO Dropbox deprecated the API we were using. :(
+      # client = new Dropbox.Client key: dropboxApiKey
+
+      reject "The Dropbox Sync API has been deprecated. :("
 
       client.authenticate (error, client) ->
         if error
