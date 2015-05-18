@@ -11,7 +11,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
-import Signal exposing (forwardTo)
+import Signal exposing (Address)
 
 type Update
   = NoOp
@@ -67,9 +67,35 @@ transition update model =
 
     SetEditor       childModel -> { model | editor       <- childModel }
 
-view addresses model =
-  let updateLeftSidebar    = forwardTo addresses.update (generalizeLeftSidebarUpdate model)
-      leftSidebarChannels  = { addresses | update <- updateLeftSidebar  }
+type Action
+  = NoAction
+  | NewDoc
+  | OpenFromFile
+  | NavigateToTitle
+  | NavigateToChapterId Identifier
+  | Download DownloadOptions
+  | NewChapter
+  | Print
+  | UpdateModel Update
+
+fromLeftSidebarAction : Model -> LeftSidebar.Action -> Action
+fromLeftSidebarAction model action =
+  case action of
+    LeftSidebar.NoAction -> NoAction
+    LeftSidebar.NewDoc -> NewDoc
+    LeftSidebar.OpenFromFile -> OpenFromFile
+    LeftSidebar.NavigateToTitle -> NavigateToTitle
+    LeftSidebar.NavigateToChapterId id -> NavigateToChapterId id
+    LeftSidebar.Download options -> Download options
+    LeftSidebar.NewChapter -> NewChapter
+    LeftSidebar.Print -> Print
+    LeftSidebar.UpdateModel update ->
+      UpdateModel <| SetLeftSidebar <| LeftSidebar.transition update model.leftSidebar
+
+view actions addresses model =
+  let leftSidebarActions   : Address LeftSidebar.Action
+      leftSidebarActions   = Signal.forwardTo actions (fromLeftSidebarAction model)
+
       rightSidebarChannels = addresses
       editorChannels       = addresses
   in div [id "page"] <|
@@ -77,7 +103,7 @@ view addresses model =
       Nothing -> []
       Just currentDoc ->
         [
-          LeftSidebar.view  leftSidebarChannels  (modelLeftSidebar currentDoc model),
+          LeftSidebar.view  leftSidebarActions   (modelLeftSidebar currentDoc model),
           Editor.view       editorChannels       (modelEditor currentDoc model),
           RightSidebar.view rightSidebarChannels (modelRightSidebar model)
         ]
@@ -101,7 +127,3 @@ modelRightSidebar model = {
     currentNote = model.currentNote,
     notes       = model.notes
   }
-
-generalizeLeftSidebarUpdate : Model -> LeftSidebar.Update -> Update
-generalizeLeftSidebarUpdate model leftSidebarUpdate =
-  SetLeftSidebar (LeftSidebar.transition leftSidebarUpdate model.leftSidebar)

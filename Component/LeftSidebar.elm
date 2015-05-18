@@ -11,20 +11,20 @@ import Html.Events exposing (..)
 import Html.Lazy exposing (..)
 import Maybe
 import Regex exposing (..)
-import Signal exposing (Address, forwardTo)
+import Signal exposing (Address)
 
 type ViewMode = CurrentDocMode | OpenMenuMode | SettingsMode
 
-type alias Addresses a = { a |
-  print               : Address (),
-  newDoc              : Address (),
-  newChapter          : Address (),
-  openFromFile        : Address (),
-  navigateToTitle     : Address (),
-  navigateToChapterId : Address Identifier,
-  download            : Address DownloadOptions,
-  update              : Address Update
-}
+type Action
+  = NoAction
+  | NewDoc
+  | OpenFromFile
+  | NavigateToTitle
+  | NavigateToChapterId Identifier
+  | Download DownloadOptions
+  | NewChapter
+  | Print
+  | UpdateModel ModelUpdate
 
 type alias Model = {
   viewMode     : ViewMode,
@@ -41,12 +41,18 @@ initialModel = {
     currentDoc   = emptyDoc
   }
 
-type Update
+type ModelUpdate
   = NoOp
   | SetViewMode ViewMode
   | OpenDocId Identifier
 
-transition : Update -> Model -> Model
+applyAction : Action -> Model -> Model
+applyAction action model =
+  case action of
+    UpdateModel update -> transition update model
+    _                  -> model
+
+transition : ModelUpdate -> Model -> Model
 transition update model =
   case update of
     NoOp -> model
@@ -66,28 +72,36 @@ legalizeFilename = replace All illegalFilenameCharMatcher (\_ -> "_")
 
 downloadContentType = "text/plain;charset=UTF-8"
 
-view : Addresses a -> Model -> Html
-view addresses model =
-  let openDoc = forwardTo addresses.update OpenDocId
-      {sidebarHeader, sidebarBody, sidebarFooter} = case model.viewMode of
-    OpenMenuMode  -> {
-      sidebarHeader = lazy viewOpenMenuHeader addresses.update,
-      sidebarBody   = lazy2 (OpenMenu.view addresses.openFromFile openDoc) model.docs model.currentDoc,
-      sidebarFooter = viewOpenMenuFooter
-    }
+view : Address Action -> Model -> Html
+view actions model =
+  let forward = Signal.forwardTo actions
 
-    CurrentDocMode -> {
-      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc addresses,
-      sidebarBody   = lazy3 CurrentDoc.view addresses.navigateToTitle addresses.navigateToChapterId model.currentDoc,
-      sidebarFooter = lazy  viewCurrentDocFooter addresses
-    }
+      newChapter          = forward (always NewChapter)
+      navigateToTitle     = forward (always NavigateToTitle)
+      openFromFile        = forward (always OpenFromFile)
+      openDoc             = forward (UpdateModel << OpenDocId)
+      navigateToChapterId = forward NavigateToChapterId
+      updateModel         = forward UpdateModel
 
-    SettingsMode  -> { -- TODO make this different than CurrentDocMode
-      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc addresses,
-      sidebarBody   = lazy3 CurrentDoc.view addresses.navigateToTitle addresses.navigateToChapterId model.currentDoc,
-      sidebarFooter = lazy  viewCurrentDocFooter addresses
-    }
+      {sidebarHeader, sidebarBody, sidebarFooter} =
+        case model.viewMode of
+          OpenMenuMode  -> {
+            sidebarHeader = lazy viewOpenMenuHeader updateModel,
+            sidebarBody   = lazy2 (OpenMenu.view openFromFile openDoc) model.docs model.currentDoc,
+            sidebarFooter = viewOpenMenuFooter
+          }
 
+          CurrentDocMode -> {
+            sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc actions,
+            sidebarBody   = lazy3 CurrentDoc.view navigateToTitle navigateToChapterId model.currentDoc,
+            sidebarFooter = lazy  viewCurrentDocFooter newChapter
+          }
+
+          SettingsMode  -> { -- TODO make this different than CurrentDocMode
+            sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc actions,
+            sidebarBody   = lazy3 CurrentDoc.view navigateToTitle navigateToChapterId model.currentDoc,
+            sidebarFooter = lazy  viewCurrentDocFooter newChapter
+          }
   in
     div [id "left-sidebar-container", class "sidebar"] [
       sidebarHeader,
@@ -101,22 +115,23 @@ sidebarHeaderClass = "sidebar-header"
 viewOpenMenuFooter : Html
 viewOpenMenuFooter = span [] []
 
-viewCurrentDocFooter : Addresses a -> Html
-viewCurrentDocFooter addresses =
+viewCurrentDocFooter : Address () -> Html
+viewCurrentDocFooter newChapter =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
       title "Add Chapter",
-      onClick addresses.newChapter (),
+      onClick newChapter (),
       class "flaticon-plus81"] []]
 
-viewOpenMenuHeader updateChannel =
+viewOpenMenuHeader : Address ModelUpdate -> Html
+viewOpenMenuHeader updateModel =
   div [key "open-menu-header", id sidebarHeaderId, class sidebarHeaderClass] [
     span [class "sidebar-header-control",
-      onClick updateChannel (SetViewMode CurrentDocMode)] [text "cancel"]
+      onClick updateModel (SetViewMode CurrentDocMode)] [text "cancel"]
   ]
 
-viewCurrentDocHeader : Doc -> Addresses a -> Html
-viewCurrentDocHeader currentDoc addresses =
+viewCurrentDocHeader : Doc -> Address Action -> Html
+viewCurrentDocHeader currentDoc actions =
   let downloadOptions = {
     filename    = (legalizeFilename currentDoc.title) ++ ".html",
     contentType = downloadContentType
@@ -126,21 +141,21 @@ viewCurrentDocHeader currentDoc addresses =
       menuitem [
         title "New",
         class "sidebar-header-control flaticon-add26",
-        onClick addresses.newDoc ()] [],
+        onClick actions NewDoc] [],
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
-        onClick addresses.update (SetViewMode OpenMenuMode)] [],
+        onClick actions (UpdateModel <| SetViewMode OpenMenuMode)] [],
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
-        onClick addresses.download downloadOptions] [],
+        onClick actions (Download downloadOptions)] [],
       menuitem [
         title "Print",
         class "sidebar-header-control flaticon-printer70",
-        onClick addresses.print ()] [],
+        onClick actions Print] [],
       menuitem [
         title "Settings",
         class "sidebar-header-control flaticon-gear33",
-        onClick addresses.update (SetViewMode SettingsMode)] []
+        onClick actions (UpdateModel <| SetViewMode SettingsMode)] []
     ]
