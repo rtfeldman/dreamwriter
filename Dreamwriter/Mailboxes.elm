@@ -1,4 +1,4 @@
-module Dreamwriter.Channel where
+module Dreamwriter.Mailboxes (Addresses, Signals, addresses, signals) where
 
 import Dreamwriter exposing (..)
 
@@ -21,7 +21,8 @@ type alias Addresses = {
   download            : Address DownloadOptions
 }
 
-locals = {
+addresses : Addresses
+addresses = {
     fullscreen          = fullscreen.address,
     execCommand         = execCommand.address,
     remoteSync          = remoteSync.address,
@@ -34,7 +35,40 @@ locals = {
     download            = download.address,
     openFromFile        = openFromFile.address,
     navigateToTitle     = navigateToTitle.address,
-    navigateToChapterId = navigateToChapterId
+    navigateToChapterId = navigateToChapterId.address
+  }
+
+type alias Signals = {
+  newNote             : Signal (),
+  openNoteId          : Signal Identifier,
+  searchNotes         : Signal (),
+  fullscreen          : Signal FullscreenState,
+  execCommand         : Signal String,
+  remoteSync          : Signal (),
+  print               : Signal (),
+  newDoc              : Signal (),
+  newChapter          : Signal (),
+  openFromFile        : Signal (),
+  navigateToTitle     : Signal (),
+  navigateToChapterId : Signal Identifier,
+  download            : Signal DownloadOptions
+}
+
+signals : Signals
+signals = {
+    fullscreen          = fullscreen.signal,
+    execCommand         = execCommand.signal,
+    remoteSync          = remoteSync.signal,
+    newNote             = newNote.signal,
+    openNoteId          = openNoteId.signal,
+    searchNotes         = searchNotes.signal,
+    print               = print.signal,
+    newDoc              = newDoc.signal,
+    newChapter          = newChapter.signal,
+    download            = download.signal,
+    openFromFile        = openFromFile.signal,
+    navigateToTitle     = navigateToTitle.signal,
+    navigateToChapterId = navigateToChapterId.signal
   }
 
 download : Signal.Mailbox DownloadOptions

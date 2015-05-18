@@ -11,7 +11,7 @@ import Html.Events exposing (..)
 import Html.Lazy exposing (..)
 import Maybe
 import Regex exposing (..)
-import Signal exposing (Address)
+import Signal exposing (Address, forwardTo)
 
 type ViewMode = CurrentDocMode | OpenMenuMode | SettingsMode
 
@@ -68,10 +68,11 @@ downloadContentType = "text/plain;charset=UTF-8"
 
 view : Addresses a -> Model -> Html
 view addresses model =
-  let {sidebarHeader, sidebarBody, sidebarFooter} = case model.viewMode of
+  let openDoc = forwardTo addresses.update OpenDocId
+      {sidebarHeader, sidebarBody, sidebarFooter} = case model.viewMode of
     OpenMenuMode  -> {
       sidebarHeader = lazy viewOpenMenuHeader addresses.update,
-      sidebarBody   = lazy2 (OpenMenu.view addresses.openFromFile addresses.update OpenDocId) model.docs model.currentDoc,
+      sidebarBody   = lazy2 (OpenMenu.view addresses.openFromFile openDoc) model.docs model.currentDoc,
       sidebarFooter = viewOpenMenuFooter
     }
 

@@ -11,6 +11,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
+import Signal exposing (forwardTo)
+
 type Update
   = NoOp
   | SetLeftSidebar  LeftSidebar.Model
@@ -65,11 +67,11 @@ transition update model =
 
     SetEditor       childModel -> { model | editor       <- childModel }
 
-view channels model =
-  let updateLeftSidebar    = localize (generalizeLeftSidebarUpdate model)  channels.update
-      leftSidebarChannels  = { channels | update <- updateLeftSidebar  }
-      rightSidebarChannels = channels
-      editorChannels       = channels
+view addresses model =
+  let updateLeftSidebar    = forwardTo addresses.update (generalizeLeftSidebarUpdate model)
+      leftSidebarChannels  = { addresses | update <- updateLeftSidebar  }
+      rightSidebarChannels = addresses
+      editorChannels       = addresses
   in div [id "page"] <|
     case model.currentDoc of
       Nothing -> []
