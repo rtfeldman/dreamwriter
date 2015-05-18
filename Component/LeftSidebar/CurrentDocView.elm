@@ -7,24 +7,24 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
 import List exposing (..)
-import LocalChannel exposing (LocalChannel, send)
+import Signal exposing (Address)
 
-view : LocalChannel () -> LocalChannel Identifier -> Doc -> Html
-view navigateToTitleChannel navigateToChapterIdChannel currentDoc =
+view : Address () -> Address Identifier -> Doc -> Html
+view navigateToTitle navigateToChapterId currentDoc =
   div [key "current-doc-view", id "current-doc-view"] [
-    div [id "title", onClick <| send navigateToTitleChannel ()]
+    div [id "title", onClick navigateToTitle ()]
       [text currentDoc.title],
 
-    viewOutline navigateToChapterIdChannel currentDoc.chapters
+    viewOutline navigateToChapterId currentDoc.chapters
   ]
 
-viewOutline : LocalChannel Identifier -> List Chapter -> Html
-viewOutline navigateToChapterIdChannel chapters =
-  ul [id "outline"] <| indexedMap (viewChapter navigateToChapterIdChannel) chapters
+viewOutline : Address Identifier -> List Chapter -> Html
+viewOutline navigateToChapterId chapters =
+  ul [id "outline"] <| indexedMap (viewChapter navigateToChapterId) chapters
 
-viewChapter : LocalChannel Identifier -> Int -> Chapter -> Html
-viewChapter navigateToChapterIdChannel index chapter = li [
+viewChapter : Address Identifier -> Int -> Chapter -> Html
+viewChapter navigateToChapterId index chapter = li [
     key ("chapter" ++ (toString index)),
     title chapter.heading,
-    onClick <| send navigateToChapterIdChannel chapter.id
+    onClick navigateToChapterId chapter.id
   ] [text chapter.heading]

@@ -5,12 +5,11 @@ import Dreamwriter exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import LocalChannel exposing (LocalChannel, send)
 import List exposing (..)
-import Signal exposing (Message)
+import Signal exposing (Message, Address)
 
-view : LocalChannel () -> (Identifier -> Message) -> List Doc -> Doc -> Html
-view openFromFileChannel openDoc docs currentDoc =
+view : Address () -> Address Identifier -> List Doc -> Doc -> Html
+view openFromFile openDoc docs currentDoc =
   let sortedDocs : List Doc
       sortedDocs = sortBy (negate << .lastModifiedTime) docs
 
@@ -20,7 +19,7 @@ view openFromFileChannel openDoc docs currentDoc =
       openFileNodes : List Html
       openFileNodes = [
         div [class "open-entry from-file",
-            onClick <| send openFromFileChannel ()
+            onClick openFromFile ()
           ] [
             span [] [text "A "],
             b    [] [text ".html"],
@@ -30,11 +29,11 @@ view openFromFileChannel openDoc docs currentDoc =
   in
     div [key "open-menu-view", id "open"] (openFileNodes ++ docNodes)
 
-viewOpenDocEntryFor : (Identifier -> Message) -> Doc -> Doc -> Html
+viewOpenDocEntryFor : Address Identifier -> Doc -> Doc -> Html
 viewOpenDocEntryFor openDoc currentDoc doc =
   let className = if doc.id == currentDoc.id
     then "open-entry current"
     else "open-entry"
   in
     div [key ("#open-doc-" ++ doc.id), class className,
-      onClick <| openDoc doc.id] [text doc.title]
+      onClick openDoc doc.id] [text doc.title]

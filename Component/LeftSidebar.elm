@@ -1,29 +1,29 @@
 module Component.LeftSidebar where
 
-import Dreamwriter exposing exposing (..)
+import Dreamwriter exposing (..)
 
 import Component.LeftSidebar.OpenMenuView as OpenMenu
 import Component.LeftSidebar.CurrentDocView as CurrentDoc
 
-import Html exposing exposing (..)
-import Html.Attributes exposing exposing (..)
-import Html.Events exposing exposing (..)
-import Html.Lazy exposing exposing (..)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import Html.Lazy exposing (..)
 import Maybe
-import Regex exposing exposing (..)
-import LocalChannel exposing (send, LocalChannel)
+import Regex exposing (..)
+import Signal exposing (Address)
 
 type ViewMode = CurrentDocMode | OpenMenuMode | SettingsMode
 
-type alias Channels a = { a |
-  print               : LocalChannel (),
-  newDoc              : LocalChannel (),
-  newChapter          : LocalChannel (),
-  openFromFile        : LocalChannel (),
-  navigateToTitle     : LocalChannel (),
-  navigateToChapterId : LocalChannel Identifier,
-  download            : LocalChannel DownloadOptions,
-  update              : LocalChannel Update
+type alias Addresses a = { a |
+  print               : Address (),
+  newDoc              : Address (),
+  newChapter          : Address (),
+  openFromFile        : Address (),
+  navigateToTitle     : Address (),
+  navigateToChapterId : Address Identifier,
+  download            : Address DownloadOptions,
+  update              : Address Update
 }
 
 type alias Model = {
@@ -66,12 +66,12 @@ legalizeFilename = replace All illegalFilenameCharMatcher (\_ -> "_")
 
 downloadContentType = "text/plain;charset=UTF-8"
 
-view : Channels a -> Model -> Html
+view : Addresses a -> Model -> Html
 view channels model =
   let {sidebarHeader, sidebarBody, sidebarFooter} = case model.viewMode of
     OpenMenuMode  -> {
       sidebarHeader = lazy viewOpenMenuHeader channels.update,
-      sidebarBody   = lazy2 (OpenMenu.view channels.openFromFile (\id -> send channels.update (OpenDocId id))) model.docs model.currentDoc,
+      sidebarBody   = lazy2 (OpenMenu.view channels.openFromFile channels.update OpenDocId) model.docs model.currentDoc,
       sidebarFooter = viewOpenMenuFooter
     }
 
@@ -100,21 +100,21 @@ sidebarHeaderClass = "sidebar-header"
 viewOpenMenuFooter : Html
 viewOpenMenuFooter = span [] []
 
-viewCurrentDocFooter : Channels a -> Html
+viewCurrentDocFooter : Addresses a -> Html
 viewCurrentDocFooter channels =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
       title "Add Chapter",
-      onClick <| send channels.newChapter (),
+      onClick channels.newChapter (),
       class "flaticon-plus81"] []]
 
 viewOpenMenuHeader updateChannel =
   div [key "open-menu-header", id sidebarHeaderId, class sidebarHeaderClass] [
     span [class "sidebar-header-control",
-      onClick <| send updateChannel (SetViewMode CurrentDocMode)] [text "cancel"]
+      onClick updateChannel (SetViewMode CurrentDocMode)] [text "cancel"]
   ]
 
-viewCurrentDocHeader : Doc -> Channels a -> Html
+viewCurrentDocHeader : Doc -> Addresses a -> Html
 viewCurrentDocHeader currentDoc channels =
   let downloadOptions = {
     filename    = (legalizeFilename currentDoc.title) ++ ".html",
@@ -125,21 +125,21 @@ viewCurrentDocHeader currentDoc channels =
       menuitem [
         title "New",
         class "sidebar-header-control flaticon-add26",
-        onClick <| send channels.newDoc ()] [],
+        onClick channels.newDoc ()] [],
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
-        onClick <| send channels.update (SetViewMode OpenMenuMode)] [],
+        onClick channels.update (SetViewMode OpenMenuMode)] [],
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
-        onClick <| send channels.download downloadOptions] [],
+        onClick channels.download downloadOptions] [],
       menuitem [
         title "Print",
         class "sidebar-header-control flaticon-printer70",
-        onClick <| send channels.print ()] [],
+        onClick channels.print ()] [],
       menuitem [
         title "Settings",
         class "sidebar-header-control flaticon-gear33",
-        onClick <| send channels.update (SetViewMode SettingsMode)] []
+        onClick channels.update (SetViewMode SettingsMode)] []
     ]

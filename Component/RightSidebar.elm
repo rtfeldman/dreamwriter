@@ -7,13 +7,13 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Lazy exposing (..)
 import Maybe
-import LocalChannel exposing (send, LocalChannel)
+import Signal exposing (Address)
 import List exposing (..)
 
-type alias Channels a = { a |
-  newNote     : LocalChannel (),
-  searchNotes : LocalChannel (),
-  openNoteId  : LocalChannel Identifier
+type alias Addresses a = { a |
+  newNote     : Address (),
+  searchNotes : Address (),
+  openNoteId  : Address Identifier
 }
 
 type alias Model = {
@@ -27,24 +27,24 @@ initialModel = {
     notes       = []
   }
 
-view : Channels a -> Model -> Html
-view channels model =
+view : Addresses a -> Model -> Html
+view addresses model =
   let {sidebarBody, sidebarFooter} = case model.currentNote of
     Nothing ->
-      { sidebarBody   = lazy2 viewNoteListings channels.openNoteId model.notes
+      { sidebarBody   = lazy2 viewNoteListings addresses.openNoteId model.notes
       , sidebarFooter = span [] []
       }
     Just currentNote ->
       { sidebarBody   = lazy  viewCurrentNoteBody            currentNote
-      , sidebarFooter = lazy2 viewCurrentNoteFooter channels currentNote
+      , sidebarFooter = lazy2 viewCurrentNoteFooter addresses currentNote
       }
   in
     div [id "right-sidebar-container", class "sidebar"] [
       div [id "right-sidebar-header", class "sidebar-header"] [
         input [id "notes-search-text", class "sidebar-header-control", placeholder "search notes",
-          onKeyUp (\_ -> send channels.searchNotes ())] [],
+          onKeyUp addresses.searchNotes ()] [],
         span [id "notes-search-button", class "sidebar-header-control flaticon-pencil90",
-          onClick <| send channels.newNote ()] []
+          onClick addresses.newNote ()] []
       ],
       div [id "right-sidebar-body", class "sidebar-body"] [
         sidebarBody
@@ -55,10 +55,10 @@ view channels model =
 viewNoteListings openNoteIdChannel notes =
   div [id "note-listings"] <| map (viewNoteListing openNoteIdChannel) notes
 
-viewNoteListing : LocalChannel Identifier -> Note -> Html
-viewNoteListing openNoteIdChannel note =
+viewNoteListing : Address Identifier -> Note -> Html
+viewNoteListing openNoteId note =
   div [key ("note-" ++ note.id), class "note-listing",
-    onClick <| send openNoteIdChannel note.id] [
+    onClick openNoteId note.id] [
       div [class "flaticon-document127 note-listing-icon"] [],
       div [class "note-listing-title"] [text note.title]
     ]
@@ -72,8 +72,8 @@ viewCurrentNoteBody note =
     div [id "current-note-body"] []
   ]
 
-viewCurrentNoteFooter : Channels a -> Note -> Html
-viewCurrentNoteFooter channels note =
+viewCurrentNoteFooter : Addresses a -> Note -> Html
+viewCurrentNoteFooter addresses note =
   div [id "current-note-controls", class "sidebar-footer"] []
   --div [id "current-note-controls", class "sidebar-footer"] [
   --  span [id "download-current-note",

@@ -2,79 +2,77 @@ module Dreamwriter.Channel where
 
 import Dreamwriter exposing (..)
 
-import LocalChannel exposing (LocalChannel)
-import LocalChannel as LC
+import Signal exposing (Mailbox, Address, mailbox)
 import Signal
 
-type alias Locals = {
-  newNote             : LocalChannel (),
-  openNoteId          : LocalChannel Identifier,
-  searchNotes         : LocalChannel (),
-  fullscreen          : LocalChannel FullscreenState,
-  execCommand         : LocalChannel String,
-  remoteSync          : LocalChannel (),
-  print               : LocalChannel (),
-  newDoc              : LocalChannel (),
-  newChapter          : LocalChannel (),
-  openFromFile        : LocalChannel (),
-  navigateToTitle     : LocalChannel (),
-  navigateToChapterId : LocalChannel Identifier,
-  download            : LocalChannel DownloadOptions
+type alias Addresses = {
+  newNote             : Address (),
+  openNoteId          : Address Identifier,
+  searchNotes         : Address (),
+  fullscreen          : Address FullscreenState,
+  execCommand         : Address String,
+  remoteSync          : Address (),
+  print               : Address (),
+  newDoc              : Address (),
+  newChapter          : Address (),
+  openFromFile        : Address (),
+  navigateToTitle     : Address (),
+  navigateToChapterId : Address Identifier,
+  download            : Address DownloadOptions
 }
 
 locals = {
-    fullscreen          = LC.create identity fullscreen,
-    execCommand         = LC.create identity execCommand,
-    remoteSync          = LC.create identity remoteSync,
-    newNote             = LC.create identity newNote,
-    openNoteId          = LC.create identity openNoteId,
-    searchNotes         = LC.create identity searchNotes,
-    print               = LC.create identity print,
-    newDoc              = LC.create identity newDoc,
-    newChapter          = LC.create identity newChapter,
-    download            = LC.create identity download,
-    openFromFile        = LC.create identity openFromFile,
-    navigateToTitle     = LC.create identity navigateToTitle,
-    navigateToChapterId = LC.create identity navigateToChapterId
+    fullscreen          = fullscreen.address,
+    execCommand         = execCommand.address,
+    remoteSync          = remoteSync.address,
+    newNote             = newNote.address,
+    openNoteId          = openNoteId.address,
+    searchNotes         = searchNotes.address,
+    print               = print.address,
+    newDoc              = newDoc.address,
+    newChapter          = newChapter.address,
+    download            = download.address,
+    openFromFile        = openFromFile.address,
+    navigateToTitle     = navigateToTitle.address,
+    navigateToChapterId = navigateToChapterId
   }
 
+download : Signal.Mailbox DownloadOptions
+download = Signal.mailbox { filename = "", contentType = "" }
 
-download : Signal.Channel DownloadOptions
-download = Signal.channel { filename = "", contentType = "" }
+newDoc : Signal.Mailbox ()
+newDoc = Signal.mailbox ()
 
-newDoc : Signal.Channel ()
-newDoc = Signal.channel ()
+openFromFile : Signal.Mailbox ()
+openFromFile = Signal.mailbox ()
 
-openFromFile : Signal.Channel ()
-openFromFile = Signal.channel ()
+navigateToChapterId : Signal.Mailbox Identifier
+navigateToChapterId = Signal.mailbox ""
 
-navigateToChapterId : Signal.Channel Identifier
-navigateToChapterId = Signal.channel ""
+navigateToTitle : Signal.Mailbox ()
+navigateToTitle = Signal.mailbox ()
 
-navigateToTitle : Signal.Channel ()
-navigateToTitle = Signal.channel ()
-
-print : Signal.Channel ()
-print = Signal.channel ()
+print : Signal.Mailbox ()
+print = Signal.mailbox ()
 
 -- TODO make this Signal. String, with the String being the search query
-searchNotes : Signal.Channel ()
-searchNotes = Signal.channel ()
+searchNotes : Signal.Mailbox ()
+searchNotes = Signal.mailbox ()
 
-newNote : Signal.Channel ()
-newNote = Signal.channel ()
+newNote : Signal.Mailbox ()
+newNote = Signal.mailbox ()
 
-openNoteId : Signal.Channel Identifier
-openNoteId = Signal.channel ""
+openNoteId : Signal.Mailbox Identifier
+openNoteId = Signal.mailbox ""
 
-newChapter : Signal.Channel ()
-newChapter = Signal.channel ()
+newChapter : Signal.Mailbox ()
+newChapter = Signal.mailbox ()
 
-fullscreen : Signal.Channel Bool
-fullscreen = Signal.channel False
+fullscreen : Signal.Mailbox Bool
+fullscreen = Signal.mailbox False
 
-execCommand : Signal.Channel String
-execCommand = Signal.channel ""
+execCommand : Signal.Mailbox String
+execCommand = Signal.mailbox ""
 
-remoteSync : Signal.Channel ()
-remoteSync = Signal.channel ()
+remoteSync : Signal.Mailbox ()
+remoteSync = Signal.mailbox ()

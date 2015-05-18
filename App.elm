@@ -15,15 +15,13 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Lazy exposing (..)
 import Signal
-import Signal exposing (Signal, sampleOn, dropRepeats, mergeMany, foldp)
+import Signal exposing (Signal, sampleOn, dropRepeats, mergeMany, foldp, forwardTo)
 import Time exposing (Time, since)
 import List exposing (..)
 import Maybe
 import Window
 import Dict
 import Set
-
-import LocalChannel as LC
 
 debounce : Time -> Signal a -> Signal a
 debounce wait signal = sampleOn (since wait signal |> dropRepeats) signal
@@ -210,7 +208,7 @@ modelPage state = {
 
 scene : AppState -> (Int, Int) -> Element
 scene state (w, h) =
-  let pageUpdate = LC.create (generalizePageUpdate state) updates
+  let pageUpdate = forwardTo (generalizePageUpdate state) updates
       locals     = Channel.locals
       html       = Page.view { locals | update = pageUpdate } (modelPage state)
   in

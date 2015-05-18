@@ -1,8 +1,5 @@
 module Dreamwriter where
 
-import LocalChannel exposing (LocalChannel)
-import LocalChannel as LC
-
 -- TODO make this a proper ADT once outbound ports can accept them
 type alias FullscreenState = Bool
 
