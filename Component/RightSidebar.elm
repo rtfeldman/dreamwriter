@@ -42,7 +42,7 @@ view addresses model =
     div [id "right-sidebar-container", class "sidebar"] [
       div [id "right-sidebar-header", class "sidebar-header"] [
         input [id "notes-search-text", class "sidebar-header-control", placeholder "search notes",
-          onKeyUp addresses.searchNotes ()] [],
+          onKeyUp addresses.searchNotes (\_ -> ())] [],
         span [id "notes-search-button", class "sidebar-header-control flaticon-pencil90",
           onClick addresses.newNote ()] []
       ],

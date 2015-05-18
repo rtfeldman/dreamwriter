@@ -67,24 +67,24 @@ legalizeFilename = replace All illegalFilenameCharMatcher (\_ -> "_")
 downloadContentType = "text/plain;charset=UTF-8"
 
 view : Addresses a -> Model -> Html
-view channels model =
+view addresses model =
   let {sidebarHeader, sidebarBody, sidebarFooter} = case model.viewMode of
     OpenMenuMode  -> {
-      sidebarHeader = lazy viewOpenMenuHeader channels.update,
-      sidebarBody   = lazy2 (OpenMenu.view channels.openFromFile channels.update OpenDocId) model.docs model.currentDoc,
+      sidebarHeader = lazy viewOpenMenuHeader addresses.update,
+      sidebarBody   = lazy2 (OpenMenu.view addresses.openFromFile addresses.update OpenDocId) model.docs model.currentDoc,
       sidebarFooter = viewOpenMenuFooter
     }
 
     CurrentDocMode -> {
-      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc channels,
-      sidebarBody   = lazy3 CurrentDoc.view channels.navigateToTitle channels.navigateToChapterId model.currentDoc,
-      sidebarFooter = lazy  viewCurrentDocFooter channels
+      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc addresses,
+      sidebarBody   = lazy3 CurrentDoc.view addresses.navigateToTitle addresses.navigateToChapterId model.currentDoc,
+      sidebarFooter = lazy  viewCurrentDocFooter addresses
     }
 
     SettingsMode  -> { -- TODO make this different than CurrentDocMode
-      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc channels,
-      sidebarBody   = lazy3 CurrentDoc.view channels.navigateToTitle channels.navigateToChapterId model.currentDoc,
-      sidebarFooter = lazy  viewCurrentDocFooter channels
+      sidebarHeader = lazy2 viewCurrentDocHeader model.currentDoc addresses,
+      sidebarBody   = lazy3 CurrentDoc.view addresses.navigateToTitle addresses.navigateToChapterId model.currentDoc,
+      sidebarFooter = lazy  viewCurrentDocFooter addresses
     }
 
   in
@@ -101,11 +101,11 @@ viewOpenMenuFooter : Html
 viewOpenMenuFooter = span [] []
 
 viewCurrentDocFooter : Addresses a -> Html
-viewCurrentDocFooter channels =
+viewCurrentDocFooter addresses =
   div [id "left-sidebar-footer", class "sidebar-footer"] [
     span [id "add-chapter",
       title "Add Chapter",
-      onClick channels.newChapter (),
+      onClick addresses.newChapter (),
       class "flaticon-plus81"] []]
 
 viewOpenMenuHeader updateChannel =
@@ -115,7 +115,7 @@ viewOpenMenuHeader updateChannel =
   ]
 
 viewCurrentDocHeader : Doc -> Addresses a -> Html
-viewCurrentDocHeader currentDoc channels =
+viewCurrentDocHeader currentDoc addresses =
   let downloadOptions = {
     filename    = (legalizeFilename currentDoc.title) ++ ".html",
     contentType = downloadContentType
@@ -125,21 +125,21 @@ viewCurrentDocHeader currentDoc channels =
       menuitem [
         title "New",
         class "sidebar-header-control flaticon-add26",
-        onClick channels.newDoc ()] [],
+        onClick addresses.newDoc ()] [],
       menuitem [
         title "Open",
         class "sidebar-header-control flaticon-folder63",
-        onClick channels.update (SetViewMode OpenMenuMode)] [],
+        onClick addresses.update (SetViewMode OpenMenuMode)] [],
       menuitem [
         title "Download",
         class "sidebar-header-control flaticon-cloud134",
-        onClick channels.download downloadOptions] [],
+        onClick addresses.download downloadOptions] [],
       menuitem [
         title "Print",
         class "sidebar-header-control flaticon-printer70",
-        onClick channels.print ()] [],
+        onClick addresses.print ()] [],
       menuitem [
         title "Settings",
         class "sidebar-header-control flaticon-gear33",
-        onClick channels.update (SetViewMode SettingsMode)] []
+        onClick addresses.update (SetViewMode SettingsMode)] []
     ]
