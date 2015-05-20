@@ -8,7 +8,7 @@ import Signal
 type alias Addresses = {
   newNote             : Address (),
   openNoteId          : Address Identifier,
-  searchNotes         : Address (),
+  searchNotes         : Address String,
   fullscreen          : Address FullscreenState,
   execCommand         : Address String,
   remoteSync          : Address (),
@@ -41,7 +41,7 @@ addresses = {
 type alias Signals = {
   newNote             : Signal (),
   openNoteId          : Signal Identifier,
-  searchNotes         : Signal (),
+  searchNotes         : Signal String,
   fullscreen          : Signal FullscreenState,
   execCommand         : Signal String,
   remoteSync          : Signal (),
@@ -89,9 +89,8 @@ navigateToTitle = Signal.mailbox ()
 print : Signal.Mailbox ()
 print = Signal.mailbox ()
 
--- TODO make this Signal. String, with the String being the search query
-searchNotes : Signal.Mailbox ()
-searchNotes = Signal.mailbox ()
+searchNotes : Signal.Mailbox String
+searchNotes = Signal.mailbox ""
 
 newNote : Signal.Mailbox ()
 newNote = Signal.mailbox ()

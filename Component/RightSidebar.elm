@@ -12,7 +12,7 @@ import List exposing (..)
 
 type alias Addresses a = { a |
   newNote     : Address (),
-  searchNotes : Address (),
+  searchNotes : Address String,
   openNoteId  : Address Identifier
 }
 
@@ -42,7 +42,7 @@ view addresses model =
     div [id "right-sidebar-container", class "sidebar"] [
       div [id "right-sidebar-header", class "sidebar-header"] [
         input [id "notes-search-text", class "sidebar-header-control", placeholder "search notes",
-          onKeyUp addresses.searchNotes (\_ -> ())] [],
+          onInput addresses.searchNotes targetValue] [],
         span [id "notes-search-button", class "sidebar-header-control flaticon-pencil90",
           onClick addresses.newNote ()] []
       ],
@@ -71,6 +71,9 @@ viewCurrentNoteBody note =
     ],
     div [id "current-note-body"] []
   ]
+
+onInput address decoder =
+  on "input" decoder (Signal.message address)
 
 viewCurrentNoteFooter : Addresses a -> Note -> Html
 viewCurrentNoteFooter addresses note =

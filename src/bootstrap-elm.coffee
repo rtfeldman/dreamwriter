@@ -318,8 +318,6 @@ app.ports.execCommand.subscribe (command) ->
   document.execCommand command, false, null
 
 app.ports.searchNotes.subscribe (query) ->
-  query = document.getElementById("notes-search-text").value
-
   notes.search(query).done (results) ->
     app.ports.listNotes.send results
 

@@ -262,7 +262,7 @@ port openNoteId = signals.openNoteId
 port newChapter : Signal ()
 port newChapter = signals.newChapter
 
-port searchNotes : Signal ()
+port searchNotes : Signal String
 port searchNotes = debounce 500 <| signals.searchNotes
 
 port fullscreen : Signal Bool
