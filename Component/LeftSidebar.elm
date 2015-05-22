@@ -20,7 +20,7 @@ type alias Addresses a = { a |
   newDoc              : Address (),
   newChapter          : Address (),
   openFromFile        : Address (),
-  navigateToTitle     : Address (),
+  navigateToTitle     : Address String,
   navigateToChapterId : Address Identifier,
   download            : Address DownloadOptions,
   update              : Address Update
