@@ -9,8 +9,8 @@ var fs = require("fs"),
   {
     "accessKeyId":     "[access key ID goes here]",
     "secretAccessKey": "[secret access key goes here]",
-    "region":          "us-west-2",
-    "bucket":          "dreamwriter.io"
+    "region":          "us-east-1",
+    "bucket":          "dreamwriter.co"
   }
 */
 

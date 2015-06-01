@@ -2,7 +2,7 @@ dreamwriter
 ===============
 Streamlined long-form writing software. Written in [Elm](http://elm-lang.org). [![build status][1]][2]
 
-Try it at [dreamwriter.io](https://dreamwriter.io)
+Try it at [dreamwriter.co](https://dreamwriter.co)
 
 ## Features
 
@@ -18,7 +18,7 @@ Dreamwriter is a browser-based writing app with a few goals in mind. (Not all of
 
 ## Technology
 
-Dreamwriter was originally written in [CoffeeScript](http://coffee-script.org) and has been rewritten in [Elm](http://elm-lang.org). It compiles to static files only (and requires no server-side code), and [dreamwriter.io](http://dreamwriter.io) is hosted entirely on [Amazon S3](http://aws.amazon.com/s3).
+Dreamwriter was originally written in [CoffeeScript](http://coffee-script.org) and has been rewritten in [Elm](http://elm-lang.org). It compiles to static files only (and requires no server-side code), and [dreamwriter.co](http://dreamwriter.co) is hosted entirely on [Amazon S3](http://aws.amazon.com/s3).
 
 It can only run in modern browsers, as it uses the following browser features:
 
