@@ -1,4 +1,5 @@
 @require "mixins/page-text"
+@require "mixins/flex"
 @require "page"
 @require "sidebars"
 
@@ -10,7 +11,7 @@ search-notes-color = rgb(152, 125, 152)
 
 #right-sidebar-container
   position relative
-  flex-grow 1
+  flex-grow(1)
 
   margin-left 8px
 
@@ -31,7 +32,7 @@ search-notes-color = rgb(152, 125, 152)
   cursor text
   border none
   padding 0 12px
-  flex-grow 1
+  flex-grow(1)
   font-size 18px
   height 36px
   margin-top 2px
@@ -71,7 +72,7 @@ search-notes-color = rgb(152, 125, 152)
   font-size 18px
   padding 8px
   cursor pointer
-  display flex
+  display-flex()
 
   margin-bottom 8px
 
@@ -83,7 +84,7 @@ search-notes-color = rgb(152, 125, 152)
     background-color note-hover
 
 .note-listing-title
-  flex 1
+  flex(1)
 
 .note-listing-icon
   margin-right 6px
@@ -96,10 +97,10 @@ search-notes-color = rgb(152, 125, 152)
 
 #current-note-title-container
   font-size 24px
-  display flex
+  display-flex()
 
 #current-note-title
-  flex-grow 1
+  flex-grow(1)
 
 #close-current-note
   font-size 18px
@@ -111,7 +112,8 @@ search-notes-color = rgb(152, 125, 152)
     color black
 
 #current-note-controls
-  display flex
+  display-flex()
+  
   justify-content space-between
   padding-left 16px
   padding-right 16px
