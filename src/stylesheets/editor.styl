@@ -1,4 +1,5 @@
 @require "mixins/page-text"
+@require "mixins/flex"
 
 editor-width = 700px
 editor-header-width = editor-width - 40
@@ -24,8 +25,8 @@ user-select()
 
 #editor-header, #editor-footer
   position absolute
-  display flex
-  flex-direction row
+  display-flex()
+  flex-direction(row)
   justify-content center
   align-items stretch
 
@@ -43,7 +44,7 @@ user-select()
 
 #editor-container
   position relative
-  display flex
+  display-flex()
   width editor-width px
   min-width editor-width px
   background #fff
@@ -70,7 +71,7 @@ user-select()
   top -1px
 
 .toolbar-section
-  flex 1
+  flex(1)
   text-align center
 
 .toolbar-section:first-child
