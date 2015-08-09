@@ -9,6 +9,8 @@ countWords = require "./WordCount.coffee"
 
 blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, lastModifiedTime: 0, titleWords: 0, descriptionWords: 0}
 
+newDocTitle = "Untitled Masterpiece"
+
 document.addEventListener "keydown", (event) ->
   switch event.keyCode
     when 83
@@ -45,7 +47,19 @@ loadAsCurrentDoc = (doc) ->
     sync.getDoc(doc.id).done (doc) ->
       doc.title = node.textContent
       doc.titleWords = countWords doc.title
-      sync.saveDoc(doc).done -> app.ports.setTitle.send [doc.title, doc.titleWords]
+      sync.saveDoc(doc).done ->
+        app.ports.setTitle.send [doc.title, doc.titleWords]
+        if doc.title == newDocTitle
+          if document.body.createTextRange
+            range = document.body.createTextRange()
+            range.moveToElement node
+            range.select()
+          else if window.getSelection
+            selection = window.getSelection()
+            range = document.createRange()
+            range.selectNodeContents node
+            selection.removeAllRanges()
+            selection.addRange range
 
   setUpEditor getDescriptionElem, doc.description, false, (mutations, node) ->
     sync.getDoc(doc.id).done (doc) ->
