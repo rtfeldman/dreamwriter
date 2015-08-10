@@ -31,7 +31,9 @@ type alias Doc =
     titleWords : Int,
     descriptionWords : Int,
     creationTime : MsSinceEpoch,
-    lastModifiedTime : MsSinceEpoch
+    lastModifiedTime : MsSinceEpoch,
+    dailyWords : List WordsPerDay,
+    dailyWordsStartsAt : Int
   }
 
 emptyDoc =
@@ -43,7 +45,9 @@ emptyDoc =
     titleWords = 0,
     descriptionWords = 0,
     creationTime = 0,
-    lastModifiedTime = 0
+    lastModifiedTime = 0,
+    dailyWords = [],
+    dailyWordsStartsAt = 0
   }
 
 type alias Chapter =
@@ -55,6 +59,12 @@ type alias Chapter =
     creationTime : MsSinceEpoch,
     lastModifiedTime : MsSinceEpoch,
     snapshotId : Identifier
+  }
+
+type alias WordsPerDay =
+  {
+    day : String,
+    words : Int
   }
 
 type alias Snapshot =

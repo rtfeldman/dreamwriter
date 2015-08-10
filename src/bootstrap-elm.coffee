@@ -7,7 +7,7 @@ DocImport  = require "./DocImport.coffee"
 FileIO     = require "./FileIO.coffee"
 countWords = require "./WordCount.coffee"
 
-blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, lastModifiedTime: 0, titleWords: 0, descriptionWords: 0}
+blankDoc = {id: "", title: "", description: "", chapters: [], creationTime: 0, lastModifiedTime: 0, titleWords: 0, descriptionWords: 0, dailyWords: [], dailyWordsStartsAt: 0}
 
 document.addEventListener "keydown", (event) ->
   switch event.keyCode
@@ -36,7 +36,8 @@ notes = null
 # Looks up the doc and snapshot associated with the given docId,
 # writes the snapshot to the editor, and tells Elm about the new currentDocId
 loadDocId = (docId) ->
-  sync.getDoc(docId).done loadAsCurrentDoc
+  sync.getDoc(docId).done (doc) ->
+    loadAsCurrentDoc sync.normalizeDoc(doc)
 
 loadAsCurrentDoc = (doc) ->
   app.ports.loadAsCurrentDoc.send doc
@@ -190,7 +191,7 @@ setUpEditor = (getElem, html, enableRichText, onMutate) ->
           ((err)  -> console.error "Could not write after 10,000 attempts:", id, html)
 
 refreshDocList = -> sync.listDocs().done (docs) ->
-  app.ports.listDocs.send docs
+  app.ports.listDocs.send(sync.normalizeDoc(doc) for doc in docs)
 
 scrollToChapterId = (chapterId) ->
   editorFrame    = document.getElementById("editor-frame")
