@@ -92,6 +92,7 @@ setUpChapter = (chapter) ->
   editorBodyPromise = new Promise (resolve, reject) ->
     sync.getSnapshot(chapter.snapshotId).done (snapshot) ->
       setUpEditor (-> getChapterBodyElem chapterId), snapshot.html, true, (mutations, node) ->
+        oldBodyWords = chapter.bodyWords
         snapshotId        = chapter.snapshotId
         html              = node.innerHTML
         text              = node.textContent
@@ -105,8 +106,12 @@ setUpChapter = (chapter) ->
               .then (->
                   app.ports.putSnapshot.send {id: snapshotId, html, text}
                   app.ports.updateChapter.send chapter
-
                   resolve()
+                  doc.chapters = for docChapter in doc.chapters
+                    if docChapter.id == chapter.id
+                      docChapter.bodyWords = chapter.bodyWords
+                    docChapter
+                  sync.saveDoc doc
                 ), reject
 
   Promise.all [editorHeadingPromise, editorBodyPromise]

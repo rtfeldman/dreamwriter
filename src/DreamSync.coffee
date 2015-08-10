@@ -222,24 +222,18 @@ updateDailyWords = (doc) ->
     words: 0
   sumToDate = doc.dailyWordsStartsAt
 
-  # Ensure that the daily word counts are sorted by date ascending
-  dailyWords = doc.dailyWords.sort (a, b) ->
-    if a.day > b.day
-      return 1
-    if b.day < a.day
-      return -1
-    return 0
-
   # If we have the current day already, retrieve that
-  if dailyWords.length > 0 and dailyWords[-1..][0].day == currentDay
-    todayWords = dailyWords.pop()
+  if doc.dailyWords.length > 0 and doc.dailyWords[-1..][0].day == currentDay
+    todayWords = doc.dailyWords.pop()
 
   # Sum the words to date
-  sumToDate += day.words for day in dailyWords
+  sumToDate += day.words for day in doc.dailyWords
 
   # Calculate the change
-  todayWords.words = DreamSync.wordsForDoc(doc) - sumToDate
+  newWords = DreamSync.wordsForDoc(doc) - sumToDate
+  if newWords == todayWords.words
+    return doc
+  todayWords.words = newWords
 
-  dailyWords.push todayWords
-  doc.dailyWords = dailyWords
+  doc.dailyWords.push todayWords
   doc
