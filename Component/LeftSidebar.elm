@@ -14,39 +14,39 @@ import Regex
 import Signal exposing (Address)
 
 
-type ViewMode =
-    CurrentDocMode | OpenMenuMode | SettingsMode
+type ViewMode
+    = CurrentDocMode
+    | OpenMenuMode
+    | SettingsMode
 
 
 type alias Addresses a =
-    { a |
-        print : Address (),
-        newDoc : Address (),
-        newChapter : Address (),
-        openFromFile : Address (),
-        navigateToTitle : Address (),
-        navigateToChapterId : Address Identifier,
-        download : Address DownloadOptions,
-        update : Address Update
+    { a
+    | print               : Address ()
+    , newDoc              : Address ()
+    , newChapter          : Address ()
+    , openFromFile        : Address ()
+    , navigateToTitle     : Address ()
+    , navigateToChapterId : Address Identifier
+    , download            : Address DownloadOptions
+    , update              : Address Update
     }
 
 
 type alias Model =
-    {
-        viewMode : ViewMode,
-        docs : List Doc,
-        currentDocId : Maybe Identifier,
-        currentDoc : Doc
+    { viewMode     : ViewMode
+    , docs         : List Doc
+    , currentDocId : Maybe Identifier
+    , currentDoc   : Doc
     }
 
 
 initialModel : Model
 initialModel =
-    {
-        viewMode = CurrentDocMode,
-        docs = [],
-        currentDocId = Nothing,
-        currentDoc = emptyDoc
+    { viewMode     = CurrentDocMode
+    , docs         = []
+    , currentDocId = Nothing
+    , currentDoc   = emptyDoc
     }
 
 
@@ -66,9 +66,9 @@ transition update model =
             { model | viewMode <- mode }
 
         OpenDocId id ->
-            { model |
-                currentDocId <- Just id,
-                viewMode <- CurrentDocMode
+            { model
+            | currentDocId <- Just id
+            , viewMode     <- CurrentDocMode
             }
 
 
@@ -95,75 +95,67 @@ view addresses model =
         {sidebarHeader, sidebarBody, sidebarFooter} =
             case model.viewMode of
                 OpenMenuMode ->
-                    {
-                        sidebarHeader =
-                            lazy
-                                viewOpenMenuHeader addresses.update
-                        ,
+                    { sidebarHeader =
+                        lazy
+                            viewOpenMenuHeader addresses.update
 
-                        sidebarBody =
-                            lazy2
-                                (OpenMenu.view addresses.openFromFile openDoc)
-                                model.docs
-                                model.currentDoc
-                        ,
+                    , sidebarBody =
+                        lazy2
+                            (OpenMenu.view addresses.openFromFile openDoc)
+                            model.docs
+                            model.currentDoc
 
-                        sidebarFooter =
-                            viewOpenMenuFooter
+                    , sidebarFooter =
+                        viewOpenMenuFooter
                     }
 
                 CurrentDocMode ->
-                    {
-                        sidebarHeader =
-                            lazy2
-                                viewCurrentDocHeader model.currentDoc addresses,
+                    { sidebarHeader =
+                        lazy2
+                            viewCurrentDocHeader model.currentDoc addresses
 
-                        sidebarBody =
-                            lazy3
-                                CurrentDoc.view
-                                    addresses.navigateToTitle
-                                    addresses.navigateToChapterId
-                                    model.currentDoc,
+                    , sidebarBody =
+                        lazy3
+                            CurrentDoc.view
+                                addresses.navigateToTitle
+                                addresses.navigateToChapterId
+                                model.currentDoc
 
-                        sidebarFooter =
-                            lazy
-                                viewCurrentDocFooter addresses
+                    , sidebarFooter =
+                        lazy
+                            viewCurrentDocFooter addresses
                     }
 
                 SettingsMode ->
-                    { -- TODO make this different than CurrentDocMode
-                        sidebarHeader =
-                            lazy2
-                                viewCurrentDocHeader
+                    -- TODO make this different than CurrentDocMode
+                    { sidebarHeader =
+                        lazy2
+                            viewCurrentDocHeader
+                            model.currentDoc
+                            addresses
+
+                    , sidebarBody =
+                        lazy3
+                            CurrentDoc.view
+                                addresses.navigateToTitle
+                                addresses.navigateToChapterId
                                 model.currentDoc
-                                addresses
-                        ,
 
-                        sidebarBody =
-                            lazy3
-                                CurrentDoc.view
-                                    addresses.navigateToTitle
-                                    addresses.navigateToChapterId
-                                    model.currentDoc
-                        ,
-
-                        sidebarFooter =
-                            lazy
-                                viewCurrentDocFooter addresses
+                    , sidebarFooter =
+                        lazy
+                            viewCurrentDocFooter addresses
                     }
 
     in
         div
             [ id "left-sidebar-container", class "sidebar" ]
-            [
-                sidebarHeader,
+            [ sidebarHeader
 
-                div
-                    [ id "left-sidebar-body", class "sidebar-body" ]
-                    [ sidebarBody ]
-                ,
+            , div
+                [ id "left-sidebar-body", class "sidebar-body" ]
+                [ sidebarBody ]
 
-                sidebarFooter
+            , sidebarFooter
             ]
 
 
@@ -184,30 +176,27 @@ viewCurrentDocFooter : Addresses a -> Html
 viewCurrentDocFooter addresses =
     div
         [ id "left-sidebar-footer", class "sidebar-footer" ]
-        [
-            span
-                [
-                    id "add-chapter",
-                    title "Add Chapter",
-                    onClick addresses.newChapter (),
-                    class "flaticon-plus81"] []
-                ]
+        [ span
+            [ id "add-chapter"
+            , title "Add Chapter"
+            , onClick addresses.newChapter ()
+            , class "flaticon-plus81"
+            ]
+            []
+        ]
 
 
 viewOpenMenuHeader updateChannel =
     div
-        [
-            key "open-menu-header",
-            id sidebarHeaderId,
-            class sidebarHeaderClass
+        [ key "open-menu-header"
+        , id sidebarHeaderId
+        , class sidebarHeaderClass
         ]
-        [
-            span
-                [
-                    class "sidebar-header-control",
-                    onClick updateChannel (SetViewMode CurrentDocMode)
-                ]
-                [ text "cancel" ]
+        [ span
+            [ class "sidebar-header-control"
+            , onClick updateChannel (SetViewMode CurrentDocMode)
+            ]
+            [ text "cancel" ]
         ]
 
 
@@ -215,55 +204,44 @@ viewCurrentDocHeader : Doc -> Addresses a -> Html
 viewCurrentDocHeader currentDoc addresses =
     let
         downloadOptions =
-          {
-              filename = (legalizeFilename currentDoc.title) ++ ".html",
-              contentType = downloadContentType
-          }
+            { filename = (legalizeFilename currentDoc.title) ++ ".html"
+            , contentType = downloadContentType
+            }
     in
         menu
             [ id sidebarHeaderId, class sidebarHeaderClass ]
-            [
-                menuitem
-                    [
-                        title "New",
-                        class "sidebar-header-control flaticon-add26",
-                        onClick addresses.newDoc ()
-                    ]
-                    []
-                ,
+            [ menuitem
+                [ title "New"
+                , class "sidebar-header-control flaticon-add26"
+                , onClick addresses.newDoc ()
+                ]
+                []
 
-                menuitem
-                    [
-                        title "Open",
-                        class "sidebar-header-control flaticon-folder63",
-                        onClick addresses.update (SetViewMode OpenMenuMode)
-                    ]
-                    []
-                ,
+            , menuitem
+                [ title "Open"
+                , class "sidebar-header-control flaticon-folder63"
+                , onClick addresses.update (SetViewMode OpenMenuMode)
+                ]
+                []
 
-                menuitem
-                    [
-                        title "Download",
-                        class "sidebar-header-control flaticon-cloud134",
-                        onClick addresses.download downloadOptions
-                    ]
-                    []
-                ,
+            , menuitem
+                [ title "Download"
+                , class "sidebar-header-control flaticon-cloud134"
+                , onClick addresses.download downloadOptions
+                ]
+                []
 
-                menuitem
-                    [
-                        title "Print",
-                        class "sidebar-header-control flaticon-printer70",
-                        onClick addresses.print ()
-                    ]
-                    []
-                ,
+            , menuitem
+                [ title "Print"
+                , class "sidebar-header-control flaticon-printer70"
+                , onClick addresses.print ()
+                ]
+                []
 
-                menuitem
-                    [
-                        title "Settings",
-                        class "sidebar-header-control flaticon-gear33",
-                        onClick addresses.update (SetViewMode SettingsMode)
-                    ]
-                    []
+            , menuitem
+                [ title "Settings"
+                , class "sidebar-header-control flaticon-gear33"
+                , onClick addresses.update (SetViewMode SettingsMode)
+                ]
+                []
             ]
