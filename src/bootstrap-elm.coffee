@@ -114,6 +114,7 @@ app.ports.remoteSync.subscribe ->
   alert "Unfortunately Dropbox has decided to deprecate their Sync API. Work on an alternative syncing method for Dreamwriter is underway!"
 
 app.ports.newChapter.subscribe ->
+  throw "kaboom!"
   sync.getCurrentDoc().done (doc) ->
     sync.addChapter(doc,
       DocImport.blankChapterHeading, DocImport.blankChapterHtml).done (doc) ->
