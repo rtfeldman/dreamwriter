@@ -1,15 +1,17 @@
 {
     "version": "1.1.0",
-    "elm-version": "0.15.0 <= v < 0.16.0",
     "summary": "Streamlined long-form writing software.",
     "repository": "https://github.com/rtfeldman/dreamwriter.git",
     "license": "Apache2",
     "source-directories": [
-        ".", "Dreamwriter"
+        ".",
+        "Dreamwriter"
     ],
     "exposed-modules": [],
     "dependencies": {
         "elm-lang/core": "2.0.0 <= v < 3.0.0",
-        "evancz/elm-html": "3.0.0 <= v < 4.0.0"
-    }
+        "evancz/elm-html": "3.0.0 <= v < 4.0.0",
+        "evancz/elm-svg": "2.0.0 <= v < 3.0.0"
+    },
+    "elm-version": "0.15.0 <= v < 0.16.0"
 }

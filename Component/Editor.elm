@@ -1,6 +1,7 @@
 module Component.Editor where
 
 import Dreamwriter exposing (..)
+import Component.WordGraph as WordGraph
 
 import String
 import Html exposing (..)
@@ -109,12 +110,30 @@ viewEditorFooter channels currentDoc fullscreen =
             chapterWords
 
         wordCountLabel =
-            (pluralize "word" wordCount) ++ " saved"
+            (pluralize "word" wordCount) ++ " saved "
+
+        wordGraph = [
+            {
+                words = 100,
+                day = "yesterday"
+            },
+            {
+                words = 200,
+                day = "today"
+            },
+            {
+                words = -100,
+                day = "tomorrow"
+            }
+        ]
     in
-        div 
+        div
             [ id "editor-footer" ]
             [
-                div [ id "doc-word-count" ] [ text wordCountLabel ],
+                div [ id "doc-word-count" ] [
+                    text wordCountLabel,
+                    WordGraph.viewWordGraph wordGraph
+                ],
 
                 div
                     [ id "dropbox-sync" ]
@@ -158,7 +177,7 @@ withCommas : Int -> String
 withCommas num =
     if num >= 1000 then
         let
-            prefix = 
+            prefix =
                 (num / 1000)
                     |> floor
                     |> withCommas
