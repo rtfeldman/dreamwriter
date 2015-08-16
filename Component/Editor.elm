@@ -111,28 +111,13 @@ viewEditorFooter channels currentDoc fullscreen =
 
         wordCountLabel =
             (pluralize "word" wordCount) ++ " saved "
-
-        wordGraph = [
-            {
-                words = 100,
-                day = "yesterday"
-            },
-            {
-                words = 200,
-                day = "today"
-            },
-            {
-                words = -100,
-                day = "tomorrow"
-            }
-        ]
     in
         div
             [ id "editor-footer" ]
             [
                 div [ id "doc-word-count" ] [
                     text wordCountLabel,
-                    WordGraph.viewWordGraph wordGraph
+                    WordGraph.viewWordGraph currentDoc.dailyWords
                 ],
 
                 div
