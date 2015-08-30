@@ -45,6 +45,12 @@ module.exports = class DreamSync
     new Promise (resolve, reject) =>
       @db.settings.get(id).then ((result) -> resolve result?.value), reject
 
+  normalizeDoc: (doc) =>
+    if not doc.dailyWords
+      doc.dailyWords = []
+      doc.dailyWordsStartsAt = DreamSync.wordsForDoc doc
+    doc
+
   listDocs: => @db.docs.query().all().execute()
 
   getDoc:      (id) => @db.docs.get      id
@@ -64,7 +70,7 @@ module.exports = class DreamSync
       @getCurrentNoteId().then (id) =>
         @getNote(id).then resolve, reject
 
-  saveDoc:      (doc)      => @db.docs.update      doc
+  saveDoc:      (doc)      => @db.docs.update      updateDailyWords(@normalizeDoc doc)
   saveNote:     (note)     => @db.notes.update     note
   saveSnapshot: (snapshot) => @db.snapshots.update snapshot
 
@@ -166,6 +172,11 @@ module.exports = class DreamSync
       note.id = DreamSync.getRandomSha()
       persistNoteAndSnapshot @db, note, snapshot
 
+  @wordsForDoc: (doc) ->
+    total = doc.titleWords + doc.descriptionWords
+    total += chapter.headingWords + chapter.bodyWords for chapter in doc.chapters
+    return total
+
 persistNoteAndSnapshot = (db, note, snapshot) ->
   new Promise (resolve, reject) ->
     note.id ?= DreamSync.getRandomSha()
@@ -185,6 +196,8 @@ persistDocAndSnapshot = (db, doc, snapshot) ->
 
     updateTimestamps doc, snapshot
 
+    updateDailyWords doc
+
     for chapter in doc.chapters
       chapter.id ||= DreamSync.getRandomSha()
 
@@ -201,3 +214,26 @@ updateTimestamps = (doc, snapshot) ->
   doc.lastModifiedTime         = currentTime
   snapshot.creationTime      ||= doc.creationTime
   snapshot.lastModifiedTime    = doc.lastModifiedTime
+
+updateDailyWords = (doc) ->
+  currentDay = new Date(doc.lastModifiedTime).toISOString().split('T')[0]
+  todayWords = 
+    day: currentDay
+    words: 0
+  sumToDate = doc.dailyWordsStartsAt
+
+  # If we have the current day already, retrieve that
+  if doc.dailyWords.length > 0 and doc.dailyWords[-1..][0].day == currentDay
+    todayWords = doc.dailyWords.pop()
+
+  # Sum the words to date
+  sumToDate += day.words for day in doc.dailyWords
+
+  # Calculate the change
+  newWords = DreamSync.wordsForDoc(doc) - sumToDate
+  if newWords == todayWords.words
+    return doc
+  todayWords.words = newWords
+
+  doc.dailyWords.push todayWords
+  doc
