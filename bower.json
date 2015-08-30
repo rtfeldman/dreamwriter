@@ -11,7 +11,7 @@
     "dreamwriter",
     "elm"
   ],
-  "license": "Apache2",
+  "license": "BSD-3-Clause",
   "private": true,
   "dependencies": {
     "FileSaver.js": "git@github.com:eligrey/FileSaver.js.git#899ed116a946921223f25eaa2f54862b737c6e73",

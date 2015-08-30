@@ -2,7 +2,7 @@
     "version": "1.1.0",
     "summary": "Streamlined long-form writing software.",
     "repository": "https://github.com/rtfeldman/dreamwriter.git",
-    "license": "Apache2",
+    "license": "BSD-3-Clause",
     "source-directories": [
         ".",
         "Dreamwriter"

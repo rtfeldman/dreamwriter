@@ -12,7 +12,7 @@
     "url": "https://github.com/rtfeldman/dreamwriter.git"
   },
   "author": "Richard Feldman",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "devDependencies": {
     "browserify-mustache": "0.0.4",
     "chai": "1.10.0",
