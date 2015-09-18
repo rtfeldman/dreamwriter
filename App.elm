@@ -55,35 +55,27 @@ updates =
 
 
 type alias AppState =
-    {
-        page : Page.Model,
-
-        fullscreen : FullscreenState,
-
-        currentDoc : Maybe Doc,
-        currentDocId : Maybe Identifier,
-        currentNote : Maybe Note,
-
-        docs : List Doc,
-        notes : List Note,
-        snapshots : Dict.Dict Identifier Snapshot
+    { page         : Page.Model
+    , fullscreen   : FullscreenState
+    , currentDoc   : Maybe Doc
+    , currentDocId : Maybe Identifier
+    , currentNote  : Maybe Note
+    , docs         : List Doc
+    , notes        : List Note
+    , snapshots    : Dict.Dict Identifier Snapshot
     }
 
 
 initialState : AppState
 initialState =
-    {
-        page = Page.initialModel,
-
-        fullscreen = False,
-
-        currentDoc = Nothing,
-        currentDocId = Nothing,
-        currentNote = Nothing,
-
-        docs = [],
-        notes = [],
-        snapshots = Dict.empty
+    { page         = Page.initialModel
+    , fullscreen   = False
+    , currentDoc   = Nothing
+    , currentDocId = Nothing
+    , currentNote  = Nothing
+    , docs         = []
+    , notes        = []
+    , snapshots    = Dict.empty
     }
 
 
@@ -99,17 +91,17 @@ transition action state =
                     Page.initialModel
 
                 page =
-                    { initialPage |
-                        currentDocId <- Just id,
-                        currentDoc <- state.currentDoc,
-                        docs <- state.docs,
-                        notes <- state.notes,
-                        fullscreen <- state.fullscreen
+                    { initialPage
+                    | currentDocId <- Just id
+                    , currentDoc   <- state.currentDoc
+                    , docs         <- state.docs
+                    , notes        <- state.notes
+                    , fullscreen   <- state.fullscreen
                     }
             in
-                { state |
-                    currentDocId <- Just id,
-                    page <- page
+                { state
+                | currentDocId <- Just id
+                , page <- page
                 }
 
         LoadAsCurrentDoc doc ->
@@ -143,8 +135,8 @@ transition action state =
         UpdateChapter chapter ->
             let
                 updateDoc doc =
-                    { doc |
-                        chapters <- List.map (preferById chapter) doc.chapters
+                    { doc
+                    | chapters <- List.map (preferById chapter) doc.chapters
                     }
             in
                 updateCurrentDoc updateDoc state
@@ -160,9 +152,9 @@ transition action state =
         SetDescription (description, words) ->
             let
                 updateDoc doc =
-                    { doc |
-                        description <- description,
-                        descriptionWords <- words
+                    { doc
+                    | description <- description
+                    , descriptionWords <- words
                     }
             in
                 updateCurrentDoc updateDoc state
@@ -171,15 +163,15 @@ transition action state =
             { state | fullscreen <- enabled }
 
         PutSnapshot snapshot ->
-            { state |
-                snapshots <- Dict.insert snapshot.id snapshot state.snapshots
+            { state
+            | snapshots <- Dict.insert snapshot.id snapshot state.snapshots
             }
 
         SetPage model ->
-            { state |
-                page <- model,
-                currentDocId <- model.currentDocId,
-                currentNote <- model.currentNote
+            { state
+            | page         <- model
+            , currentDocId <- model.currentDocId
+            , currentNote  <- model.currentNote
             }
 
 
@@ -218,9 +210,9 @@ updateCurrentDoc transformation state =
                 newDocs =
                     List.map (preferById newCurrentDoc) state.docs
             in
-                { state |
-                    currentDoc <- Just newCurrentDoc,
-                    docs <- newDocs
+                { state
+                | currentDoc <- Just newCurrentDoc
+                , docs       <- newDocs
                 }
 
 
@@ -240,18 +232,17 @@ main =
 userInput : Signal Update
 userInput =
     Signal.mergeMany
-        [
-            Signal.map LoadAsCurrentDoc loadAsCurrentDoc,
-            Signal.map ListDocs listDocs,
-            Signal.map ListNotes listNotes,
-            Signal.map SetChapters setChapters,
-            Signal.map UpdateChapter updateChapter,
-            Signal.map SetTitle setTitle,
-            Signal.map SetDescription setDescription,
-            Signal.map SetFullscreen setFullscreen,
-            Signal.map PutSnapshot putSnapshot,
-            Signal.map SetCurrentNote setCurrentNote,
-            updates.signal
+        [ Signal.map LoadAsCurrentDoc loadAsCurrentDoc
+        , Signal.map ListDocs listDocs
+        , Signal.map ListNotes listNotes
+        , Signal.map SetChapters setChapters
+        , Signal.map UpdateChapter updateChapter
+        , Signal.map SetTitle setTitle
+        , Signal.map SetDescription setDescription
+        , Signal.map SetFullscreen setFullscreen
+        , Signal.map PutSnapshot putSnapshot
+        , Signal.map SetCurrentNote setCurrentNote
+        , updates.signal
         ]
 
 
@@ -262,19 +253,15 @@ generalizePageUpdate state pageUpdate =
 
 modelPage : AppState -> Page.Model
 modelPage state =
-    {
-        leftSidebar = state.page.leftSidebar,
-        rightSidebar = state.page.rightSidebar,
-        editor = state.page.editor,
-
-        fullscreen = state.fullscreen,
-
-        currentDocId = state.currentDocId,
-        currentDoc = state.currentDoc,
-        currentNote = state.currentNote,
-
-        docs = state.docs,
-        notes = state.notes
+    { leftSidebar = state.page.leftSidebar
+    , rightSidebar = state.page.rightSidebar
+    , editor = state.page.editor
+    , fullscreen = state.fullscreen
+    , currentDocId = state.currentDocId
+    , currentDoc = state.currentDoc
+    , currentNote = state.currentNote
+    , docs = state.docs
+    , notes = state.notes
     }
 
 scene : AppState -> Html

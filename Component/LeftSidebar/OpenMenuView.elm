@@ -22,10 +22,9 @@ view openFromFile openDoc docs currentDoc =
         openFileNode =
             div
                 [ class "open-entry from-file", onClick openFromFile () ]
-                [
-                    span [] [ text "A " ],
-                    b [] [ text ".html" ],
-                    span [] [ text " file from your computer..." ]
+                [ span [] [ text "A " ]
+                , b [] [ text ".html" ]
+                , span [] [ text " file from your computer..." ]
                 ]
     in
         div [ key "open-menu-view", id "open" ] (openFileNode :: docNodes)
@@ -41,9 +40,8 @@ viewOpenDocEntryFor openDoc currentDoc doc =
                 "open-entry"
     in
         div
-          [
-              key ("#open-doc-" ++ doc.id),
-              class className,
-              onClick openDoc doc.id
-          ]
-          [ text doc.title ]
+            [ key ("#open-doc-" ++ doc.id)
+            , class className
+            , onClick openDoc doc.id
+            ]
+            [ text doc.title ]
