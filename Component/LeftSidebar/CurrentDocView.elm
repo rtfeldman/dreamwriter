@@ -1,11 +1,9 @@
 module Component.LeftSidebar.CurrentDocView (view) where
 
 import Dreamwriter exposing (..)
-
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-
 import List exposing (..)
 import Signal exposing (Address)
 
@@ -17,7 +15,6 @@ view navigateToTitle navigateToChapterId currentDoc =
         [ div
             [ id "title", onClick navigateToTitle () ]
             [ text currentDoc.title ]
-
         , viewOutline navigateToChapterId currentDoc.chapters
         ]
 
@@ -34,4 +31,4 @@ viewChapter navigateToChapterId index chapter =
         , title chapter.heading
         , onClick navigateToChapterId chapter.id
         ]
-        [text chapter.heading]
+        [ text chapter.heading ]

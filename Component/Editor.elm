@@ -1,24 +1,23 @@
-module Component.Editor where
+module Component.Editor (..) where
 
-import Dreamwriter exposing (..)
 import Component.WordGraph as WordGraph
-
-import String
+import Dreamwriter exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Lazy exposing (..)
 import Html.Events exposing (..)
-import Maybe
-import List exposing (..)
-import Signal exposing (Address, mailbox)
+import Html.Lazy exposing (..)
 import Json.Encode exposing (string)
+import List exposing (..)
+import Maybe
+import Signal exposing (Address, mailbox)
+import String
 
 
 type alias Addresses a =
     { a
-    | fullscreen : Address FullscreenState
-    , remoteSync : Address ()
-    , execCommand : Address String
+        | fullscreen : Address FullscreenState
+        , remoteSync : Address ()
+        , execCommand : Address String
     }
 
 
@@ -58,7 +57,6 @@ viewEditorHeader channels currentDoc fullscreen =
     div
         [ id "editor-header" ]
         [ div [ class "toolbar-section toolbar-button flaticon-zoom19" ] []
-
         , div
             [ class "toolbar-section" ]
             [ viewFontControl
@@ -66,20 +64,17 @@ viewEditorHeader channels currentDoc fullscreen =
                 "toggle-bold"
                 "B"
                 "bold"
-
             , viewFontControl
                 channels.execCommand
                 "toggle-italics"
                 "I"
                 "italic"
-
             , viewFontControl
                 channels.execCommand
                 "toggle-strikethrough"
-                "\xA0S\xA0"
+                " S "
                 "strikethrough"
             ]
-
         , lazy2 viewFullscreenButton channels.fullscreen fullscreen
         ]
 
@@ -96,9 +91,9 @@ viewEditorFooter channels currentDoc fullscreen =
                 |> List.sum
 
         wordCount =
-            currentDoc.titleWords +
-            currentDoc.descriptionWords +
-            chapterWords
+            currentDoc.titleWords
+                + currentDoc.descriptionWords
+                + chapterWords
 
         wordCountLabel =
             (pluralize "word" wordCount) ++ " saved "
@@ -118,7 +113,6 @@ viewEditorFooter channels currentDoc fullscreen =
                     , onClick channels.remoteSync ()
                     ]
                     []
-
                 , label
                     [ for "toggle-dropbox-sync" ]
                     [ text " sync to Dropbox" ]
@@ -157,7 +151,6 @@ withCommas num =
                 num
                     |> toString
                     |> String.right 3
-
         in
             prefix ++ "," ++ suffix
     else
@@ -182,7 +175,6 @@ viewFullscreenButton fullscreenChannel fullscreen =
                     , targetMode = False
                     , fullscreenTitle = "Leave Fullscreen Mode"
                     }
-
                 False ->
                     { fullscreenClass = "flaticon-expand"
                     , targetMode = True
