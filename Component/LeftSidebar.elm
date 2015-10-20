@@ -1,10 +1,8 @@
-module Component.LeftSidebar where
+module Component.LeftSidebar (..) where
 
-import Dreamwriter exposing (..)
-
-import Component.LeftSidebar.OpenMenuView as OpenMenu
 import Component.LeftSidebar.CurrentDocView as CurrentDoc
-
+import Component.LeftSidebar.OpenMenuView as OpenMenu
+import Dreamwriter exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -14,67 +12,51 @@ import Regex
 import Signal exposing (Address)
 
 
-type ViewMode
-    = CurrentDocMode
-    | OpenMenuMode
-    | SettingsMode
-
-
+<datatype>
 type alias Addresses a =
     { a
-    | print               : Address ()
-    , newDoc              : Address ()
-    , newChapter          : Address ()
-    , openFromFile        : Address ()
-    , navigateToTitle     : Address ()
-    , navigateToChapterId : Address Identifier
-    , download            : Address DownloadOptions
-    , update              : Address Update
+        | print : Address ()
+        , newDoc : Address ()
+        , newChapter : Address ()
+        , openFromFile : Address ()
+        , navigateToTitle : Address ()
+        , navigateToChapterId : Address Identifier
+        , download : Address DownloadOptions
+        , update : Address Update
     }
 
 
 type alias Model =
-    { viewMode     : ViewMode
-    , docs         : List Doc
+    { viewMode : ViewMode
+    , docs : List Doc
     , currentDocId : Maybe Identifier
-    , currentDoc   : Doc
+    , currentDoc : Doc
     }
 
 
 initialModel : Model
 initialModel =
-    { viewMode     = CurrentDocMode
-    , docs         = []
+    { viewMode = CurrentDocMode
+    , docs = []
     , currentDocId = Nothing
-    , currentDoc   = emptyDoc
+    , currentDoc = emptyDoc
     }
 
 
-type Update
-    = NoOp
-    | SetViewMode ViewMode
-    | OpenDocId Identifier
-
-
+<datatype>
 transition : Update -> Model -> Model
 transition update model =
     case update of
         NoOp ->
             model
-
         SetViewMode mode ->
-            { model | viewMode <- mode }
-
+            <update>
         OpenDocId id ->
-            { model
-            | currentDocId <- Just id
-            , viewMode     <- CurrentDocMode
-            }
+            <update>
 
 
--- Replace illegal filename characters with underscores
 illegalFilenameCharMatcher =
-    Regex.regex "[/\\<>?|\":*]"
+    Regex.regex "[/\<>?|":*]"
 
 
 legalizeFilename : String -> String
@@ -97,64 +79,57 @@ view addresses model =
                 OpenMenuMode ->
                     { sidebarHeader =
                         lazy
-                            viewOpenMenuHeader addresses.update
-
+                            viewOpenMenuHeader
+                            addresses.update
                     , sidebarBody =
                         lazy2
                             (OpenMenu.view addresses.openFromFile openDoc)
                             model.docs
                             model.currentDoc
-
                     , sidebarFooter =
                         viewOpenMenuFooter
                     }
-
                 CurrentDocMode ->
-                    { sidebarHeader =
-                        lazy2
-                            viewCurrentDocHeader model.currentDoc addresses
-
-                    , sidebarBody =
-                        lazy3
-                            CurrentDoc.view
-                                addresses.navigateToTitle
-                                addresses.navigateToChapterId
-                                model.currentDoc
-
-                    , sidebarFooter =
-                        lazy
-                            viewCurrentDocFooter addresses
-                    }
-
-                SettingsMode ->
-                    -- TODO make this different than CurrentDocMode
                     { sidebarHeader =
                         lazy2
                             viewCurrentDocHeader
                             model.currentDoc
                             addresses
-
                     , sidebarBody =
                         lazy3
                             CurrentDoc.view
-                                addresses.navigateToTitle
-                                addresses.navigateToChapterId
-                                model.currentDoc
-
+                            addresses.navigateToTitle
+                            addresses.navigateToChapterId
+                            model.currentDoc
                     , sidebarFooter =
                         lazy
-                            viewCurrentDocFooter addresses
+                            viewCurrentDocFooter
+                            addresses
                     }
-
+                SettingsMode ->
+                    { sidebarHeader =
+                        lazy2
+                            viewCurrentDocHeader
+                            model.currentDoc
+                            addresses
+                    , sidebarBody =
+                        lazy3
+                            CurrentDoc.view
+                            addresses.navigateToTitle
+                            addresses.navigateToChapterId
+                            model.currentDoc
+                    , sidebarFooter =
+                        lazy
+                            viewCurrentDocFooter
+                            addresses
+                    }
     in
         div
             [ id "left-sidebar-container", class "sidebar" ]
             [ sidebarHeader
-
             , div
                 [ id "left-sidebar-body", class "sidebar-body" ]
                 [ sidebarBody ]
-
             , sidebarFooter
             ]
 
@@ -216,28 +191,24 @@ viewCurrentDocHeader currentDoc addresses =
                 , onClick addresses.newDoc ()
                 ]
                 []
-
             , menuitem
                 [ title "Open"
                 , class "sidebar-header-control flaticon-folder63"
                 , onClick addresses.update (SetViewMode OpenMenuMode)
                 ]
                 []
-
             , menuitem
                 [ title "Download"
                 , class "sidebar-header-control flaticon-cloud134"
                 , onClick addresses.download downloadOptions
                 ]
                 []
-
             , menuitem
                 [ title "Print"
                 , class "sidebar-header-control flaticon-printer70"
                 , onClick addresses.print ()
                 ]
                 []
-
             , menuitem
                 [ title "Settings"
                 , class "sidebar-header-control flaticon-gear33"
