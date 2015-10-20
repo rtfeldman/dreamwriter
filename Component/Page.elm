@@ -64,18 +64,18 @@ transition update model =
 
         SetLeftSidebar childModel ->
             { model |
-                leftSidebar <- childModel,
-                currentDocId <- childModel.currentDocId
+                leftSidebar = childModel,
+                currentDocId = childModel.currentDocId
             }
 
         SetRightSidebar childModel ->
             { model |
-                rightSidebar <- childModel,
-                currentNote <- childModel.currentNote
+                rightSidebar = childModel,
+                currentNote = childModel.currentNote
             }
 
         SetEditor childModel ->
-            { model | editor <- childModel }
+            { model | editor = childModel }
 
 
 view addresses model =
@@ -86,7 +86,7 @@ view addresses model =
                 (generalizeLeftSidebarUpdate model)
 
         leftSidebarChannels =
-            { addresses | update <- updateLeftSidebar }
+            { addresses | update = updateLeftSidebar }
 
         rightSidebarChannels =
             addresses

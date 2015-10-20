@@ -63,12 +63,12 @@ transition update model =
             model
 
         SetViewMode mode ->
-            { model | viewMode <- mode }
+            { model | viewMode = mode }
 
         OpenDocId id ->
             { model
-            | currentDocId <- Just id
-            , viewMode     <- CurrentDocMode
+            | currentDocId = Just id
+            , viewMode     = CurrentDocMode
             }
 
 
